@@ -21,7 +21,7 @@ import java.awt.Color;
 @SuppressWarnings("serial")
 public class POS extends JFrame {
 
-	private JPanel contentPane;
+	private JPanel mainPanel;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -39,11 +39,17 @@ public class POS extends JFrame {
 	public POS() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
-		contentPane = new JPanel();
-		contentPane.setBackground(Gallery.BLACK);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new SpringLayout());
+		
+		
+		
+		mainPanel = new JPanel();
+		mainPanel.setBackground(Gallery.BLACK);
+		setContentPane(mainPanel);
+		mainPanel.setLayout(new SpringLayout());
+		
+		
+		
 		setLocationRelativeTo(null);
+		
 	}
 }

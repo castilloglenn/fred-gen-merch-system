@@ -16,6 +16,7 @@ import javax.swing.text.StyledEditorKit.FontSizeAction;
 public class Utility {
 
 	public Font font;
+	private final String fontName = "OpenSans-SemiBold";
 	
 
 	@SuppressWarnings("serial")
@@ -64,7 +65,7 @@ public class Utility {
 	
 	public void setupCustomFont() {
 		try {
-			InputStream inputStream = new BufferedInputStream(new FileInputStream("assets/fonts/OpenSans-Regular.ttf"));
+			InputStream inputStream = new BufferedInputStream(new FileInputStream("assets/fonts/" + fontName + ".ttf"));
 			font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 			GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			genv.registerFont(font);
