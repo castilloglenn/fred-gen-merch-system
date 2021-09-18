@@ -32,6 +32,7 @@ public class Inventory extends JFrame {
 	private JLabel lblDashboard;
 	private JLabel lblSupplier;
 	private JLabel lblProduct;
+	
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -86,9 +87,9 @@ public class Inventory extends JFrame {
 		
 		lblDashboard = new JLabel("Dashboard");
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblDashboard, 104, SpringLayout.NORTH, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblDashboard, 10, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblDashboard, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblDashboard, 138, SpringLayout.NORTH, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblDashboard, -10, SpringLayout.EAST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblDashboard, 1, SpringLayout.EAST, navigationalPanel);
 		lblDashboard.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		lblDashboard.addMouseListener(new MouseAdapter() {
 			@Override
@@ -110,6 +111,10 @@ public class Inventory extends JFrame {
 		navigationalPanel.add(lblDashboard);
 		
 		lblSupplier = new JLabel("Supplier");
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblSupplier, 18, SpringLayout.SOUTH, lblDashboard);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblSupplier, 0, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblSupplier, -371, SpringLayout.SOUTH, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, -10, SpringLayout.EAST, navigationalPanel);
 		lblSupplier.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -117,17 +122,18 @@ public class Inventory extends JFrame {
 				lblSupplier.setOpaque(true);
 			}
 		});
-		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblSupplier, 20, SpringLayout.SOUTH, lblDashboard);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblSupplier, 10, SpringLayout.WEST, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblSupplier, -369, SpringLayout.SOUTH, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, 0, SpringLayout.EAST, lblDashboard);
 		lblSupplier.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSupplier.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		navigationalPanel.add(lblSupplier);
 		
 		lblProduct = new JLabel("Product");
-		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblProduct, 26, SpringLayout.SOUTH, lblSupplier);
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblProduct, 19, SpringLayout.SOUTH, lblSupplier);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblProduct, 10, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblProduct, -318, SpringLayout.SOUTH, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblProduct, -10, SpringLayout.EAST, navigationalPanel);
+		lblProduct.setHorizontalAlignment(SwingConstants.CENTER);
+		lblProduct.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		navigationalPanel.add(lblProduct);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, dashboardPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, dashboardPanel, -15, SpringLayout.EAST, mainPanel);
 		mainPanel.add(dashboardPanel);
