@@ -13,7 +13,7 @@ public class Inventory extends JFrame {
 	private JPanel contentPane;
 
 	/**
-	 * To be done by: Sebastian Gege
+	 * To be done by: Sebastian
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
