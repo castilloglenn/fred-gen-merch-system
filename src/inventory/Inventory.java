@@ -58,7 +58,7 @@ public class Inventory extends JFrame {
 		mainPanel.add(navigationalPanel);
 		
 		dashboardPanel = new JPanel();
-		dashboardPanel.setBackground(Color.MAGENTA);
+		dashboardPanel.setBackground(Gallery.GRAY);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, dashboardPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, dashboardPanel, 15, SpringLayout.EAST, navigationalPanel);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, dashboardPanel, -15, SpringLayout.SOUTH, mainPanel);
