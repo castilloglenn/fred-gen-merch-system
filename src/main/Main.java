@@ -4,15 +4,13 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
+/**
+ *  To be done by: Glenn
+ */
 public class Main {
 
 	private JFrame frame;
 
-	/**
-	 * Launch the application.
-	 * Sebastian
-	 * Glenn
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -26,16 +24,10 @@ public class Main {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public Main() {
 		initialize();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);

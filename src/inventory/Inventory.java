@@ -7,13 +7,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+@SuppressWarnings("serial")
 public class Inventory extends JFrame {
 
 	private JPanel contentPane;
 
 	/**
-	 * Launch the application.
-	 * inventory ni seb
+	 * To be done by: Sebastian
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
