@@ -3,9 +3,13 @@ package utils;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.JPanel;
+import javax.swing.text.StyledEditorKit.FontSizeAction;
 
 public class Utility {
 
@@ -57,7 +61,7 @@ public class Utility {
 	
 	public void setupCustomFont() {
 		try {
-			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("OpenSans-Regular.ttf"));
+			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("assets/fonts/OpenSans-Regular.ttf"));
 			GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			genv.registerFont(font);
 			setFontSize(12f);

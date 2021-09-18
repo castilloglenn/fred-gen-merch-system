@@ -97,7 +97,8 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblDashboard, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblDashboard, 138, SpringLayout.NORTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblDashboard, 1, SpringLayout.EAST, navigationalPanel);
-		lblDashboard.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		utility.setFontSize(25f);
+		lblDashboard.setFont(utility.font);
 		lblDashboard.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblDashboard); }
 			@Override public void mouseExited(MouseEvent e) { mouseExit(lblDashboard); }
