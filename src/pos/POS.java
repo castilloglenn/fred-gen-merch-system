@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import utils.Database;
 import utils.Gallery;
+import utils.Utility;
 import javax.swing.SpringLayout;
 import java.awt.Color;
 
