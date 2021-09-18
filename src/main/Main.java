@@ -14,7 +14,7 @@ public class Main {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
+				try { 
 					Main window = new Main();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
