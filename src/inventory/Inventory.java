@@ -12,7 +12,7 @@ import utils.Gallery;
 
 
 /**
- * To be done by: Sebastian
+ * To be done by: Sebastian Garcia
  */
 @SuppressWarnings("serial")
 public class Inventory extends JFrame {
@@ -37,11 +37,11 @@ public class Inventory extends JFrame {
 	 */
 	public Inventory() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 689, 381);
 		mainPanel = new JPanel();
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		mainPanel.setLayout(new BorderLayout(0, 0));
 		setContentPane(mainPanel);
+		mainPanel.setLayout(null);
 		setLocationRelativeTo(null); 
 	}
 
