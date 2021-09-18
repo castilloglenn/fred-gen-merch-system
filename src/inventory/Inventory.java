@@ -106,7 +106,8 @@ public class Inventory extends JFrame {
 		ImageIcon dashboardIconScaled = new ImageIcon(scaledIcon);
 		lblDashboard.setIcon(dashboardIconScaled);
 		
-		lblDashboard.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		utility.setFontSize(20f);
+		lblDashboard.setFont(utility.font);
 		lblDashboard.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblDashboard); }
 			@Override public void mouseExited(MouseEvent e) { mouseExit(lblDashboard); }
@@ -139,14 +140,8 @@ public class Inventory extends JFrame {
 		
 		lblProduct = new JLabel("Product");
 		lblProduct.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				 mouseEnter(lblProduct);
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				mouseExit(lblProduct);
-			}
+			@Override public void mouseEntered(MouseEvent e) {mouseEnter(lblProduct);	}
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblProduct); }
 		});
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblProduct, 19, SpringLayout.SOUTH, lblSupplier);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblProduct, 0, SpringLayout.WEST, navigationalPanel);

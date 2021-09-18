@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -59,9 +61,11 @@ public class Utility {
 		setupCustomFont();
 	}
 	
+	
 	public void setupCustomFont() {
 		try {
-			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("assets/fonts/OpenSans-Regular.ttf"));
+			InputStream inputStream = new BufferedInputStream(new FileInputStream("assets/fonts/OpenSans-Regular.ttf"));
+			font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 			GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			genv.registerFont(font);
 			setFontSize(12f);
@@ -73,6 +77,7 @@ public class Utility {
 			e.printStackTrace();
 		}
 	}
+	
 	
 	public void setFontSize(float size) {
 		font = font.deriveFont(size);
