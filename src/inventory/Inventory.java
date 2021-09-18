@@ -3,6 +3,7 @@ package inventory;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -21,6 +22,7 @@ import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
+import java.awt.Image;
 
 
 /**
@@ -97,6 +99,13 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblDashboard, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblDashboard, 138, SpringLayout.NORTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblDashboard, 1, SpringLayout.EAST, navigationalPanel);
+	
+		ImageIcon image = new ImageIcon("assets/images/dashboard.png");
+		Image img = image.getImage();
+		Image scaledIcon = img.getScaledInstance(10, 15, Image.SCALE_SMOOTH);
+		ImageIcon dashboardIconScaled = new ImageIcon(scaledIcon);
+		lblDashboard.setIcon(dashboardIconScaled);
+		
 		lblDashboard.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		lblDashboard.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblDashboard); }
@@ -114,7 +123,7 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblSupplier, 18, SpringLayout.SOUTH, lblDashboard);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblSupplier, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblSupplier, -371, SpringLayout.SOUTH, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, -10, SpringLayout.EAST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, 1, SpringLayout.EAST, navigationalPanel);
 		lblSupplier.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblSupplier); }
 			@Override public void mouseExited(MouseEvent e) { mouseExit(lblSupplier); }
@@ -129,10 +138,20 @@ public class Inventory extends JFrame {
 		navigationalPanel.add(lblSupplier);
 		
 		lblProduct = new JLabel("Product");
+		lblProduct.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				 mouseEnter(lblProduct);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseExit(lblProduct);
+			}
+		});
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblProduct, 19, SpringLayout.SOUTH, lblSupplier);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblProduct, 10, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblProduct, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblProduct, -318, SpringLayout.SOUTH, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblProduct, -10, SpringLayout.EAST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblProduct, 1, SpringLayout.EAST, navigationalPanel);
 		lblProduct.setHorizontalAlignment(SwingConstants.CENTER);
 		lblProduct.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		navigationalPanel.add(lblProduct);
@@ -154,5 +173,9 @@ public class Inventory extends JFrame {
 	
 	public void mouseExit(JLabel label) {
 		label.setBackground(Gallery.BLUE);
+	}
+	
+	public void buttonIcons() {
+		
 	}
 }
