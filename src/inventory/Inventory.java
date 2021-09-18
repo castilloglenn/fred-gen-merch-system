@@ -62,8 +62,6 @@ public class Inventory extends JFrame {
 		/**
 		 *  	After designing, change all Panel to Rounded Panel like this:
 		 * panelVariableExample = utility.new RoundedPanel(Gallery.WHITE);
-		 *    	And importantly set the opaque to false
-		 * dashboardPanel.setOpaque(false);
 		 *     
 		 * 	 	To set the default font, first set the size then set the font:
 		 * utility.setFontSize(20f);
@@ -106,8 +104,7 @@ public class Inventory extends JFrame {
 		ImageIcon dashboardIconScaled = new ImageIcon(scaledIcon);
 		lblDashboard.setIcon(dashboardIconScaled);
 		
-		utility.setFontSize(20f);
-		lblDashboard.setFont(utility.font);
+		lblDashboard.setFont(utility.getFont(20f));
 		lblDashboard.setForeground(Gallery.WHITE);
 		lblDashboard.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(lblDashboard);

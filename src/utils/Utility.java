@@ -28,12 +28,14 @@ public class Utility {
         public RoundedPanel(Color bgColor) {
             super();
             backgroundColor = bgColor;
+            setOpaque(false);
         }
 
         public RoundedPanel(int radius, Color bgColor) {
             super();
             cornerRadius = radius;
             backgroundColor = bgColor;
+            setOpaque(false);
         }
 
         @Override
@@ -45,15 +47,14 @@ public class Utility {
             Graphics2D graphics = (Graphics2D) g;
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            //Draws the rounded panel with borders.
             if (backgroundColor != null) {
                 graphics.setColor(backgroundColor);
             } else {
                 graphics.setColor(getBackground());
             }
-            graphics.fillRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height); //paint background
+            graphics.fillRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height);
             graphics.setColor(getForeground());
-            graphics.drawRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height); //paint border
+            graphics.drawRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height);
         }
     }
 	
@@ -69,7 +70,7 @@ public class Utility {
 			font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 			GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			genv.registerFont(font);
-			setFontSize(12f);
+			font = font.deriveFont(12f);
 		} catch (FontFormatException e) {
 			// insert error JLabel here
 			e.printStackTrace();
@@ -79,8 +80,8 @@ public class Utility {
 		}
 	}
 	
-	
-	public void setFontSize(float size) {
+	public Font getFont(float size) {
 		font = font.deriveFont(size);
+		return font;
 	}
 }
