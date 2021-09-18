@@ -9,6 +9,8 @@ import javax.swing.border.EmptyBorder;
 
 import utils.Database;
 import utils.Gallery;
+import utils.Utility;
+
 import javax.swing.SpringLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -28,6 +30,8 @@ import java.awt.Font;
 public class Inventory extends JFrame {
 	
 	private Gallery gallery;
+	private Utility utility;
+	
 	private JPanel mainPanel, navigationalPanel, dashboardPanel;
 	private JLabel lblDashboard;
 	private JLabel lblSupplier;
@@ -51,15 +55,18 @@ public class Inventory extends JFrame {
 	public Inventory() {
 		
 		gallery = new Gallery();
+		utility = new Utility();
 		
-		// 			After designing, change all Panel to Rounded Panel like this:
-		// panelVariableExample = gallery.new RoundedPanel(Gallery.WHITE);
-		// 			And importantly set the opaque to false
-		// dashboardPanel.setOpaque(false);
-		
-		// 			To set the default font, first set the size then set the font:
-		// gallery.setFontSize(20f);
-		// lblNewLabel.setFont(gallery.font);
+		/**
+		 *  	After designing, change all Panel to Rounded Panel like this:
+		 * panelVariableExample = utility.new RoundedPanel(Gallery.WHITE);
+		 *    	And importantly set the opaque to false
+		 * dashboardPanel.setOpaque(false);
+		 *     
+		 * 	 	To set the default font, first set the size then set the font:
+		 * utility.setFontSize(20f);
+		 * lblNewLabel.setFont(gallery.font);
+		 */
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
@@ -98,10 +105,12 @@ public class Inventory extends JFrame {
 				lblDashboard.setOpaque(true);
 				lblDashboard.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
+			
 			@Override
 			public void mouseExited(MouseEvent e) {
 				lblDashboard.setBackground(Gallery.BLUE);
 			}
+			
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				System.out.println("ge");
