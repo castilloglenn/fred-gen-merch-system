@@ -99,21 +99,12 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblDashboard, 1, SpringLayout.EAST, navigationalPanel);
 		lblDashboard.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		lblDashboard.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				lblDashboard.setBackground(Gallery.WHITE);
-				lblDashboard.setOpaque(true);
-				lblDashboard.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				lblDashboard.setBackground(Gallery.BLUE);
-			}
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblDashboard); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblDashboard); }
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("ge");
+				System.out.println("lblDashboard");
 			}
 		});
 		lblDashboard.setHorizontalAlignment(SwingConstants.CENTER);
@@ -125,10 +116,12 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblSupplier, -371, SpringLayout.SOUTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, -10, SpringLayout.EAST, navigationalPanel);
 		lblSupplier.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblSupplier); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblSupplier); }
+			
 			@Override
-			public void mouseEntered(MouseEvent e) {
-				lblSupplier.setBackground(Gallery.WHITE);
-				lblSupplier.setOpaque(true);
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("lblSupplier");
 			}
 		});
 		lblSupplier.setHorizontalAlignment(SwingConstants.CENTER);
@@ -148,5 +141,18 @@ public class Inventory extends JFrame {
 		mainPanel.add(dashboardPanel);
 		SpringLayout sl_dashboardPanel = new SpringLayout();
 		dashboardPanel.setLayout(sl_dashboardPanel);
+	}
+	
+	/**
+	 *  Can be used to other UI's, if so, transfer to Utility class.
+	 */
+	public void mouseEnter(JLabel label) {
+		label.setBackground(Gallery.GRAY);
+		label.setOpaque(true);
+		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	}
+	
+	public void mouseExit(JLabel label) {
+		label.setBackground(Gallery.BLUE);
 	}
 }
