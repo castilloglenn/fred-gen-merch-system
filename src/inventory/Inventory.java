@@ -20,7 +20,7 @@ import javax.swing.border.LineBorder;
 @SuppressWarnings("serial")
 public class Inventory extends JFrame {
 
-	private JPanel mainPanel,navigationalPanel;
+	private JPanel mainPanel, navigationalPanel, dashboardPanel;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -57,7 +57,8 @@ public class Inventory extends JFrame {
 		navigationalPanel.setBorder(new LineBorder(new Color(5, 25, 35), 0, true));
 		mainPanel.add(navigationalPanel);
 		
-		JPanel dashboardPanel = new JPanel();
+		dashboardPanel = new JPanel();
+		dashboardPanel.setBackground(Color.MAGENTA);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, dashboardPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, dashboardPanel, 15, SpringLayout.EAST, navigationalPanel);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, dashboardPanel, -15, SpringLayout.SOUTH, mainPanel);
