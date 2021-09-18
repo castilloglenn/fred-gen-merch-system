@@ -13,6 +13,7 @@ public class Inventory extends JFrame {
 
 	/**
 	 * Launch the application.
+	 * inventory ni seb
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
