@@ -1,6 +1,8 @@
 package utils;
 
 import java.awt.*;
+import java.io.IOException;
+
 import javax.swing.*;
 
 public class Gallery {
@@ -22,6 +24,8 @@ public class Gallery {
 	public static Color RED = new Color(216, 74, 49);
 	public static Color WHITE = new Color(255, 255, 255);
 	
+	public Font font;
+
 	
 	@SuppressWarnings("serial")
 	public class RoundedPanel extends JPanel
@@ -60,5 +64,25 @@ public class Gallery {
             graphics.drawRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height); //paint border
         }
     }
+	
+	
+	public Gallery() {
+		try {
+			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("OpenSans-Regular.ttf"));
+			GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			genv.registerFont(font);
+			setFontSize(12f);
+		} catch (FontFormatException e) {
+			// insert error JLabel here
+			e.printStackTrace();
+		} catch (IOException e) {
+			// insert error JLabel here
+			e.printStackTrace();
+		}
+	}
+	
+	public void setFontSize(float size) {
+		font = font.deriveFont(size);
+	}
 
 }

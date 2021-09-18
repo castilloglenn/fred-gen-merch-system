@@ -12,6 +12,8 @@ import utils.Gallery;
 import javax.swing.SpringLayout;
 import java.awt.Color;
 import javax.swing.border.LineBorder;
+import javax.swing.JLabel;
+import java.awt.Font;
 
 
 /**
@@ -20,7 +22,7 @@ import javax.swing.border.LineBorder;
 @SuppressWarnings("serial")
 public class Inventory extends JFrame {
 	
-	// private Gallery gallery; uncomment this after designing the UI
+	private Gallery gallery;
 	private JPanel mainPanel, navigationalPanel, dashboardPanel;
 
 	public static void main(String[] args) {
@@ -36,16 +38,19 @@ public class Inventory extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
+
 	public Inventory() {
 		
-		// gallery = new Gallery();
+		gallery = new Gallery();
+		
 		// 			After designing, change all Panel to Rounded Panel like this:
 		// panelVariableExample = gallery.new RoundedPanel(Gallery.WHITE);
 		// 			And importantly set the opaque to false
 		// dashboardPanel.setOpaque(false);
+		
+		// 			To set the default font, first set the size then set the font:
+		// gallery.setFontSize(20f);
+		// lblNewLabel.setFont(gallery.font);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
@@ -68,9 +73,13 @@ public class Inventory extends JFrame {
 		dashboardPanel.setBackground(Gallery.WHITE);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, dashboardPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, dashboardPanel, 15, SpringLayout.EAST, navigationalPanel);
+		SpringLayout sl_navigationalPanel = new SpringLayout();
+		navigationalPanel.setLayout(sl_navigationalPanel);
+		gallery.font = gallery.font.deriveFont(15f);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, dashboardPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, dashboardPanel, -15, SpringLayout.EAST, mainPanel);
 		mainPanel.add(dashboardPanel);
-		
+		SpringLayout sl_dashboardPanel = new SpringLayout();
+		dashboardPanel.setLayout(sl_dashboardPanel);
 	}
 }
