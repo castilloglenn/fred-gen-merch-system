@@ -7,14 +7,18 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import utils.Database;
+import utils.Gallery;
+
+
+/**
+ * To be done by: Sebastian
+ */
 @SuppressWarnings("serial")
 public class Inventory extends JFrame {
 
 	private JPanel mainPanel;
 
-	/**
-	 * To be done by: Sebastian
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {

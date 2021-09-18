@@ -1,20 +1,25 @@
 package pos;
 
 import java.awt.BorderLayout;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import utils.Database;
+import utils.Gallery;
+
+
+/**
+ * To be done by: Glenn
+ */
 @SuppressWarnings("serial")
 public class POS extends JFrame {
 
 	private JPanel contentPane;
 
-	/**
-	 * To be done by: Glenn
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -30,6 +35,7 @@ public class POS extends JFrame {
 
 	public POS() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

@@ -4,6 +4,10 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
+import utils.Database;
+import utils.Gallery;
+
+
 /**
  *  To be done by: Glenn
  */
