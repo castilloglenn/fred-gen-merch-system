@@ -62,8 +62,6 @@ public class Inventory extends JFrame {
 		/**
 		 *  	After designing, change all Panel to Rounded Panel like this:
 		 * panelVariableExample = utility.new RoundedPanel(Gallery.WHITE);
-		 *    	And importantly set the opaque to false
-		 * dashboardPanel.setOpaque(false);
 		 *     
 		 * 	 	To set the default font, first set the size then set the font:
 		 * utility.setFontSize(20f);
@@ -102,20 +100,12 @@ public class Inventory extends JFrame {
 	
 		ImageIcon image = new ImageIcon("assets/images/dashboard.png");
 		Image img = image.getImage();
-		Image scaledIcon = img.getScaledInstance(10, 15, Image.SCALE_SMOOTH);
+		Image scaledIcon = img.getScaledInstance(15, 15, Image.SCALE_SMOOTH);
 		ImageIcon dashboardIconScaled = new ImageIcon(scaledIcon);
 		lblDashboard.setIcon(dashboardIconScaled);
 		
-		lblDashboard.setFont(new Font("Times New Roman", Font.PLAIN, 15));
-		lblDashboard.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblDashboard); }
-			@Override public void mouseExited(MouseEvent e) { mouseExit(lblDashboard); }
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("lblDashboard");
-			}
-		});
+		lblDashboard.setFont(utility.getFont(20f));
+		lblDashboard.setForeground(Gallery.WHITE);
 		lblDashboard.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(lblDashboard);
 		
@@ -124,30 +114,11 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblSupplier, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblSupplier, -371, SpringLayout.SOUTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, 1, SpringLayout.EAST, navigationalPanel);
-		lblSupplier.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblSupplier); }
-			@Override public void mouseExited(MouseEvent e) { mouseExit(lblSupplier); }
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("lblSupplier");
-			}
-		});
 		lblSupplier.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSupplier.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		navigationalPanel.add(lblSupplier);
 		
 		lblProduct = new JLabel("Product");
-		lblProduct.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				 mouseEnter(lblProduct);
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				mouseExit(lblProduct);
-			}
-		});
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblProduct, 19, SpringLayout.SOUTH, lblSupplier);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblProduct, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblProduct, -318, SpringLayout.SOUTH, navigationalPanel);
@@ -160,13 +131,52 @@ public class Inventory extends JFrame {
 		mainPanel.add(dashboardPanel);
 		SpringLayout sl_dashboardPanel = new SpringLayout();
 		dashboardPanel.setLayout(sl_dashboardPanel);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		// NOTE: Please put all mouse listeners here at the end
+		lblDashboard.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblDashboard); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblDashboard); }
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("lblDashboard");
+			}
+		});
+		lblSupplier.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblSupplier); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblSupplier); }
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("lblSupplier");
+			}
+		});
+		lblProduct.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) {mouseEnter(lblProduct);	}
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblProduct); }
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("lblProduct");
+			}
+		});
 	}
 	
 	/**
 	 *  Can be used to other UI's, if so, transfer to Utility class.
 	 */
 	public void mouseEnter(JLabel label) {
-		label.setBackground(Gallery.GRAY);
+		label.setBackground(Gallery.BLACK);
 		label.setOpaque(true);
 		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
