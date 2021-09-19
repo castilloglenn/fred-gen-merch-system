@@ -77,18 +77,18 @@ public class POS extends JFrame {
 		sl_mainPanel = new SpringLayout();
 		mainPanel.setLayout(sl_mainPanel);
 		
-		navigationPanel = utility.new RoundedPanel(Gallery.BLUE);
-//		navigationPanel = new JPanel();
-//		navigationPanel.setBackground(Gallery.BLUE);
+//		navigationPanel = utility.new RoundedPanel(Gallery.BLUE);
+		navigationPanel = new JPanel();
+		navigationPanel.setBackground(Gallery.BLUE);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationPanel, height / 8, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, navigationPanel, -30, SpringLayout.WEST, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationPanel, -height / 8, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, navigationPanel, 50, SpringLayout.WEST, mainPanel);
 		mainPanel.add(navigationPanel);
 
-		posPanel = utility.new RoundedPanel(Gallery.GRAY);
-//		posPanel = new JPanel();
-//		posPanel.setBackground(Gallery.GRAY);
+//		posPanel = utility.new RoundedPanel(Gallery.GRAY);
+		posPanel = new JPanel();
+		posPanel.setBackground(Gallery.GRAY);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, posPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, posPanel, 15, SpringLayout.EAST, navigationPanel);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, posPanel, -15, SpringLayout.SOUTH, mainPanel);
