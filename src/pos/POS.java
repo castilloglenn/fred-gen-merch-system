@@ -4,11 +4,12 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Timer;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import utils.Gallery;
@@ -43,6 +45,8 @@ public class POS extends JFrame {
 
 	private Gallery gallery;
 	private Utility utility;
+	
+	private Timer timer;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -207,7 +211,13 @@ public class POS extends JFrame {
 			}
 		});
 		
-		
+		timer = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				lblDateTime.setText(utility.getTime());
+			}
+		});
+		timer.start();
 		
 		setLocationRelativeTo(null);
 	}
