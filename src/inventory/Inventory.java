@@ -99,12 +99,7 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblDashboard, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblDashboard, 138, SpringLayout.NORTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblDashboard, 1, SpringLayout.EAST, navigationalPanel);
-	
-		ImageIcon image = new ImageIcon("assets/images/dashboard.png");
-		Image img = image.getImage();
-		Image scaledIcon = img.getScaledInstance(15, 15, Image.SCALE_SMOOTH);
-		ImageIcon dashboardIconScaled = new ImageIcon(scaledIcon);
-		lblDashboard.setIcon(dashboardIconScaled);
+		lblDashboard.setIcon(utility.getImage("dashboard.png"));
 		
 		lblDashboard.setFont(utility.getFont(20f));
 		lblDashboard.setForeground(Gallery.BLACK);

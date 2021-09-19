@@ -10,7 +10,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.swing.JPanel;
 import javax.swing.text.StyledEditorKit.FontSizeAction;
 
 public class Utility {
@@ -83,5 +82,13 @@ public class Utility {
 	public Font getFont(float size) {
 		font = font.deriveFont(size);
 		return font;
+	}
+	
+	public ImageIcon getImage(String name) {
+		ImageIcon image = new ImageIcon("assets/images/" + name);
+		Image img = image.getImage();
+		Image scaledIcon = img.getScaledInstance(15, 15, Image.SCALE_SMOOTH);
+		ImageIcon finalImage = new ImageIcon(scaledIcon);
+		return finalImage;
 	}
 }
