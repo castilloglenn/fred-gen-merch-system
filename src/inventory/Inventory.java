@@ -77,7 +77,9 @@ public class Inventory extends JFrame {
 		mainPanel.setLayout(sl_mainPanel);
 		setLocationRelativeTo(null); 
 		
+		
 		navigationalPanel = new JPanel();
+		//navigationalPanel = utility.new RoundedPanel(Gallery.BLUE);
 		navigationalPanel.setBackground(Gallery.BLUE);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationalPanel, 0, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, navigationalPanel, 0, SpringLayout.WEST, mainPanel);
@@ -105,7 +107,7 @@ public class Inventory extends JFrame {
 		lblDashboard.setIcon(dashboardIconScaled);
 		
 		lblDashboard.setFont(utility.getFont(20f));
-		lblDashboard.setForeground(Gallery.WHITE);
+		lblDashboard.setForeground(Gallery.BLACK);
 		lblDashboard.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(lblDashboard);
 		
@@ -176,7 +178,7 @@ public class Inventory extends JFrame {
 	 *  Can be used to other UI's, if so, transfer to Utility class.
 	 */
 	public void mouseEnter(JLabel label) {
-		label.setBackground(Gallery.BLACK);
+		label.setBackground(Gallery.GRAY);
 		label.setOpaque(true);
 		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
