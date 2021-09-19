@@ -1,24 +1,26 @@
 package utils;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-
-import javax.swing.*;
-import javax.swing.plaf.basic.BasicLabelUI;
-
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
-import javax.swing.text.StyledEditorKit.FontSizeAction;
+import javax.swing.ImageIcon;
+
 
 public class Utility {
 
 	public Font font;
 	private final String fontName = "OpenSans-SemiBold";
+	private SimpleDateFormat sdf;
+	private Date date;
 	
 	public Utility() {
 		setupCustomFont();
@@ -51,6 +53,12 @@ public class Utility {
 		Image scaledIcon = img.getScaledInstance(size, size, Image.SCALE_SMOOTH);
 		ImageIcon finalImage = new ImageIcon(scaledIcon);
 		return finalImage;
+	}
+	
+	public String getTime() {
+		sdf = new SimpleDateFormat("EE, MMM dd, yyyy, hh:mm:ss aa");
+        date = Calendar.getInstance().getTime();
+        return sdf.format(date);
 	}
 }
 

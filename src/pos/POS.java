@@ -1,37 +1,29 @@
 package pos;
 
-import java.awt.BorderLayout;
-
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.DimensionUIResource;
-import javax.swing.plaf.basic.BasicGraphicsUtils;
-import javax.swing.SpringLayout;
-import javax.swing.SwingUtilities;
-
-import utils.Database;
-import utils.Gallery;
-import utils.Utility;
-import utils.RoundedPanel;
-import utils.VerticalLabelUI;
-
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Graphics;
+import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Dimension;
-import java.awt.event.WindowStateListener;
-import java.awt.event.WindowEvent;
-import java.awt.CardLayout;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.border.LineBorder;
-import javax.swing.border.CompoundBorder;
+import javax.swing.JPanel;
+import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.AttributeSet.ColorAttribute;
+
+import utils.Gallery;
+import utils.RoundedBorder;
+import utils.RoundedLabel;
+import utils.RoundedPanel;
+import utils.Utility;
+import utils.VerticalLabelUI;
 
 
 /**
@@ -40,17 +32,19 @@ import javax.swing.border.CompoundBorder;
 @SuppressWarnings("serial")
 public class POS extends JFrame {
 
-	private JPanel mainPanel, navigationPanel, posPanel;
-	private SpringLayout sl_mainPanel;
+	private JPanel mainPanel, navigationPanel, displayPanel, 
+					posPanel, transactionPanel, reportPanel,
+					cartPanel;
+	private JLabel lblDashboardNav, lblTransactionNav, lblReportNav,
+					lblTransactionNo, lblDateTime;
+	private SpringLayout sl_mainPanel, sl_posPanel, sl_cartPanel;
+	private CardLayout cardLayout;
 	
 	private int height = 600;
 	private int width = 1000;
-	private int heightDiff = 0;
 
 	private Gallery gallery;
 	private Utility utility;
-	private JLabel lblDashboardNav;
-	private JLabel lblTransactionLabel;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -87,50 +81,94 @@ public class POS extends JFrame {
 		mainPanel.setBackground(Gallery.BLACK);
 		sl_mainPanel = new SpringLayout();
 		mainPanel.setLayout(sl_mainPanel);
+		cardLayout = new CardLayout(0, 0);
 		
 		navigationPanel = new RoundedPanel(Gallery.BLUE);
-//		navigationPanel = new JPanel();
-//		navigationPanel.setBackground(Gallery.BLUE);
+		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationPanel, 426, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, navigationPanel, 60, SpringLayout.WEST, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationPanel, height / 8, SpringLayout.NORTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, navigationPanel, -30, SpringLayout.WEST, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationPanel, -height / 8, SpringLayout.SOUTH, mainPanel);
 		mainPanel.add(navigationPanel);
 
-		posPanel = new RoundedPanel(Gallery.GRAY);
-//		posPanel = new JPanel();
-//		posPanel.setBackground(Gallery.GRAY);
-		sl_mainPanel.putConstraint(SpringLayout.NORTH, posPanel, 15, SpringLayout.NORTH, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.WEST, posPanel, 15, SpringLayout.EAST, navigationPanel);
+		displayPanel = new RoundedPanel(Gallery.GRAY);
+		sl_mainPanel.putConstraint(SpringLayout.NORTH, displayPanel, 15, SpringLayout.NORTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.WEST, displayPanel, 15, SpringLayout.EAST, navigationPanel);
 		SpringLayout sl_navigationPanel = new SpringLayout();
 		navigationPanel.setLayout(sl_navigationPanel);
 		
 		lblDashboardNav = new JLabel("POS");
+		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblDashboardNav, 35, SpringLayout.NORTH, navigationPanel);
 		lblDashboardNav.setBorder(new EmptyBorder(10, 10, 0, 10));
 		lblDashboardNav.setFont(utility.getFont(15f));
 		lblDashboardNav.setForeground(Color.WHITE);
-		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblDashboardNav, 10, SpringLayout.NORTH, navigationPanel);
 		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblDashboardNav, 40, SpringLayout.WEST, navigationPanel);
 		lblDashboardNav.setUI(new VerticalLabelUI(false));
 		lblDashboardNav.setIcon(utility.getImage("pos.png", 15));
 		sl_navigationPanel.putConstraint(SpringLayout.EAST, lblDashboardNav, -10, SpringLayout.EAST, navigationPanel);
 		navigationPanel.add(lblDashboardNav);
 		
-		lblTransactionLabel = new JLabel("TRANSACTIONS");
-		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblTransactionLabel, 5, SpringLayout.SOUTH, lblDashboardNav);
-		lblTransactionLabel.setBorder(new EmptyBorder(10, 10, 0, 10));
-		lblTransactionLabel.setFont(utility.getFont(15f));
-		lblTransactionLabel.setForeground(Color.WHITE);
-		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblTransactionLabel, 0, SpringLayout.WEST, lblDashboardNav);
-		sl_navigationPanel.putConstraint(SpringLayout.EAST, lblTransactionLabel, 0, SpringLayout.EAST, lblDashboardNav);
-		lblTransactionLabel.setUI(new VerticalLabelUI(false));
-		lblTransactionLabel.setIcon(utility.getImage("transaction.png", 15));
-		navigationPanel.add(lblTransactionLabel);
-		sl_mainPanel.putConstraint(SpringLayout.SOUTH, posPanel, -15, SpringLayout.SOUTH, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.EAST, posPanel, -15, SpringLayout.EAST, mainPanel);
-		mainPanel.add(posPanel);
-		SpringLayout sl_posPanel = new SpringLayout();
+		lblTransactionNav = new JLabel("TRANSACTIONS");
+		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblTransactionNav, 10, SpringLayout.SOUTH, lblDashboardNav);
+		lblTransactionNav.setBorder(new EmptyBorder(10, 10, 0, 10));
+		lblTransactionNav.setFont(utility.getFont(15f));
+		lblTransactionNav.setForeground(Color.WHITE);
+		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblTransactionNav, 0, SpringLayout.WEST, lblDashboardNav);
+		sl_navigationPanel.putConstraint(SpringLayout.EAST, lblTransactionNav, 0, SpringLayout.EAST, lblDashboardNav);
+		lblTransactionNav.setUI(new VerticalLabelUI(false));
+		lblTransactionNav.setIcon(utility.getImage("transaction.png", 15));
+		navigationPanel.add(lblTransactionNav);
+		
+		lblReportNav = new JLabel("REPORTS");
+		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblReportNav, 10, SpringLayout.SOUTH, lblTransactionNav);
+		lblReportNav.setForeground(Color.WHITE);
+		lblReportNav.setBorder(new EmptyBorder(10, 10, 0, 10));
+		lblReportNav.setFont(utility.getFont(15f));
+		lblReportNav.setUI(new VerticalLabelUI(false));
+		lblReportNav.setIcon(utility.getImage("report.png", 15));
+		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblReportNav, 0, SpringLayout.WEST, lblDashboardNav);
+		sl_navigationPanel.putConstraint(SpringLayout.EAST, lblReportNav, 0, SpringLayout.EAST, lblDashboardNav);
+		navigationPanel.add(lblReportNav);
+		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.EAST, displayPanel, -15, SpringLayout.EAST, mainPanel);
+		mainPanel.add(displayPanel);
+		displayPanel.setLayout(cardLayout);
+		
+		posPanel = new RoundedPanel(Gallery.GRAY);
+		displayPanel.add(posPanel, "pos");
+		sl_posPanel = new SpringLayout();
 		posPanel.setLayout(sl_posPanel);
+		
+		lblTransactionNo = new JLabel("Transaction No.81273");
+		lblTransactionNo.setFont(utility.getFont(23f));
+		sl_posPanel.putConstraint(SpringLayout.NORTH, lblTransactionNo, 20, SpringLayout.NORTH, posPanel);
+		sl_posPanel.putConstraint(SpringLayout.WEST, lblTransactionNo, 20, SpringLayout.WEST, posPanel);
+		posPanel.add(lblTransactionNo);
+		
+		cartPanel = new RoundedPanel(Color.WHITE);
+		sl_posPanel.putConstraint(SpringLayout.NORTH, cartPanel, 20, SpringLayout.NORTH, posPanel);
+		sl_posPanel.putConstraint(SpringLayout.WEST, cartPanel, -250, SpringLayout.EAST, posPanel);
+		sl_posPanel.putConstraint(SpringLayout.SOUTH, cartPanel, -20, SpringLayout.SOUTH, posPanel);
+		sl_posPanel.putConstraint(SpringLayout.EAST, cartPanel, -20, SpringLayout.EAST, posPanel);
+		posPanel.add(cartPanel);
+		
+		sl_cartPanel = new SpringLayout();
+		cartPanel.setLayout(sl_cartPanel);
+		
+		lblDateTime = new JLabel(utility.getTime());
+		sl_posPanel.putConstraint(SpringLayout.SOUTH, lblDateTime, -1, SpringLayout.SOUTH, lblTransactionNo);
+		sl_posPanel.putConstraint(SpringLayout.EAST, lblDateTime, -20, SpringLayout.WEST, cartPanel);
+		lblDateTime.setFont(utility.getFont(15f));
+		posPanel.add(lblDateTime);
+		
+		transactionPanel = new RoundedPanel(Color.BLUE); // Gallery.GRAY
+		displayPanel.add(transactionPanel, "transaction");
+		transactionPanel.setLayout(new SpringLayout());
+		
+		reportPanel = new RoundedPanel(Color.GREEN); // Gallery.GRAY
+		displayPanel.add(reportPanel, "report");
+		reportPanel.setLayout(new SpringLayout());
+		
+		
 		
 		
 		
@@ -139,34 +177,38 @@ public class POS extends JFrame {
 		
 		
 
-		
+
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				
+			}
+		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblDashboardNav); }
 			@Override public void mouseExited(MouseEvent e) { mouseExit(lblDashboardNav); }
 			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("lblSupplier");
+			@Override public void mouseClicked(MouseEvent e) {
+				cardLayout.show(displayPanel, "pos");
 			}
 		});
-		lblTransactionLabel.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblTransactionLabel); }
-			@Override public void mouseExited(MouseEvent e) { mouseExit(lblTransactionLabel); }
+		lblTransactionNav.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblTransactionNav); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblTransactionNav); }
 			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("lblTransactionLabel");
+			@Override public void mouseClicked(MouseEvent e) {
+				cardLayout.show(displayPanel, "transaction");
+			}
+		});
+		lblReportNav.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblReportNav); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblReportNav); }
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				cardLayout.show(displayPanel, "report");
 			}
 		});
 		setLocationRelativeTo(null);
-	}
-	
-	public void setHeightDiff() {
-		heightDiff = mainPanel.getHeight() / 8;
-		if (heightDiff > 0) {
-			sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationPanel, heightDiff, SpringLayout.NORTH, mainPanel);
-			sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationPanel, -heightDiff, SpringLayout.SOUTH, mainPanel);
-		}
 	}
 	
 	public void mouseEnter(JLabel label) {
@@ -177,11 +219,5 @@ public class POS extends JFrame {
 	
 	public void mouseExit(JLabel label) {
 		label.setBackground(Gallery.BLUE);
-	}
-	
-	@Override
-	public void paintComponents(Graphics g) {
-		super.paintComponents(g);
-		setHeightDiff();
 	}
 }

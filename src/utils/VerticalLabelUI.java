@@ -23,10 +23,10 @@ public class VerticalLabelUI extends BasicLabelUI {
     protected boolean clockwise;
 
     /**
-     * To use this class, check the code below:
+     * To use this class, check the code below: <p>
      * 
-	 * JLabel jl = new JLabel("TEST");
-	 * jl.setUI(new VerticalLabelUI(true));
+	 * JLabel jl = new JLabel("TEST"); <p>
+	 * jl.setUI(new VerticalLabelUI(true)); <p>
      */
     public VerticalLabelUI(boolean clockwise) {
         super();
