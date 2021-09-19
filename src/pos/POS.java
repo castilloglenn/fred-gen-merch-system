@@ -8,6 +8,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Timer;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,11 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.AttributeSet.ColorAttribute;
 
 import utils.Gallery;
-import utils.RoundedBorder;
-import utils.RoundedLabel;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
@@ -208,6 +206,9 @@ public class POS extends JFrame {
 				cardLayout.show(displayPanel, "report");
 			}
 		});
+		
+		
+		
 		setLocationRelativeTo(null);
 	}
 	
