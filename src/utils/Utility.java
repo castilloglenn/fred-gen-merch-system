@@ -45,10 +45,10 @@ public class Utility {
 		return font;
 	}
 	
-	public ImageIcon getImage(String name) {
+	public ImageIcon getImage(String name, int size) {
 		ImageIcon image = new ImageIcon("assets/images/" + name);
 		Image img = image.getImage();
-		Image scaledIcon = img.getScaledInstance(15, 15, Image.SCALE_SMOOTH);
+		Image scaledIcon = img.getScaledInstance(size, size, Image.SCALE_SMOOTH);
 		ImageIcon finalImage = new ImageIcon(scaledIcon);
 		return finalImage;
 	}

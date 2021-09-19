@@ -101,7 +101,7 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblDashboard, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblDashboard, 138, SpringLayout.NORTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblDashboard, 1, SpringLayout.EAST, navigationalPanel);
-		lblDashboard.setIcon(utility.getImage("dashboard.png"));
+		lblDashboard.setIcon(utility.getImage("dashboard.png", 15));
 		
 		lblDashboard.setFont(utility.getFont(20f));
 		lblDashboard.setForeground(new Color(237, 237, 233));
@@ -114,7 +114,7 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblSupplier, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblSupplier, -371, SpringLayout.SOUTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, 1, SpringLayout.EAST, navigationalPanel);
-		lblSupplier.setIcon(utility.getImage("supplier.png"));
+		lblSupplier.setIcon(utility.getImage("supplier.png", 15));
 		lblSupplier.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSupplier.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		navigationalPanel.add(lblSupplier);
@@ -125,7 +125,7 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblProduct, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblProduct, -318, SpringLayout.SOUTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblProduct, 1, SpringLayout.EAST, navigationalPanel);
-		lblProduct.setIcon(utility.getImage("product.png"));
+		lblProduct.setIcon(utility.getImage("product.png", 15));
 		lblProduct.setHorizontalAlignment(SwingConstants.CENTER);
 		lblProduct.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		navigationalPanel.add(lblProduct);

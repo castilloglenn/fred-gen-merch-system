@@ -15,12 +15,19 @@ import javax.swing.plaf.basic.BasicLabelUI;
 
 
 public class VerticalLabelUI extends BasicLabelUI {
+	
     static {
         labelUI = new VerticalLabelUI(false);
     }
 
     protected boolean clockwise;
 
+    /**
+     * To use this class, check the code below:
+     * 
+	 * JLabel jl = new JLabel("TEST");
+	 * jl.setUI(new VerticalLabelUI(true));
+     */
     public VerticalLabelUI(boolean clockwise) {
         super();
         this.clockwise = clockwise;

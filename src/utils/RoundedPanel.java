@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 public class RoundedPanel extends JPanel
 {
     private Color backgroundColor;
-    private int cornerRadius = 30;
+    public int defaultRadius = 30;
 
     public RoundedPanel(Color bgColor) {
         super();
@@ -23,7 +23,7 @@ public class RoundedPanel extends JPanel
 
     public RoundedPanel(int radius, Color bgColor) {
         super();
-        cornerRadius = radius;
+        defaultRadius = radius;
         backgroundColor = bgColor;
         setOpaque(false);
     }
@@ -31,7 +31,7 @@ public class RoundedPanel extends JPanel
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Dimension arcs = new Dimension(cornerRadius, cornerRadius);
+        Dimension arcs = new Dimension(defaultRadius, defaultRadius);
         int width = getWidth();
         int height = getHeight();
         Graphics2D graphics = (Graphics2D) g;
