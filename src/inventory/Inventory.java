@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import utils.Database;
 import utils.Gallery;
+import utils.RoundedPanel;
 import utils.Utility;
 
 import javax.swing.SpringLayout;
@@ -60,7 +61,7 @@ public class Inventory extends JFrame {
 		
 		/**
 		 *  	After designing, change all Panel to Rounded Panel like this:
-		 * panelVariableExample = utility.new RoundedPanel(Gallery.WHITE);
+		 * panelVariableExample = new RoundedPanel(Gallery.BLUE);
 		 *     
 		 * 	 	To set the default font, first set the size then set the font:
 		 * utility.setFontSize(20f);
