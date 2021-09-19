@@ -9,9 +9,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import utils.Database;
-
-import utils.RoundedPanel;
 import utils.Gallery;
+import utils.RoundedPanel;
+
 import utils.Utility;
 
 import javax.swing.SpringLayout;
@@ -121,32 +121,31 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblDashboard, 138, SpringLayout.NORTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblDashboard, 1, SpringLayout.EAST, navigationalPanel);
 		lblDashboard.setIcon(utility.getImage("dashboard.png", 15));
-		
 		lblDashboard.setFont(utility.getFont(20f));
 		lblDashboard.setForeground(new Color(237, 237, 233));
 		lblDashboard.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(lblDashboard);
 		
 		lblSupplier = new JLabel("Supplier");
-		lblSupplier.setForeground(Color.WHITE);
+		lblSupplier.setFont(utility.getFont(20f));
+		lblSupplier.setForeground(new Color(237, 237, 233));
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblSupplier, 18, SpringLayout.SOUTH, lblDashboard);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblSupplier, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblSupplier, -371, SpringLayout.SOUTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, 1, SpringLayout.EAST, navigationalPanel);
 		lblSupplier.setIcon(utility.getImage("supplier.png", 15));
 		lblSupplier.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSupplier.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		navigationalPanel.add(lblSupplier);
 		
 		lblProduct = new JLabel("Product");
-		lblProduct.setForeground(Color.WHITE);
+		lblProduct.setForeground(new Color(237, 237, 233));
+		lblProduct.setFont(utility.getFont(20f));
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblProduct, 19, SpringLayout.SOUTH, lblSupplier);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblProduct, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblProduct, -318, SpringLayout.SOUTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblProduct, 1, SpringLayout.EAST, navigationalPanel);
 		lblProduct.setIcon(utility.getImage("product.png", 15));
 		lblProduct.setHorizontalAlignment(SwingConstants.CENTER);
-		lblProduct.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		navigationalPanel.add(lblProduct);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, displayPanel, -15, SpringLayout.EAST, mainPanel);
@@ -219,15 +218,6 @@ public class Inventory extends JFrame {
 		supplierFormPane.add(lblSupplierAddress);
 		
 		btnSupplierAdd = new JLabel("Add");
-		btnSupplierAdd.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				 mouseEnter2(btnSupplierAdd); 
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-		});
 		btnSupplierAdd.setHorizontalAlignment(SwingConstants.CENTER);
 		btnSupplierAdd.setFont(new Font("Times New Roman", Font.BOLD, 12));
 		btnSupplierAdd.setBounds(504, 117, 75, 26);
@@ -293,7 +283,19 @@ public class Inventory extends JFrame {
 				displayPanel.revalidate();
 			}
 		});
+		
+		btnSupplierAdd.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				 mouseEnter2(btnSupplierAdd); 
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+		});
+		
 	}
+	
 
 	
 	/**
