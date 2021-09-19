@@ -8,9 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import utils.Database;
 import utils.Gallery;
 import utils.RoundedPanel;
+import utils.Database;
 
 import utils.Utility;
 
@@ -58,6 +58,8 @@ public class Inventory extends JFrame {
 	private JLabel btnSupplierAdd;
 	private JLabel btnSupplierUpdate;
 	private JLabel btnSupplierDelete;
+	
+	private CardLayout cardLayout;
 
 
 
@@ -113,6 +115,7 @@ public class Inventory extends JFrame {
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, displayPanel, 15, SpringLayout.NORTH, mainPanel);
 		SpringLayout sl_navigationalPanel = new SpringLayout();
 		navigationalPanel.setLayout(sl_navigationalPanel);
+		cardLayout = new CardLayout(0, 0);
 		
 		
 		lblDashboard = new JLabel("Dashboard");
@@ -150,7 +153,7 @@ public class Inventory extends JFrame {
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, displayPanel, -15, SpringLayout.EAST, mainPanel);
 		mainPanel.add(displayPanel);
-		displayPanel.setLayout(new CardLayout(0, 0));
+		displayPanel.setLayout(cardLayout);
 		
 		dashboardPanel = new JPanel();
 		dashboardPanel.setVisible(false);
@@ -160,7 +163,7 @@ public class Inventory extends JFrame {
 		supplierPanel = new JPanel();
 		supplierPanel.setVisible(false);
 		supplierPanel.setBackground(Gallery.GRAY);
-		displayPanel.add(supplierPanel, "supply");
+		displayPanel.add(supplierPanel, "supplier");
 		SpringLayout sl_supplierPanel = new SpringLayout();
 		supplierPanel.setLayout(sl_supplierPanel);
 		
@@ -237,7 +240,7 @@ public class Inventory extends JFrame {
 		
 		productPanel = new JPanel();
 		productPanel.setBackground(Color.CYAN);
-		displayPanel.add(productPanel, "name_44409547658700");
+		displayPanel.add(productPanel, "product");
 		
 		
 		
@@ -253,14 +256,7 @@ public class Inventory extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-<<<<<<< HEAD
-				
-=======
-				displayPanel.removeAll();
-				displayPanel.add(dashboardPanel);
-				displayPanel.repaint();
-				displayPanel.revalidate();
->>>>>>> branch 'main' of https://github.com/castilloglenn/fred-gen-merch-system
+				cardLayout.show(displayPanel, "dashboard");
 			}
 		});
 		lblSupplier.addMouseListener(new MouseAdapter() {
@@ -269,10 +265,7 @@ public class Inventory extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				displayPanel.removeAll();
-				displayPanel.add(supplierPanel);
-				displayPanel.repaint();
-				displayPanel.revalidate();
+				cardLayout.show(displayPanel, "supplier");
 			}
 		});
 		lblProduct.addMouseListener(new MouseAdapter() {
@@ -281,10 +274,7 @@ public class Inventory extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				displayPanel.removeAll();
-				displayPanel.add(productPanel);
-				displayPanel.repaint();
-				displayPanel.revalidate();
+				cardLayout.show(displayPanel, "product");
 			}
 		});
 		
