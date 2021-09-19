@@ -25,6 +25,15 @@ import java.awt.event.MouseEvent;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.CardLayout;
+import javax.swing.JTable;
+import javax.swing.JSeparator;
+import java.awt.Component;
+import javax.swing.Box;
+import java.awt.Dimension;
+import javax.swing.JLayeredPane;
+import javax.swing.JDesktopPane;
+import javax.swing.JTextField;
+import javax.swing.JButton;
 
 
 /**
@@ -39,7 +48,15 @@ public class Inventory extends JFrame {
 	private JPanel mainPanel, navigationalPanel, displayPanel;
 	private JLabel lblDashboard, lblSupplier, lblProduct;
 	private JPanel dashboardPanel;
-	private JPanel supplyPanel;
+	private JPanel supplierPanel;
+	private JPanel productPanel;
+	private JTextField txtSupplierID;
+	private JTextField txtSupplierName;
+	private JTextField txtSupplierContactNumber;
+	private JTextField txtSupplierAddress;
+	private JLabel btnSupplierAdd;
+	private JLabel btnSupplierUpdate;
+	private JLabel btnSupplierDelete;
 
 
 
@@ -140,10 +157,96 @@ public class Inventory extends JFrame {
 		dashboardPanel.setBackground(Color.BLUE);
 		displayPanel.add(dashboardPanel, "dashboard");
 		
-		supplyPanel = new JPanel();
-		supplyPanel.setVisible(false);
-		supplyPanel.setBackground(Color.GREEN);
-		displayPanel.add(supplyPanel, "supply");
+		supplierPanel = new JPanel();
+		supplierPanel.setVisible(false);
+		supplierPanel.setBackground(Gallery.GRAY);
+		displayPanel.add(supplierPanel, "supply");
+		SpringLayout sl_supplierPanel = new SpringLayout();
+		supplierPanel.setLayout(sl_supplierPanel);
+		
+		JDesktopPane supplierFormPane = new JDesktopPane();
+		sl_supplierPanel.putConstraint(SpringLayout.NORTH, supplierFormPane, 52, SpringLayout.NORTH, supplierPanel);
+		sl_supplierPanel.putConstraint(SpringLayout.WEST, supplierFormPane, 10, SpringLayout.WEST, supplierPanel);
+		sl_supplierPanel.putConstraint(SpringLayout.SOUTH, supplierFormPane, 206, SpringLayout.NORTH, supplierPanel);
+		sl_supplierPanel.putConstraint(SpringLayout.EAST, supplierFormPane, -10, SpringLayout.EAST, supplierPanel);
+		supplierFormPane.setBackground(Color.WHITE);
+		supplierPanel.add(supplierFormPane);
+		
+		JLabel lblSupplierID = new JLabel("Supplier ID");
+		lblSupplierID.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		lblSupplierID.setBounds(32, 11, 81, 31);
+		supplierFormPane.add(lblSupplierID);
+		
+		txtSupplierID = new JTextField();
+		txtSupplierID.setEditable(false);
+		txtSupplierID.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		txtSupplierID.setBounds(123, 13, 228, 26);
+		supplierFormPane.add(txtSupplierID);
+		txtSupplierID.setColumns(10);
+		
+		JLabel lblSupplierName = new JLabel("Supplier Name");
+		lblSupplierName.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		lblSupplierName.setBounds(20, 53, 96, 31);
+		supplierFormPane.add(lblSupplierName);
+		
+		txtSupplierName = new JTextField();
+		txtSupplierName.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		txtSupplierName.setColumns(10);
+		txtSupplierName.setBounds(121, 59, 230, 26);
+		supplierFormPane.add(txtSupplierName);
+		
+		JLabel lblSupplierContactNumber = new JLabel("Contact Number");
+		lblSupplierContactNumber.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		lblSupplierContactNumber.setBounds(407, 11, 115, 31);
+		supplierFormPane.add(lblSupplierContactNumber);
+		
+		txtSupplierContactNumber = new JTextField();
+		txtSupplierContactNumber.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		txtSupplierContactNumber.setColumns(10);
+		txtSupplierContactNumber.setBounds(532, 11, 228, 26);
+		supplierFormPane.add(txtSupplierContactNumber);
+		
+		txtSupplierAddress = new JTextField();
+		txtSupplierAddress.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		txtSupplierAddress.setColumns(10);
+		txtSupplierAddress.setBounds(532, 59, 228, 26);
+		supplierFormPane.add(txtSupplierAddress);
+		
+		JLabel lblSupplierAddress = new JLabel("Address");
+		lblSupplierAddress.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		lblSupplierAddress.setBounds(467, 53, 55, 31);
+		supplierFormPane.add(lblSupplierAddress);
+		
+		btnSupplierAdd = new JLabel("Add");
+		btnSupplierAdd.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				 mouseEnter2(btnSupplierAdd); 
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+		});
+		btnSupplierAdd.setHorizontalAlignment(SwingConstants.CENTER);
+		btnSupplierAdd.setFont(new Font("Times New Roman", Font.BOLD, 12));
+		btnSupplierAdd.setBounds(504, 117, 75, 26);
+		supplierFormPane.add(btnSupplierAdd);
+		
+		btnSupplierUpdate = new JLabel("Update");
+		btnSupplierUpdate.setHorizontalAlignment(SwingConstants.CENTER);
+		btnSupplierUpdate.setFont(new Font("Times New Roman", Font.BOLD, 12));
+		btnSupplierUpdate.setBounds(599, 117, 75, 26);
+		supplierFormPane.add(btnSupplierUpdate);
+		
+		btnSupplierDelete = new JLabel("Delete");
+		btnSupplierDelete.setHorizontalAlignment(SwingConstants.CENTER);
+		btnSupplierDelete.setFont(new Font("Times New Roman", Font.BOLD, 12));
+		btnSupplierDelete.setBounds(685, 117, 75, 26);
+		supplierFormPane.add(btnSupplierDelete);
+		
+		productPanel = new JPanel();
+		productPanel.setBackground(Color.CYAN);
+		displayPanel.add(productPanel, "name_44409547658700");
 		
 		
 		
@@ -159,7 +262,10 @@ public class Inventory extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				displayPanel.show();
+				displayPanel.removeAll();
+				displayPanel.add(dashboardPanel);
+				displayPanel.repaint();
+				displayPanel.revalidate();
 			}
 		});
 		lblSupplier.addMouseListener(new MouseAdapter() {
@@ -168,7 +274,10 @@ public class Inventory extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				supplyPanel.setVisible(true);
+				displayPanel.removeAll();
+				displayPanel.add(supplierPanel);
+				displayPanel.repaint();
+				displayPanel.revalidate();
 			}
 		});
 		lblProduct.addMouseListener(new MouseAdapter() {
@@ -177,16 +286,26 @@ public class Inventory extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
+				displayPanel.removeAll();
+				displayPanel.add(productPanel);
+				displayPanel.repaint();
+				displayPanel.revalidate();
 			}
 		});
 	}
+
 	
 	/**
 	 *  Can be used to other UI's, if so, transfer to Utility class.
 	 */
 	public void mouseEnter(JLabel label) {
 		label.setBackground(Gallery.WHITE);
+		label.setOpaque(true);
+		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	}
+		
+	public void mouseEnter2(JLabel label) {
+		label.setBackground(Gallery.BLUE);
 		label.setOpaque(true);
 		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
