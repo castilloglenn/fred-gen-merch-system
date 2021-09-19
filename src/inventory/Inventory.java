@@ -159,7 +159,7 @@ public class Inventory extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				dashboardPanel.setVisible(true);
+				
 			}
 		});
 		lblSupplier.addMouseListener(new MouseAdapter() {

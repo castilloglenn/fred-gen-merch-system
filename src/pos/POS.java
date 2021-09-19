@@ -107,24 +107,24 @@ public class POS extends JFrame {
 		
 		lblDashboardNav = new JLabel("POS");
 		lblDashboardNav.setBorder(new EmptyBorder(10, 10, 0, 10));
-		lblDashboardNav.setFont(utility.getFont(20f));
+		lblDashboardNav.setFont(utility.getFont(15f));
 		lblDashboardNav.setForeground(Color.WHITE);
 		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblDashboardNav, 10, SpringLayout.NORTH, navigationPanel);
 		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblDashboardNav, 40, SpringLayout.WEST, navigationPanel);
 		lblDashboardNav.setUI(new VerticalLabelUI(false));
-		lblDashboardNav.setIcon(utility.getImage("pos.png", 25));
+		lblDashboardNav.setIcon(utility.getImage("pos.png", 15));
 		sl_navigationPanel.putConstraint(SpringLayout.EAST, lblDashboardNav, -10, SpringLayout.EAST, navigationPanel);
 		navigationPanel.add(lblDashboardNav);
 		
 		lblTransactionLabel = new JLabel("TRANSACTIONS");
+		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblTransactionLabel, 5, SpringLayout.SOUTH, lblDashboardNav);
 		lblTransactionLabel.setBorder(new EmptyBorder(10, 10, 0, 10));
-		lblTransactionLabel.setFont(utility.getFont(20f));
-		lblDashboardNav.setForeground(Color.WHITE);
-		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblTransactionLabel, 10, SpringLayout.SOUTH, lblDashboardNav);
+		lblTransactionLabel.setFont(utility.getFont(15f));
+		lblTransactionLabel.setForeground(Color.WHITE);
 		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblTransactionLabel, 0, SpringLayout.WEST, lblDashboardNav);
 		sl_navigationPanel.putConstraint(SpringLayout.EAST, lblTransactionLabel, 0, SpringLayout.EAST, lblDashboardNav);
 		lblTransactionLabel.setUI(new VerticalLabelUI(false));
-		lblTransactionLabel.setIcon(utility.getImage("transaction.png", 25));
+		lblTransactionLabel.setIcon(utility.getImage("transaction.png", 15));
 		navigationPanel.add(lblTransactionLabel);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, posPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, posPanel, -15, SpringLayout.EAST, mainPanel);
