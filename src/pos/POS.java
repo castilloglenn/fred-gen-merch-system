@@ -19,14 +19,19 @@ import utils.RoundedPanel;
 import utils.VerticalLabelUI;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.Dimension;
 import java.awt.event.WindowStateListener;
 import java.awt.event.WindowEvent;
 import java.awt.CardLayout;
 import javax.swing.JLabel;
+import javax.swing.border.LineBorder;
+import javax.swing.border.CompoundBorder;
 
 
 /**
@@ -45,6 +50,7 @@ public class POS extends JFrame {
 	private Gallery gallery;
 	private Utility utility;
 	private JLabel lblDashboardNav;
+	private JLabel lblTransactionLabel;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -100,7 +106,8 @@ public class POS extends JFrame {
 		navigationPanel.setLayout(sl_navigationPanel);
 		
 		lblDashboardNav = new JLabel("POS");
-		lblDashboardNav.setFont(utility.getFont(25f));
+		lblDashboardNav.setBorder(new EmptyBorder(10, 10, 0, 10));
+		lblDashboardNav.setFont(utility.getFont(20f));
 		lblDashboardNav.setForeground(Color.WHITE);
 		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblDashboardNav, 10, SpringLayout.NORTH, navigationPanel);
 		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblDashboardNav, 40, SpringLayout.WEST, navigationPanel);
@@ -108,6 +115,17 @@ public class POS extends JFrame {
 		lblDashboardNav.setIcon(utility.getImage("pos.png", 25));
 		sl_navigationPanel.putConstraint(SpringLayout.EAST, lblDashboardNav, -10, SpringLayout.EAST, navigationPanel);
 		navigationPanel.add(lblDashboardNav);
+		
+		lblTransactionLabel = new JLabel("TRANSACTIONS");
+		lblTransactionLabel.setBorder(new EmptyBorder(10, 10, 0, 10));
+		lblTransactionLabel.setFont(utility.getFont(20f));
+		lblDashboardNav.setForeground(Color.WHITE);
+		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblTransactionLabel, 10, SpringLayout.SOUTH, lblDashboardNav);
+		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblTransactionLabel, 0, SpringLayout.WEST, lblDashboardNav);
+		sl_navigationPanel.putConstraint(SpringLayout.EAST, lblTransactionLabel, 0, SpringLayout.EAST, lblDashboardNav);
+		lblTransactionLabel.setUI(new VerticalLabelUI(false));
+		lblTransactionLabel.setIcon(utility.getImage("transaction.png", 25));
+		navigationPanel.add(lblTransactionLabel);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, posPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, posPanel, -15, SpringLayout.EAST, mainPanel);
 		mainPanel.add(posPanel);
@@ -122,7 +140,24 @@ public class POS extends JFrame {
 		
 
 		
-
+		lblDashboardNav.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblDashboardNav); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblDashboardNav); }
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("lblSupplier");
+			}
+		});
+		lblTransactionLabel.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblTransactionLabel); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(lblTransactionLabel); }
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("lblTransactionLabel");
+			}
+		});
 		setLocationRelativeTo(null);
 	}
 	
@@ -132,6 +167,16 @@ public class POS extends JFrame {
 			sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationPanel, heightDiff, SpringLayout.NORTH, mainPanel);
 			sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationPanel, -heightDiff, SpringLayout.SOUTH, mainPanel);
 		}
+	}
+	
+	public void mouseEnter(JLabel label) {
+		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		label.setBackground(Gallery.DARK_BLUE);
+		label.setOpaque(true);
+	}
+	
+	public void mouseExit(JLabel label) {
+		label.setBackground(Gallery.BLUE);
 	}
 	
 	@Override
