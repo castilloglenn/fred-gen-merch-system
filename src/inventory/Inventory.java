@@ -24,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.CardLayout;
 
 
 /**
@@ -35,8 +36,10 @@ public class Inventory extends JFrame {
 	private Gallery gallery;
 	private Utility utility;
 	
-	private JPanel mainPanel, navigationalPanel, displayPanel, dashboardPanel;
+	private JPanel mainPanel, navigationalPanel, displayPanel;
 	private JLabel lblDashboard, lblSupplier, lblProduct;
+	private JPanel dashboardPanel;
+	private JPanel supplyPanel;
 
 
 
@@ -78,8 +81,7 @@ public class Inventory extends JFrame {
 		setLocationRelativeTo(null); 
 		
 		
-		navigationalPanel = new JPanel();
-		//navigationalPanel = utility.new RoundedPanel(Gallery.BLUE);
+		navigationalPanel = new RoundedPanel(Gallery.BLUE);;	
 		navigationalPanel.setBackground(Gallery.BLUE);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationalPanel, 0, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, navigationalPanel, 0, SpringLayout.WEST, mainPanel);
@@ -88,10 +90,9 @@ public class Inventory extends JFrame {
 		mainPanel.add(navigationalPanel);
 		
 		displayPanel = new JPanel();
-		//dashboardPanel = utility.new RoundedPanel(Gallery.BLUE);
-		displayPanel.setBackground(Gallery.GRAY);
-		sl_mainPanel.putConstraint(SpringLayout.NORTH, displayPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, displayPanel, 15, SpringLayout.EAST, navigationalPanel);
+		displayPanel.setBackground(Color.WHITE);
+		sl_mainPanel.putConstraint(SpringLayout.NORTH, displayPanel, 15, SpringLayout.NORTH, mainPanel);
 		SpringLayout sl_navigationalPanel = new SpringLayout();
 		navigationalPanel.setLayout(sl_navigationalPanel);
 		
@@ -132,18 +133,17 @@ public class Inventory extends JFrame {
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, displayPanel, -15, SpringLayout.EAST, mainPanel);
 		mainPanel.add(displayPanel);
-		SpringLayout sl_displayPanel = new SpringLayout();
-		displayPanel.setLayout(sl_displayPanel);
+		displayPanel.setLayout(new CardLayout(0, 0));
 		
 		dashboardPanel = new JPanel();
 		dashboardPanel.setVisible(false);
-		dashboardPanel.setBackground(Color.GREEN);
-		sl_displayPanel.putConstraint(SpringLayout.NORTH, dashboardPanel, 0, SpringLayout.NORTH, displayPanel);
-		sl_displayPanel.putConstraint(SpringLayout.WEST, dashboardPanel, 0, SpringLayout.WEST, displayPanel);
-		sl_displayPanel.putConstraint(SpringLayout.SOUTH, dashboardPanel, 0, SpringLayout.SOUTH, displayPanel);
-		sl_displayPanel.putConstraint(SpringLayout.EAST, dashboardPanel, 1, SpringLayout.EAST, displayPanel);
-		displayPanel.add(dashboardPanel);
-		dashboardPanel.setLayout(new SpringLayout());
+		dashboardPanel.setBackground(Color.BLUE);
+		displayPanel.add(dashboardPanel, "dashboard");
+		
+		supplyPanel = new JPanel();
+		supplyPanel.setVisible(false);
+		supplyPanel.setBackground(Color.GREEN);
+		displayPanel.add(supplyPanel, "supply");
 		
 		
 		
@@ -159,7 +159,7 @@ public class Inventory extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				dashboardPanel.setVisible(true);
+				displayPanel.show();
 			}
 		});
 		lblSupplier.addMouseListener(new MouseAdapter() {
@@ -168,7 +168,7 @@ public class Inventory extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("lblSupplier");
+				supplyPanel.setVisible(true);
 			}
 		});
 		lblProduct.addMouseListener(new MouseAdapter() {
@@ -177,7 +177,7 @@ public class Inventory extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("lblProduct");
+				
 			}
 		});
 	}
