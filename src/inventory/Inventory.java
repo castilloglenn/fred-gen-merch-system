@@ -34,11 +34,10 @@ public class Inventory extends JFrame {
 	private Gallery gallery;
 	private Utility utility;
 	
-	private JPanel mainPanel, navigationalPanel, dashboardPanel;
-	private JLabel lblDashboard;
-	private JLabel lblSupplier;
-	private JLabel lblProduct;
-	
+	private JPanel mainPanel, navigationalPanel, displayPanel, dashboardPanel;
+	private JLabel lblDashboard, lblSupplier, lblProduct;
+
+
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -87,12 +86,14 @@ public class Inventory extends JFrame {
 		sl_mainPanel.putConstraint(SpringLayout.EAST, navigationalPanel, 162, SpringLayout.WEST, mainPanel);
 		mainPanel.add(navigationalPanel);
 		
-		dashboardPanel = new JPanel();
-		dashboardPanel.setBackground(Gallery.GRAY);
-		sl_mainPanel.putConstraint(SpringLayout.NORTH, dashboardPanel, 15, SpringLayout.NORTH, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.WEST, dashboardPanel, 15, SpringLayout.EAST, navigationalPanel);
+		displayPanel = new JPanel();
+		//dashboardPanel = utility.new RoundedPanel(Gallery.BLUE);
+		displayPanel.setBackground(Gallery.GRAY);
+		sl_mainPanel.putConstraint(SpringLayout.NORTH, displayPanel, 15, SpringLayout.NORTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.WEST, displayPanel, 15, SpringLayout.EAST, navigationalPanel);
 		SpringLayout sl_navigationalPanel = new SpringLayout();
 		navigationalPanel.setLayout(sl_navigationalPanel);
+		
 		
 		lblDashboard = new JLabel("Dashboard");
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblDashboard, 104, SpringLayout.NORTH, navigationalPanel);
@@ -102,35 +103,46 @@ public class Inventory extends JFrame {
 		lblDashboard.setIcon(utility.getImage("dashboard.png"));
 		
 		lblDashboard.setFont(utility.getFont(20f));
-		lblDashboard.setForeground(Gallery.BLACK);
+		lblDashboard.setForeground(new Color(237, 237, 233));
 		lblDashboard.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(lblDashboard);
 		
 		lblSupplier = new JLabel("Supplier");
+		lblSupplier.setForeground(Color.WHITE);
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblSupplier, 18, SpringLayout.SOUTH, lblDashboard);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblSupplier, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblSupplier, -371, SpringLayout.SOUTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, 1, SpringLayout.EAST, navigationalPanel);
+		lblSupplier.setIcon(utility.getImage("supplier.png"));
 		lblSupplier.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSupplier.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		navigationalPanel.add(lblSupplier);
 		
 		lblProduct = new JLabel("Product");
+		lblProduct.setForeground(Color.WHITE);
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblProduct, 19, SpringLayout.SOUTH, lblSupplier);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblProduct, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.SOUTH, lblProduct, -318, SpringLayout.SOUTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblProduct, 1, SpringLayout.EAST, navigationalPanel);
+		lblProduct.setIcon(utility.getImage("product.png"));
 		lblProduct.setHorizontalAlignment(SwingConstants.CENTER);
 		lblProduct.setFont(new Font("Times New Roman", Font.PLAIN, 15));
 		navigationalPanel.add(lblProduct);
-		sl_mainPanel.putConstraint(SpringLayout.SOUTH, dashboardPanel, -15, SpringLayout.SOUTH, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.EAST, dashboardPanel, -15, SpringLayout.EAST, mainPanel);
-		mainPanel.add(dashboardPanel);
-		SpringLayout sl_dashboardPanel = new SpringLayout();
-		dashboardPanel.setLayout(sl_dashboardPanel);
+		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.EAST, displayPanel, -15, SpringLayout.EAST, mainPanel);
+		mainPanel.add(displayPanel);
+		SpringLayout sl_displayPanel = new SpringLayout();
+		displayPanel.setLayout(sl_displayPanel);
 		
-		
-		
+		dashboardPanel = new JPanel();
+		dashboardPanel.setVisible(false);
+		dashboardPanel.setBackground(Color.GREEN);
+		sl_displayPanel.putConstraint(SpringLayout.NORTH, dashboardPanel, 0, SpringLayout.NORTH, displayPanel);
+		sl_displayPanel.putConstraint(SpringLayout.WEST, dashboardPanel, 0, SpringLayout.WEST, displayPanel);
+		sl_displayPanel.putConstraint(SpringLayout.SOUTH, dashboardPanel, 0, SpringLayout.SOUTH, displayPanel);
+		sl_displayPanel.putConstraint(SpringLayout.EAST, dashboardPanel, 1, SpringLayout.EAST, displayPanel);
+		displayPanel.add(dashboardPanel);
+		dashboardPanel.setLayout(new SpringLayout());
 		
 		
 		
@@ -146,7 +158,7 @@ public class Inventory extends JFrame {
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("lblDashboard");
+				dashboardPanel.setVisible(true);
 			}
 		});
 		lblSupplier.addMouseListener(new MouseAdapter() {
@@ -173,7 +185,7 @@ public class Inventory extends JFrame {
 	 *  Can be used to other UI's, if so, transfer to Utility class.
 	 */
 	public void mouseEnter(JLabel label) {
-		label.setBackground(Gallery.GRAY);
+		label.setBackground(Gallery.WHITE);
 		label.setOpaque(true);
 		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
