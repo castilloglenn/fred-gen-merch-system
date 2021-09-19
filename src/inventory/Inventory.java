@@ -36,6 +36,7 @@ import javax.swing.JDesktopPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
 
 
 /**
@@ -48,7 +49,7 @@ public class Inventory extends JFrame {
 	private Utility utility;
 	
 	private JPanel mainPanel, navigationalPanel, displayPanel;
-	private JLabel lblDashboard, lblSupplier, lblProduct;
+	private JLabel btnDashboard, btnSupplier, btnProduct;
 	private JPanel dashboardPanel;
 	
 	private CardLayout cardLayout;
@@ -56,6 +57,17 @@ public class Inventory extends JFrame {
 	private JDesktopPane supplierFormPane;
 	private JLabel lblSupplierList;
 	private JTable tblSupplierList;
+	private JLabel lblSupplierID;
+	private JLabel lblSupplierName;
+	private JLabel lblSupplierContactNumber;
+	private JLabel lblSupplierAddress;
+	private JTextField textField;
+	private JTextField txtSupplierName;
+	private JTextField txtSupplierAddress;
+	private JTextField txtSupplierConatactNumber;
+	private JLabel btnSupplierAdd;
+	private JLabel btnSupplierUpdate;
+	private JLabel btnSupplierDelete;
 
 
 
@@ -115,35 +127,35 @@ public class Inventory extends JFrame {
 		cardLayout = new CardLayout(0, 0);
 		
 		
-		lblDashboard = new JLabel("Dashboard");
-		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblDashboard, 104, SpringLayout.NORTH, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblDashboard, 0, SpringLayout.WEST, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblDashboard, 1, SpringLayout.EAST, navigationalPanel);
-		lblDashboard.setIcon(utility.getImage("dashboard.png", 15));
-		lblDashboard.setFont(utility.getFont(20f));
-		lblDashboard.setForeground(new Color(237, 237, 233));
-		lblDashboard.setHorizontalAlignment(SwingConstants.CENTER);
-		navigationalPanel.add(lblDashboard);
+		btnDashboard = new JLabel("Dashboard");
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnDashboard, 104, SpringLayout.NORTH, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnDashboard, 0, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnDashboard, 1, SpringLayout.EAST, navigationalPanel);
+		btnDashboard.setIcon(utility.getImage("dashboard.png", 15));
+		btnDashboard.setFont(utility.getFont(20f));
+		btnDashboard.setForeground(new Color(237, 237, 233));
+		btnDashboard.setHorizontalAlignment(SwingConstants.CENTER);
+		navigationalPanel.add(btnDashboard);
 		
-		lblSupplier = new JLabel("Supplier");
-		lblSupplier.setFont(utility.getFont(20f));
-		lblSupplier.setForeground(new Color(237, 237, 233));
-		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblSupplier, 18, SpringLayout.SOUTH, lblDashboard);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblSupplier, 0, SpringLayout.WEST, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblSupplier, 1, SpringLayout.EAST, navigationalPanel);
-		lblSupplier.setIcon(utility.getImage("supplier.png", 15));
-		lblSupplier.setHorizontalAlignment(SwingConstants.CENTER);
-		navigationalPanel.add(lblSupplier);
+		btnSupplier = new JLabel("Supplier");
+		btnSupplier.setFont(utility.getFont(20f));
+		btnSupplier.setForeground(new Color(237, 237, 233));
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnSupplier, 18, SpringLayout.SOUTH, btnDashboard);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnSupplier, 0, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnSupplier, 1, SpringLayout.EAST, navigationalPanel);
+		btnSupplier.setIcon(utility.getImage("supplier.png", 15));
+		btnSupplier.setHorizontalAlignment(SwingConstants.CENTER);
+		navigationalPanel.add(btnSupplier);
 		
-		lblProduct = new JLabel("Product");
-		lblProduct.setForeground(new Color(237, 237, 233));
-		lblProduct.setFont(utility.getFont(20f));
-		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, lblProduct, 19, SpringLayout.SOUTH, lblSupplier);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, lblProduct, 0, SpringLayout.WEST, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, lblProduct, 1, SpringLayout.EAST, navigationalPanel);
-		lblProduct.setIcon(utility.getImage("product.png", 15));
-		lblProduct.setHorizontalAlignment(SwingConstants.CENTER);
-		navigationalPanel.add(lblProduct);
+		btnProduct = new JLabel("Product");
+		btnProduct.setForeground(new Color(237, 237, 233));
+		btnProduct.setFont(utility.getFont(20f));
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnProduct, 19, SpringLayout.SOUTH, btnSupplier);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnProduct, 0, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnProduct, 1, SpringLayout.EAST, navigationalPanel);
+		btnProduct.setIcon(utility.getImage("product.png", 15));
+		btnProduct.setHorizontalAlignment(SwingConstants.CENTER);
+		navigationalPanel.add(btnProduct);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, displayPanel, -15, SpringLayout.EAST, mainPanel);
 		mainPanel.add(displayPanel);
@@ -175,6 +187,103 @@ public class Inventory extends JFrame {
 		sl_supplierPanel.putConstraint(SpringLayout.EAST, supplierFormPane, 0, SpringLayout.EAST, supplierPane);
 		SpringLayout sl_supplierFormPane = new SpringLayout();
 		supplierFormPane.setLayout(sl_supplierFormPane);
+		
+		lblSupplierID = new JLabel("Supplier ID");
+		sl_supplierFormPane.putConstraint(SpringLayout.NORTH, lblSupplierID, 30, SpringLayout.NORTH, supplierFormPane);
+		sl_supplierFormPane.putConstraint(SpringLayout.WEST, lblSupplierID, 14, SpringLayout.WEST, supplierFormPane);
+		lblSupplierID.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		supplierFormPane.add(lblSupplierID);
+		
+		lblSupplierName = new JLabel("Supplier Name");
+		sl_supplierFormPane.putConstraint(SpringLayout.NORTH, lblSupplierName, 79, SpringLayout.NORTH, supplierFormPane);
+		sl_supplierFormPane.putConstraint(SpringLayout.WEST, lblSupplierName, 10, SpringLayout.WEST, supplierFormPane);
+		sl_supplierFormPane.putConstraint(SpringLayout.SOUTH, lblSupplierID, -24, SpringLayout.NORTH, lblSupplierName);
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, lblSupplierID, 0, SpringLayout.EAST, lblSupplierName);
+		lblSupplierName.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		supplierFormPane.add(lblSupplierName);
+		
+		lblSupplierContactNumber = new JLabel("Contact Number");
+		sl_supplierFormPane.putConstraint(SpringLayout.NORTH, lblSupplierContactNumber, 0, SpringLayout.NORTH, lblSupplierID);
+		lblSupplierContactNumber.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		supplierFormPane.add(lblSupplierContactNumber);
+		
+		lblSupplierAddress = new JLabel("Address");
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, lblSupplierContactNumber, 0, SpringLayout.EAST, lblSupplierAddress);
+		sl_supplierFormPane.putConstraint(SpringLayout.NORTH, lblSupplierAddress, 0, SpringLayout.NORTH, lblSupplierName);
+		lblSupplierAddress.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		supplierFormPane.add(lblSupplierAddress);
+		
+		textField = new JTextField();
+		textField.setEditable(false);
+		textField.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		sl_supplierFormPane.putConstraint(SpringLayout.NORTH, textField, -20, SpringLayout.SOUTH, lblSupplierID);
+		sl_supplierFormPane.putConstraint(SpringLayout.WEST, textField, 6, SpringLayout.EAST, lblSupplierID);
+		sl_supplierFormPane.putConstraint(SpringLayout.SOUTH, textField, 0, SpringLayout.SOUTH, lblSupplierID);
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, textField, 217, SpringLayout.EAST, lblSupplierID);
+		supplierFormPane.add(textField);
+		textField.setColumns(10);
+		
+		txtSupplierName = new JTextField();
+		txtSupplierName.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		sl_supplierFormPane.putConstraint(SpringLayout.NORTH, txtSupplierName, 0, SpringLayout.NORTH, lblSupplierName);
+		sl_supplierFormPane.putConstraint(SpringLayout.WEST, txtSupplierName, 6, SpringLayout.EAST, lblSupplierName);
+		sl_supplierFormPane.putConstraint(SpringLayout.SOUTH, txtSupplierName, 20, SpringLayout.NORTH, lblSupplierName);
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, txtSupplierName, 0, SpringLayout.EAST, textField);
+		txtSupplierName.setColumns(10);
+		supplierFormPane.add(txtSupplierName);
+		
+		txtSupplierAddress = new JTextField();
+		sl_supplierFormPane.putConstraint(SpringLayout.WEST, txtSupplierAddress, 496, SpringLayout.WEST, supplierFormPane);
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, txtSupplierAddress, -27, SpringLayout.EAST, supplierFormPane);
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, lblSupplierAddress, -14, SpringLayout.WEST, txtSupplierAddress);
+		sl_supplierFormPane.putConstraint(SpringLayout.NORTH, txtSupplierAddress, 79, SpringLayout.NORTH, supplierFormPane);
+		txtSupplierAddress.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		txtSupplierAddress.setColumns(10);
+		supplierFormPane.add(txtSupplierAddress);
+		
+		txtSupplierConatactNumber = new JTextField();
+		sl_supplierFormPane.putConstraint(SpringLayout.WEST, txtSupplierConatactNumber, 17, SpringLayout.EAST, lblSupplierContactNumber);
+		sl_supplierFormPane.putConstraint(SpringLayout.SOUTH, txtSupplierConatactNumber, -25, SpringLayout.NORTH, txtSupplierAddress);
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, txtSupplierConatactNumber, -27, SpringLayout.EAST, supplierFormPane);
+		txtSupplierConatactNumber.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+		txtSupplierConatactNumber.setColumns(10);
+		supplierFormPane.add(txtSupplierConatactNumber);
+		
+		btnSupplierAdd = new JLabel("Add");
+		btnSupplierAdd.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		btnSupplierAdd.setBackground(Gallery.GRAY);
+		btnSupplierAdd.setForeground(Gallery.BLUE);
+		btnSupplierAdd.setOpaque(true);
+		sl_supplierFormPane.putConstraint(SpringLayout.WEST, btnSupplierAdd, 58, SpringLayout.WEST, lblSupplierAddress);
+		btnSupplierAdd.setHorizontalAlignment(SwingConstants.CENTER);
+		btnSupplierAdd.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		supplierFormPane.add(btnSupplierAdd);
+		
+		btnSupplierUpdate = new JLabel("Update");
+		btnSupplierUpdate.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		btnSupplierUpdate.setBackground(Gallery.GRAY);
+		btnSupplierUpdate.setForeground(Gallery.BLUE);
+		btnSupplierUpdate.setOpaque(true);
+		sl_supplierFormPane.putConstraint(SpringLayout.NORTH, btnSupplierUpdate, 72, SpringLayout.SOUTH, txtSupplierAddress);
+		sl_supplierFormPane.putConstraint(SpringLayout.WEST, btnSupplierUpdate, 571, SpringLayout.WEST, supplierFormPane);
+		sl_supplierFormPane.putConstraint(SpringLayout.SOUTH, btnSupplierUpdate, -10, SpringLayout.SOUTH, supplierFormPane);
+		sl_supplierFormPane.putConstraint(SpringLayout.NORTH, btnSupplierAdd, 0, SpringLayout.NORTH, btnSupplierUpdate);
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, btnSupplierAdd, -6, SpringLayout.WEST, btnSupplierUpdate);
+		btnSupplierUpdate.setHorizontalAlignment(SwingConstants.CENTER);
+		btnSupplierUpdate.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		supplierFormPane.add(btnSupplierUpdate);
+		
+		btnSupplierDelete = new JLabel("Delete");
+		btnSupplierDelete.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		btnSupplierDelete.setBackground(Gallery.GRAY);
+		btnSupplierDelete.setForeground(Gallery.BLUE);
+		sl_supplierFormPane.putConstraint(SpringLayout.SOUTH, btnSupplierDelete, -10, SpringLayout.SOUTH, supplierFormPane);
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, btnSupplierUpdate, -6, SpringLayout.WEST, btnSupplierDelete);
+		sl_supplierFormPane.putConstraint(SpringLayout.WEST, btnSupplierDelete, 648, SpringLayout.WEST, supplierFormPane);
+		sl_supplierFormPane.putConstraint(SpringLayout.EAST, btnSupplierDelete, 0, SpringLayout.EAST, txtSupplierAddress);
+		btnSupplierDelete.setHorizontalAlignment(SwingConstants.CENTER);
+		btnSupplierDelete.setFont(new Font("Times New Roman", Font.BOLD, 15));
+		supplierFormPane.add(btnSupplierDelete);
 		supplierPanel.add(supplierPane);
 		
 		lblSupplierList = new JLabel("Supplier List");
@@ -183,6 +292,14 @@ public class Inventory extends JFrame {
 		sl_supplierPanel.putConstraint(SpringLayout.SOUTH, lblSupplierList, -6, SpringLayout.NORTH, supplierPane);
 		
 		tblSupplierList = new JTable();
+		tblSupplierList.setModel(new DefaultTableModel(
+			new Object[][] {
+				{null, null, null, null},
+			},
+			new String[] {
+				"Supplier ID", "Name", "Contact Number", "Address"
+			}
+		));
 		tblSupplierList.setFont(new Font("Times New Roman", Font.BOLD, 12));
 		supplierPane.setViewportView(tblSupplierList);
 		sl_supplierPanel.putConstraint(SpringLayout.EAST, lblSupplierList, 129, SpringLayout.WEST, supplierPanel);
@@ -197,31 +314,64 @@ public class Inventory extends JFrame {
 		
 		
 		// NOTE: Please put all mouse listeners here at the end
-		lblDashboard.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblDashboard); }
-			@Override public void mouseExited(MouseEvent e) { mouseExit(lblDashboard); }
+		btnDashboard.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(btnDashboard); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(btnDashboard); }
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				cardLayout.show(displayPanel, "dashboard");
 			}
 		});
-		lblSupplier.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { mouseEnter(lblSupplier); }
-			@Override public void mouseExited(MouseEvent e) { mouseExit(lblSupplier); }
+		btnSupplier.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { mouseEnter(btnSupplier); }
+			@Override public void mouseExited(MouseEvent e) { mouseExit(btnSupplier); }
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				cardLayout.show(displayPanel, "supplier");
 			}
 		});
-		lblProduct.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) {mouseEnter(lblProduct);	}
-			@Override public void mouseExited(MouseEvent e) { mouseExit(lblProduct); }
+		btnProduct.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) {mouseEnter(btnProduct);	}
+			@Override public void mouseExited(MouseEvent e) { mouseExit(btnProduct); }
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				cardLayout.show(displayPanel, "product");
+			}
+		});
+		
+		btnSupplierAdd.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				mouseEnter2(btnSupplierAdd);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseExit2(btnSupplierAdd);
+			}
+		});
+		
+		btnSupplierUpdate.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				mouseEnter2(btnSupplierUpdate);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseExit2(btnSupplierUpdate);
+			}
+		});
+		
+		btnSupplierDelete.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				mouseEnter2(btnSupplierDelete);
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				mouseExit2(btnSupplierDelete);
 			}
 		});
 		
@@ -234,11 +384,25 @@ public class Inventory extends JFrame {
 	 */
 	public void mouseEnter(JLabel label) {
 		label.setBackground(Gallery.WHITE);
+		label.setForeground(Gallery.BLACK);
+		label.setOpaque(true);
+		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+	}
+	
+	public void mouseEnter2(JLabel label) {
+		label.setBackground(Gallery.BLUE);
+		label.setForeground(Gallery.WHITE);
 		label.setOpaque(true);
 		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
 	
 	public void mouseExit(JLabel label) {
 		label.setBackground(Gallery.BLUE);
+		label.setForeground(Gallery.WHITE);
+	}
+	
+	public void mouseExit2(JLabel label) {
+		label.setBackground(Gallery.GRAY);
+		label.setForeground(Gallery.BLUE);
 	}
 }
