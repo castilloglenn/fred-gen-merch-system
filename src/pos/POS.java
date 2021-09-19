@@ -25,6 +25,8 @@ import java.awt.event.ComponentEvent;
 import java.awt.Dimension;
 import java.awt.event.WindowStateListener;
 import java.awt.event.WindowEvent;
+import java.awt.CardLayout;
+import javax.swing.JLabel;
 
 
 /**
@@ -42,6 +44,7 @@ public class POS extends JFrame {
 
 	private Gallery gallery;
 	private Utility utility;
+	private JLabel lblDashboardNav;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -93,9 +96,25 @@ public class POS extends JFrame {
 //		posPanel.setBackground(Gallery.GRAY);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, posPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, posPanel, 15, SpringLayout.EAST, navigationPanel);
+		SpringLayout sl_navigationPanel = new SpringLayout();
+		navigationPanel.setLayout(sl_navigationPanel);
+		
+		lblDashboardNav = new JLabel("POS");
+		lblDashboardNav.setFont(utility.getFont(25f));
+		lblDashboardNav.setForeground(Color.WHITE);
+		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblDashboardNav, 10, SpringLayout.NORTH, navigationPanel);
+		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblDashboardNav, 40, SpringLayout.WEST, navigationPanel);
+		lblDashboardNav.setUI(new VerticalLabelUI(false));
+		lblDashboardNav.setIcon(utility.getImage("pos.png", 25));
+		sl_navigationPanel.putConstraint(SpringLayout.EAST, lblDashboardNav, -10, SpringLayout.EAST, navigationPanel);
+		navigationPanel.add(lblDashboardNav);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, posPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, posPanel, -15, SpringLayout.EAST, mainPanel);
 		mainPanel.add(posPanel);
+		SpringLayout sl_posPanel = new SpringLayout();
+		posPanel.setLayout(sl_posPanel);
+		
+		
 		
 		
 		
