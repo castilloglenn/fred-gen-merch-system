@@ -16,6 +16,7 @@ public class Gallery {
 	public static Color GRAY = new Color(237, 237, 233);
 	public static Color BLACK = new Color(5, 25, 35);
 	public static Color RED = new Color(216, 74, 49);
+	public static Color DARK_RED = new Color(188, 59, 36); // 2 down the palette
 	public static Color WHITE = new Color(255, 255, 255);
 
 }
