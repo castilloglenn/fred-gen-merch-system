@@ -14,6 +14,7 @@ public class RoundedPanel extends JPanel
     public Color backgroundColor;
     public int defaultRadius = 30;
 
+    
     public RoundedPanel(Color bgColor) {
         super();
         backgroundColor = bgColor;
@@ -27,8 +28,11 @@ public class RoundedPanel extends JPanel
         setOpaque(false);
     }
     
+    
     public void setBackgroundColor(Color color) {
-    	this.backgroundColor = color;
+    	backgroundColor = color;
+    	repaint();
+    	revalidate();
     }
 
     @Override

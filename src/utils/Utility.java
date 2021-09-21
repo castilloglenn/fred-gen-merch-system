@@ -132,12 +132,15 @@ public class Utility {
 	public void textFieldFocusLost(JTextField textField, String defaultText) {
 		if (textField.getText().equals("")) {
 			textField.setText(defaultText);
+			textField.setForeground(Gallery.LIGHT_GRAY);
 		}
-		textField.setForeground(Gallery.LIGHT_GRAY);
 	}
 	
 	public void textFieldFocusGained(JTextField textField, String defaultText) {
-		
+		if (textField.getText().equals(defaultText)) {
+			textField.setText("");
+			textField.setForeground(Gallery.BLACK);
+		}
 	}
 }
 
