@@ -2,35 +2,27 @@ package pos;
 
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.border.EmptyBorder;
 
 import utils.Gallery;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
-import javax.swing.SwingConstants;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.JTextField;
 
 
 /**
@@ -45,7 +37,9 @@ public class POS extends JFrame {
 					searchPanel, tablePanel;
 	private JLabel lblDashboardNav, lblTransactionNav, lblReportNav,
 					lblTransactionNo, lblDateTime, lblCheckoutButton,
-					lblCancelButton;
+					lblCancelButton, lblSearchIcon, lblAddToCart;
+	private JTextField tfSearch;
+	
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	private CardLayout cardLayout;
 	
@@ -61,9 +55,9 @@ public class POS extends JFrame {
 	private boolean breakpointTrigger = false;
 	
 	private Timer timer;
-	private JLabel lblAddToCart;
-	private JTextField tfQuantity;
 
+	private String defaultSearchMessage = "Search for products...";
+	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -176,8 +170,9 @@ public class POS extends JFrame {
 		posPanel.add(lblDateTime);
 		
 		paymentPanel = new RoundedPanel(Color.WHITE);
-		sl_posPanel.putConstraint(SpringLayout.SOUTH, paymentPanel, 0, SpringLayout.SOUTH, cartPanel);
 		sl_posPanel.putConstraint(SpringLayout.NORTH, paymentPanel, -120, SpringLayout.SOUTH, cartPanel);
+		sl_posPanel.putConstraint(SpringLayout.SOUTH, paymentPanel, 0, SpringLayout.SOUTH, cartPanel);
+		sl_posPanel.putConstraint(SpringLayout.EAST, paymentPanel, -15, SpringLayout.WEST, cartPanel);
 		posPanel.add(paymentPanel);
 		
 		checkoutPanel = new RoundedPanel(Color.WHITE);
@@ -212,20 +207,13 @@ public class POS extends JFrame {
 		checkoutPanel.add(lblCancelButton);
 		
 		searchPanel = new RoundedPanel(Color.WHITE);
-		sl_posPanel.putConstraint(SpringLayout.NORTH, searchPanel, 5, SpringLayout.SOUTH, lblTransactionNo);
+		sl_posPanel.putConstraint(SpringLayout.WEST, checkoutPanel, 0, SpringLayout.WEST, searchPanel);
+		sl_posPanel.putConstraint(SpringLayout.NORTH, searchPanel, 10, SpringLayout.SOUTH, lblTransactionNo);
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, searchPanel, 60, SpringLayout.SOUTH, lblTransactionNo);
 		sl_posPanel.putConstraint(SpringLayout.WEST, searchPanel, 20, SpringLayout.WEST, posPanel);
 		sl_posPanel.putConstraint(SpringLayout.EAST, searchPanel, -15, SpringLayout.WEST, cartPanel);
 		cartPanel.setLayout(new SpringLayout());
 		posPanel.add(searchPanel);
-		
-		tablePanel = new RoundedPanel(Color.WHITE);
-		sl_posPanel.putConstraint(SpringLayout.NORTH, tablePanel, 15, SpringLayout.SOUTH, searchPanel);
-		sl_posPanel.putConstraint(SpringLayout.SOUTH, tablePanel, -15, SpringLayout.NORTH, checkoutPanel);
-		sl_posPanel.putConstraint(SpringLayout.EAST, paymentPanel, 0, SpringLayout.EAST, tablePanel);
-		sl_posPanel.putConstraint(SpringLayout.WEST, checkoutPanel, 0, SpringLayout.WEST, tablePanel);
-		sl_posPanel.putConstraint(SpringLayout.WEST, tablePanel, 0, SpringLayout.WEST, searchPanel);
-		sl_posPanel.putConstraint(SpringLayout.EAST, tablePanel, 0, SpringLayout.EAST, searchPanel);
 		SpringLayout sl_searchPanel = new SpringLayout();
 		searchPanel.setLayout(sl_searchPanel);
 		
@@ -239,13 +227,27 @@ public class POS extends JFrame {
 		utility.styleLabelToButton(lblAddToCart, 15f, 20, 5);
 		searchPanel.add(lblAddToCart);
 		
-		tfQuantity = new JTextField(10);
-		sl_searchPanel.putConstraint(SpringLayout.WEST, tfQuantity, -60, SpringLayout.WEST, lblAddToCart);
-		tfQuantity.setBorder(new CompoundBorder(new LineBorder(new Color(0, 0, 0)), new EmptyBorder(5, 5, 5, 5)));
-		sl_searchPanel.putConstraint(SpringLayout.NORTH, tfQuantity, 0, SpringLayout.NORTH, lblAddToCart);
-		sl_searchPanel.putConstraint(SpringLayout.SOUTH, tfQuantity, 0, SpringLayout.SOUTH, lblAddToCart);
-		sl_searchPanel.putConstraint(SpringLayout.EAST, tfQuantity, -10, SpringLayout.WEST, lblAddToCart);
-		searchPanel.add(tfQuantity);
+		tfSearch = new JTextField();
+		utility.styleTextField(tfSearch, defaultSearchMessage, 15f);
+		tfSearch.setCaretPosition(0);
+		searchPanel.add(tfSearch);
+		
+		lblSearchIcon = new JLabel(utility.getImage("search.png", 20));
+		sl_searchPanel.putConstraint(SpringLayout.NORTH, tfSearch, 0, SpringLayout.NORTH, lblSearchIcon);
+		sl_searchPanel.putConstraint(SpringLayout.WEST, tfSearch, 5, SpringLayout.EAST, lblSearchIcon);
+		sl_searchPanel.putConstraint(SpringLayout.SOUTH, tfSearch, 0, SpringLayout.SOUTH, lblSearchIcon);
+		sl_searchPanel.putConstraint(SpringLayout.EAST, tfSearch, 275, SpringLayout.WEST, lblSearchIcon);
+		sl_searchPanel.putConstraint(SpringLayout.NORTH, lblSearchIcon, 10, SpringLayout.NORTH, searchPanel);
+		sl_searchPanel.putConstraint(SpringLayout.WEST, lblSearchIcon, 15, SpringLayout.WEST, searchPanel);
+		sl_searchPanel.putConstraint(SpringLayout.SOUTH, lblSearchIcon, -10, SpringLayout.SOUTH, searchPanel);
+		searchPanel.add(lblSearchIcon);
+		
+		tablePanel = new RoundedPanel(Gallery.WHITE);
+		sl_posPanel.putConstraint(SpringLayout.NORTH, tablePanel, 15, SpringLayout.SOUTH, searchPanel);
+		sl_posPanel.putConstraint(SpringLayout.WEST, tablePanel, 0, SpringLayout.WEST, searchPanel);
+		sl_posPanel.putConstraint(SpringLayout.SOUTH, tablePanel, -15, SpringLayout.NORTH, paymentPanel);
+		sl_posPanel.putConstraint(SpringLayout.EAST, tablePanel, 0, SpringLayout.EAST, searchPanel);
+		posPanel.add(tablePanel);
 		
 		transactionPanel = new RoundedPanel(Color.BLUE); // Gallery.GRAY
 		displayPanel.add(transactionPanel, "transaction");
