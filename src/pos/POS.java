@@ -21,6 +21,7 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
+import utils.Database;
 import utils.Gallery;
 import utils.RoundedPanel;
 import utils.VerticalLabelUI;
@@ -50,16 +51,16 @@ public class POS extends JFrame {
 	private int defaultWidth = 1000;
 	private int minHeight = 600;
 	private int minWidth = 990;
-
-	private Gallery gallery;
-	private VerticalLabelUI verticalUI;
 	
 	private boolean breakpointTrigger = false;
-	
 	private Timer timer;
 
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
+	
+	private Database database;
+	private Gallery gallery;
+	private VerticalLabelUI verticalUI;
 	
 	
 	public static void main(String[] args) {
@@ -72,6 +73,7 @@ public class POS extends JFrame {
 	}
 
 	public POS() {
+		database = new Database();
 		gallery = new Gallery();
 		
 		// rotated 90 degrees counter-clockwise

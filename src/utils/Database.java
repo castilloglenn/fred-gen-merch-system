@@ -5,7 +5,7 @@ import java.sql.*;
 public class Database {
 	
 	private String db_url = "jdbc:mysql://localhost/?serverTimezone=UTC";
-	private String db_name = "fred-gen-merch";
+	private String db_name = "fred_gen_merch";
 	private String db_user = "root";
 	private String db_pass = "";
 	
@@ -34,119 +34,66 @@ public class Database {
 	}
 	
 	public void createTables() throws SQLException {
-		stmt.execute(
-			"CREATE TABLE IF NOT EXISTS employee ("
-					+ "employee_id BIGINT PRIMARY KEY,"
-					+ "position VARCHAR(255) NOT NULL,"
-					+ "fname VARCHAR(255) NOT NULL,"
-					+ "mname VARCHAR(255) DEFAULT \"\","
-					+ "lname VARCHAR(255) NOT NULL,"
-					+ "address VARCHAR(255) NOT NULL,"
-					+ "basic DOUBLE(8, 2) NOT NULL,"
-					+ "incentives DOUBLE(8, 2) NOT NULL,"
-					+ "contributions DOUBLE(8, 2) NOT NULL,"
-					+ "penalty DOUBLE(8, 2) NOT NULL,"
-					+ "password VARCHAR(255) NOT NULL"
+		stmt.execute("CREATE TABLE IF NOT EXISTS user ("
+				+ "user_id BIGINT PRIMARY KEY, "
+				+ "fname VARCHAR(255) NOT NULL, "
+				+ "mname VARCHAR(255) DEFAULT \"\", "
+				+ "lname VARCHAR(255) NOT NULL, "
+				+ "position VARCHAR(255) NOT NULL, "
+				+ "contact VARCHAR(255) NOT NULL, "
+				+ "username VARCHAR(255) NOT NULL, "
+				+ "password VARCHAR(255) NOT NULL"
 			+ ");"
 		);
-		stmt.execute(
-			"CREATE TABLE IF NOT EXISTS logs ("
-					+ "log_id BIGINT PRIMARY KEY,"
-					+ "employee_id BIGINT NOT NULL,"
-					+ "type VARCHAR(255) NOT NULL,"
-					+ "description VARCHAR(4096) NOT NULL,"
-					+ "date DATETIME NOT NULL,"
-					+ "FOREIGN KEY (employee_id)"
-					+ "REFERENCES employee(employee_id)"
+		stmt.execute("CREATE TABLE IF NOT EXISTS supplier ("
+				+ "supplier_id BIGINT PRIMARY KEY, "
+				+ "name VARCHAR(255) NOT NULL, "
+				+ "contact_no VARCHAR(255) NOT NULL, "
+				+ "address VARCHAR(255) NOT NULL"
 			+ ");"
 		);
-		stmt.execute(
-			"CREATE TABLE IF NOT EXISTS product ("
-					+ "product_id BIGINT PRIMARY KEY,"
-					+ "category VARCHAR(255) NOT NULL,"
-					+ "quantity DOUBLE(8, 2) NOT NULL,"
-					+ "uom VARCHAR(255) NOT NULL,"
-					+ "name VARCHAR(255) NOT NULL,"
-					+ "purchase_value DOUBLE(8, 2) NOT NULL,"
-					+ "sell_value DOUBLE(8, 2) NOT NULL"
+		stmt.execute("CREATE TABLE IF NOT EXISTS product ("
+				+ "product_id BIGINT PRIMARY KEY, "
+				+ "name VARCHAR(255) NOT NULL, "
+				+ "image MEDIUMBLOB, "
+				+ "stocks DOUBLE(8, 2) NOT NULL, "
+				+ "uom VARCHAR(255) NOT NULL, "
+				+ "price_bought DOUBLE(8, 2) NOT NULL, "
+				+ "selling_price DOUBLE(8, 2) NOT NULL"
 			+ ");"
 		);
-		stmt.execute(
-			"CREATE TABLE IF NOT EXISTS supplier ("
-					+ "supplier_id BIGINT PRIMARY KEY,"
-					+ "name VARCHAR(255) NOT NULL,"
-					+ "address VARCHAR(255) NOT NULL,"
-					+ "contact_no VARCHAR(255) NOT NULL"
+		stmt.execute("CREATE TABLE IF NOT EXISTS transaction ("
+				+ "transaction_id BIGINT PRIMARY KEY, "
+				+ "user_id BIGINT NOT NULL, "
+				+ "date DATETIME NOT NULL, "
+				+ "total_price DOUBLE(8, 2) NOT NULL, "
+				+ "FOREIGN KEY (user_id) "
+				+ "REFERENCES user(user_id)"
 			+ ");"
 		);
-		stmt.execute(
-			"CREATE TABLE IF NOT EXISTS customer ("
-					+ "customer_id BIGINT PRIMARY KEY,"
-					+ "rebate DOUBLE(8, 2) NOT NULL,"
-					+ "fname VARCHAR(255) NOT NULL,"
-					+ "mname VARCHAR(255) DEFAULT \"\","
-					+ "lname VARCHAR(255) NOT NULL,"
-					+ "address VARCHAR(255) NOT NULL,"
-					+ "contact_no VARCHAR(255) NOT NULL"
+		stmt.execute("CREATE TABLE IF NOT EXISTS supplies ("
+				+ "supplier_id BIGINT NOT NULL, "
+				+ "product_id BIGINT NOT NULL, "
+				+ "user_id BIGINT NOT NULL, "
+				+ "quantity DOUBLE(8, 2) NOT NULL, "
+				+ "date DATETIME NOT NULL, "
+				+ "FOREIGN KEY (supplier_id) "
+				+ "REFERENCES supplier(supplier_id), "
+				+ "FOREIGN KEY (product_id) "
+				+ "REFERENCES product(product_id), "
+				+ "FOREIGN KEY (user_id) "
+				+ "REFERENCES user(user_id)"
 			+ ");"
 		);
-		stmt.execute(
-			"CREATE TABLE IF NOT EXISTS transaction ("
-					+ "transaction_id BIGINT PRIMARY KEY,"
-					+ "employee_id BIGINT NOT NULL,"
-					+ "customer_id BIGINT NOT NULL,"
-					+ "type VARCHAR(255) NOT NULL,"
-					+ "total_amount DOUBLE(10, 2) NOT NULL,"
-					+ "amount_tendered DOUBLE(8, 2) NOT NULL,"
-					+ "date DATETIME NOT NULL,"
-					+ "FOREIGN KEY (employee_id)"
-					+ "REFERENCES employee(employee_id),"
-					+ "FOREIGN KEY (customer_id)"
-					+ "REFERENCES customer(customer_id)"
+		stmt.execute("CREATE TABLE IF NOT EXISTS contains ("
+				+ "transaction_id BIGINT NOT NULL, "
+				+ "product_id BIGINT NOT NULL, "
+				+ "quantity DOUBLE(8, 2) NOT NULL, "
+				+ "FOREIGN KEY (transaction_id) "
+				+ "REFERENCES transaction(transaction_id), "
+				+ "FOREIGN KEY (product_id) "
+				+ "REFERENCES product(product_id)"
 			+ ");"
-		);
-		stmt.execute(
-			"CREATE TABLE IF NOT EXISTS promo ("
-					+ "product_id BIGINT NOT NULL,"
-					+ "name VARCHAR(255) NOT NULL,"
-					+ "conditions VARCHAR(255) NOT NULL,"
-					+ "discount DOUBLE(8, 2) NOT NULL,"
-					+ "start_date DATETIME NOT NULL,"
-					+ "end_date DATETIME NOT NULL,"
-					+ "FOREIGN KEY(product_id) "
-					+ "REFERENCES product(product_id)"
-			+ ");"
-		);
-		stmt.execute(
-			"CREATE TABLE IF NOT EXISTS transacts ("
-					+ "transaction_id BIGINT NOT NULL,"
-					+ "product_id BIGINT NOT NULL,"
-					+ "quantity DOUBLE(8, 2) NOT NULL,"
-					+ "total_price DOUBLE(10, 2) NOT NULL,"
-					+ "FOREIGN KEY (transaction_id)"
-					+ "REFERENCES transaction(transaction_id),"
-					+ "FOREIGN KEY (product_id)"
-					+ "REFERENCES product(product_id)"
-			+ ");"
-		);
-		stmt.execute(
-			"CREATE TABLE IF NOT EXISTS supplies ("
-					+ "supplier_id BIGINT NOT NULL,"
-					+ "product_id BIGINT NOT NULL,"
-					+ "quantity DOUBLE(8, 2) NOT NULL,"
-					+ "total_price DOUBLE(10, 2) NOT NULL,"
-					+ "FOREIGN KEY (supplier_id)"
-					+ "REFERENCES supplier(supplier_id),"
-					+ "FOREIGN KEY (product_id)"
-					+ "REFERENCES product(product_id)"
-			+ ");"
-		);
-		stmt.execute(
-			  "INSERT INTO customer "
-			+ "SELECT * FROM (SELECT 1, 0, \"WALK\", \"-\", \"IN\", \"System\", \"None\") AS tmp "
-			+ "WHERE NOT EXISTS ("
-			+ "    SELECT customer_id FROM customer WHERE customer_id = 1"
-			+ ") LIMIT 1;"
 		);
 	}
 	
