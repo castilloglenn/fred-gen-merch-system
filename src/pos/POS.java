@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -21,20 +23,16 @@ import javax.swing.Timer;
 
 import utils.Gallery;
 import utils.RoundedPanel;
-import utils.Utility;
 import utils.VerticalLabelUI;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 
 /**
- * To be done by: Glenn
+ * @author Allen Glenn E. Castillo
  */
 @SuppressWarnings("serial")
 public class POS extends JFrame {
 
 	private JPanel mainPanel;
-	
 	private RoundedPanel navigationPanel, displayPanel, 
 					posPanel, transactionPanel, reportPanel,
 					cartPanel, paymentPanel, checkoutPanel,
@@ -43,7 +41,7 @@ public class POS extends JFrame {
 					lblTransactionNo, lblDateTime, lblCheckoutButton,
 					lblCancelButton, lblSearchIcon, lblAddToCart,
 					lblQuantityIcon;
-	private JTextField tfSearch;
+	private JTextField tfSearch, tfQuantity;
 	
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	private CardLayout cardLayout;
@@ -54,7 +52,6 @@ public class POS extends JFrame {
 	private int minWidth = 990;
 
 	private Gallery gallery;
-	private Utility utility;
 	private VerticalLabelUI verticalUI;
 	
 	private boolean breakpointTrigger = false;
@@ -63,7 +60,7 @@ public class POS extends JFrame {
 
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
-	private JTextField tfQuantity;
+	
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -76,19 +73,9 @@ public class POS extends JFrame {
 
 	public POS() {
 		gallery = new Gallery();
-		utility = new Utility();
 		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false); 
-		
-		/**
-		 *  	After designing, change all Panel to Rounded Panel like this:
-		 * panelVariableExample = new RoundedPanel(Gallery.BLUE);
-		 *     
-		 * 	 	To set the default font, first set the size then set the font:
-		 * utility.setFontSize(20f);
-		 * lblNewLabel.setFont(gallery.font);
-		 */
 		
 		setMinimumSize(new Dimension(minWidth, minHeight));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -123,7 +110,7 @@ public class POS extends JFrame {
 		
 		lblDashboardNav = new JLabel("POS");
 		lblDashboardNav.setName("primary");
-		utility.styleLabelToButton(lblDashboardNav, 15f, "pos.png", 15, 10, 10);
+		gallery.styleLabelToButton(lblDashboardNav, 15f, "pos.png", 15, 10, 10);
 		lblDashboardNav.setUI(verticalUI);
 		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblDashboardNav, 35, SpringLayout.NORTH, navigationPanel);
 		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblDashboardNav, 40, SpringLayout.WEST, navigationPanel);
@@ -132,7 +119,7 @@ public class POS extends JFrame {
 		
 		lblTransactionNav = new JLabel("TRANSACTIONS");
 		lblTransactionNav.setName("primary");
-		utility.styleLabelToButton(lblTransactionNav, 15f, "transaction.png", 15, 10, 10);
+		gallery.styleLabelToButton(lblTransactionNav, 15f, "transaction.png", 15, 10, 10);
 		lblTransactionNav.setUI(verticalUI);
 		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblTransactionNav, 10, SpringLayout.SOUTH, lblDashboardNav);
 		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblTransactionNav, 0, SpringLayout.WEST, lblDashboardNav);
@@ -141,7 +128,7 @@ public class POS extends JFrame {
 		
 		lblReportNav = new JLabel("REPORTS");
 		lblReportNav.setName("primary");
-		utility.styleLabelToButton(lblReportNav, 15f, "report.png", 15, 10, 10);
+		gallery.styleLabelToButton(lblReportNav, 15f, "report.png", 15, 10, 10);
 		lblReportNav.setUI(verticalUI);
 		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblReportNav, 10, SpringLayout.SOUTH, lblTransactionNav);
 		sl_navigationPanel.putConstraint(SpringLayout.WEST, lblReportNav, 0, SpringLayout.WEST, lblDashboardNav);
@@ -158,7 +145,7 @@ public class POS extends JFrame {
 		posPanel.setLayout(sl_posPanel);
 		
 		lblTransactionNo = new JLabel("Transaction No. 81273");
-		lblTransactionNo.setFont(utility.getFont(23f));
+		lblTransactionNo.setFont(gallery.getFont(23f));
 		sl_posPanel.putConstraint(SpringLayout.NORTH, lblTransactionNo, 20, SpringLayout.NORTH, posPanel);
 		sl_posPanel.putConstraint(SpringLayout.WEST, lblTransactionNo, 20, SpringLayout.WEST, posPanel);
 		posPanel.add(lblTransactionNo);
@@ -170,10 +157,10 @@ public class POS extends JFrame {
 		sl_posPanel.putConstraint(SpringLayout.EAST, cartPanel, -20, SpringLayout.EAST, posPanel);
 		posPanel.add(cartPanel);
 		
-		lblDateTime = new JLabel(utility.getTime(breakpointTrigger));
+		lblDateTime = new JLabel(gallery.getTime(breakpointTrigger));
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, lblDateTime, -3, SpringLayout.SOUTH, lblTransactionNo);
 		sl_posPanel.putConstraint(SpringLayout.EAST, lblDateTime, -20, SpringLayout.WEST, cartPanel);
-		lblDateTime.setFont(utility.getFont(15f));
+		lblDateTime.setFont(gallery.getFont(15f));
 		posPanel.add(lblDateTime);
 		
 		paymentPanel = new RoundedPanel(Color.WHITE);
@@ -193,7 +180,7 @@ public class POS extends JFrame {
 		
 		lblCheckoutButton = new JLabel("CHECK OUT");
 		lblCheckoutButton.setName("primary");
-		utility.styleLabelToButton(lblCheckoutButton, 15f, 15, 10);
+		gallery.styleLabelToButton(lblCheckoutButton, 15f, 15, 10);
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblCheckoutButton, 15, SpringLayout.WEST, checkoutPanel);
 		sl_checkoutPanel.putConstraint(SpringLayout.SOUTH, lblCheckoutButton, 55, SpringLayout.NORTH, checkoutPanel);
 		sl_checkoutPanel.putConstraint(SpringLayout.EAST, lblCheckoutButton, -15, SpringLayout.EAST, checkoutPanel);
@@ -206,7 +193,7 @@ public class POS extends JFrame {
 		
 		lblCancelButton = new JLabel("CANCEL");
 		lblCancelButton.setName("danger");
-		utility.styleLabelToButton(lblCancelButton, 15f, 15, 10);
+		gallery.styleLabelToButton(lblCancelButton, 15f, 15, 10);
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, lblCancelButton, 10, SpringLayout.SOUTH, lblCheckoutButton);
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblCancelButton, 0, SpringLayout.WEST, lblCheckoutButton);
 		sl_checkoutPanel.putConstraint(SpringLayout.SOUTH, lblCancelButton, -15, SpringLayout.SOUTH, checkoutPanel);
@@ -228,18 +215,18 @@ public class POS extends JFrame {
 		sl_searchPanel.putConstraint(SpringLayout.WEST, lblAddToCart, -60, SpringLayout.EAST, searchPanel);
 		sl_searchPanel.putConstraint(SpringLayout.EAST, lblAddToCart, -20, SpringLayout.EAST, searchPanel);
 		lblAddToCart.setName("primary");
-		utility.styleLabelToButton(lblAddToCart, 1f, "arrow.png", 20, 0, 0);
+		gallery.styleLabelToButton(lblAddToCart, 1f, "arrow.png", 20, 0, 0);
 		sl_searchPanel.putConstraint(SpringLayout.NORTH, lblAddToCart, 10, SpringLayout.NORTH, searchPanel);
 		sl_searchPanel.putConstraint(SpringLayout.SOUTH, lblAddToCart, -10, SpringLayout.SOUTH, searchPanel);
-		utility.styleLabelToButton(lblAddToCart, 15f, 20, 5);
+		gallery.styleLabelToButton(lblAddToCart, 15f, 20, 5);
 		searchPanel.add(lblAddToCart);
 		
 		tfSearch = new JTextField();
-		utility.styleTextField(tfSearch, defaultSearchMessage, 15f);
+		gallery.styleTextField(tfSearch, defaultSearchMessage, 15f);
 		tfSearch.setCaretPosition(0);
 		searchPanel.add(tfSearch);
 		
-		lblSearchIcon = new JLabel(utility.getImage("search.png", 20));
+		lblSearchIcon = new JLabel(gallery.getImage("search.png", 20));
 		sl_searchPanel.putConstraint(SpringLayout.NORTH, tfSearch, 0, SpringLayout.NORTH, lblSearchIcon);
 		sl_searchPanel.putConstraint(SpringLayout.WEST, tfSearch, 5, SpringLayout.EAST, lblSearchIcon);
 		sl_searchPanel.putConstraint(SpringLayout.SOUTH, tfSearch, 0, SpringLayout.SOUTH, lblSearchIcon);
@@ -256,14 +243,14 @@ public class POS extends JFrame {
 		
 		tfQuantity = new JTextField();
 		sl_searchPanel.putConstraint(SpringLayout.WEST, tfQuantity, -120, SpringLayout.WEST, lblAddToCart);
-		utility.styleTextField(tfQuantity, defaultQuantityMessage, 15f);
+		gallery.styleTextField(tfQuantity, defaultQuantityMessage, 15f);
 		tfQuantity.setCaretPosition(0);
 		sl_searchPanel.putConstraint(SpringLayout.NORTH, tfQuantity, 0, SpringLayout.NORTH, lblAddToCart);
 		sl_searchPanel.putConstraint(SpringLayout.SOUTH, tfQuantity, 0, SpringLayout.SOUTH, lblAddToCart);
 		sl_searchPanel.putConstraint(SpringLayout.EAST, tfQuantity, 0, SpringLayout.WEST, lblAddToCart);
 		searchPanel.add(tfQuantity);
 		
-		lblQuantityIcon = new JLabel(utility.getImage("scale.png", 20));
+		lblQuantityIcon = new JLabel(gallery.getImage("scale.png", 20));
 		sl_searchPanel.putConstraint(SpringLayout.EAST, tfSearch, 0, SpringLayout.WEST, lblQuantityIcon);
 		sl_searchPanel.putConstraint(SpringLayout.NORTH, lblQuantityIcon, 0, SpringLayout.NORTH, tfQuantity);
 		sl_searchPanel.putConstraint(SpringLayout.SOUTH, lblQuantityIcon, 0, SpringLayout.SOUTH, tfQuantity);
@@ -295,52 +282,52 @@ public class POS extends JFrame {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				breakpointTrigger = getWidth() <= minWidth;
-				lblDateTime.setText(utility.getTime(breakpointTrigger));
+				lblDateTime.setText(gallery.getTime(breakpointTrigger));
 			}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { utility.buttonHovered(lblDashboardNav); }
-			@Override public void mouseExited(MouseEvent e) { utility.buttonNormalized(lblDashboardNav); }
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblDashboardNav); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblDashboardNav); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				cardLayout.show(displayPanel, "pos");
 			}
 		});
 		lblTransactionNav.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { utility.buttonHovered(lblTransactionNav); }
-			@Override public void mouseExited(MouseEvent e) { utility.buttonNormalized(lblTransactionNav); }
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblTransactionNav); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblTransactionNav); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				cardLayout.show(displayPanel, "transaction");
 			}
 		});
 		lblReportNav.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { utility.buttonHovered(lblReportNav); }
-			@Override public void mouseExited(MouseEvent e) { utility.buttonNormalized(lblReportNav); }
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblReportNav); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblReportNav); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				cardLayout.show(displayPanel, "report");
 			}
 		});
 		lblCheckoutButton.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { utility.buttonHovered(lblCheckoutButton); }
-			@Override public void mouseExited(MouseEvent e) { utility.buttonNormalized(lblCheckoutButton); }
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblCheckoutButton); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCheckoutButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				System.out.println("Checkout");
 			}
 		});
 		lblCancelButton.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { utility.buttonHovered(lblCancelButton); }
-			@Override public void mouseExited(MouseEvent e) { utility.buttonNormalized(lblCancelButton); }
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblCancelButton); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCancelButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				System.out.println("Cancel");
 			}
 		});
 		lblAddToCart.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { utility.buttonHovered(lblAddToCart); }
-			@Override public void mouseExited(MouseEvent e) { utility.buttonNormalized(lblAddToCart); }
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblAddToCart); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblAddToCart); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				System.out.println("Add To Cart");
@@ -349,38 +336,28 @@ public class POS extends JFrame {
 		tfSearch.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				utility.textFieldFocusGained(tfSearch, defaultSearchMessage);
+				gallery.textFieldFocusGained(tfSearch, defaultSearchMessage);
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
-				utility.textFieldFocusLost(tfSearch, defaultSearchMessage);
+				gallery.textFieldFocusLost(tfSearch, defaultSearchMessage);
 			}
 		});
 		tfQuantity.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				utility.textFieldFocusGained(tfQuantity, defaultQuantityMessage);
+				gallery.textFieldFocusGained(tfQuantity, defaultQuantityMessage);
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
-				utility.textFieldFocusLost(tfQuantity, defaultQuantityMessage);
-			}
-		});
-		tablePanel.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				tablePanel.setBackgroundColor(Gallery.RED);
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				tablePanel.setBackgroundColor(Gallery.WHITE);
+				gallery.textFieldFocusLost(tfQuantity, defaultQuantityMessage);
 			}
 		});
 		
 		timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				lblDateTime.setText(utility.getTime(breakpointTrigger));
+				lblDateTime.setText(gallery.getTime(breakpointTrigger));
 			}
 		});
 		timer.start();

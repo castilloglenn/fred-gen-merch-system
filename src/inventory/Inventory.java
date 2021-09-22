@@ -131,29 +131,29 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnDashboard, 104, SpringLayout.NORTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnDashboard, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnDashboard, 1, SpringLayout.EAST, navigationalPanel);
-		btnDashboard.setIcon(utility.getImage("dashboard.png", 15));
-		btnDashboard.setFont(utility.getFont(20f));
+		btnDashboard.setIcon(gallery.getImage("dashboard.png", 15));
+		btnDashboard.setFont(gallery.getFont(20f));
 		btnDashboard.setForeground(new Color(237, 237, 233));
 		btnDashboard.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(btnDashboard);
 		
 		btnSupplier = new JLabel("Supplier");
-		btnSupplier.setFont(utility.getFont(20f));
+		btnSupplier.setFont(gallery.getFont(20f));
 		btnSupplier.setForeground(new Color(237, 237, 233));
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnSupplier, 18, SpringLayout.SOUTH, btnDashboard);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnSupplier, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnSupplier, 1, SpringLayout.EAST, navigationalPanel);
-		btnSupplier.setIcon(utility.getImage("supplier.png", 15));
+		btnSupplier.setIcon(gallery.getImage("supplier.png", 15));
 		btnSupplier.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(btnSupplier);
 		
 		btnProduct = new JLabel("Product");
 		btnProduct.setForeground(new Color(237, 237, 233));
-		btnProduct.setFont(utility.getFont(20f));
+		btnProduct.setFont(gallery.getFont(20f));
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnProduct, 19, SpringLayout.SOUTH, btnSupplier);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnProduct, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnProduct, 1, SpringLayout.EAST, navigationalPanel);
-		btnProduct.setIcon(utility.getImage("product.png", 15));
+		btnProduct.setIcon(gallery.getImage("product.png", 15));
 		btnProduct.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(btnProduct);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
