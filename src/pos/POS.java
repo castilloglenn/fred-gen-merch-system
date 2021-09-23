@@ -333,6 +333,7 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				System.out.println("Add To Cart");
+				// TODO: Test image upload from this button then test the download of image
 			}
 		});
 		tfSearch.addFocusListener(new FocusAdapter() {
