@@ -89,7 +89,7 @@ public class SupplierAdd extends JFrame {
 		sl_p.putConstraint(SpringLayout.EAST, lblNewSupplier, 139, SpringLayout.WEST, formsPanel);
 		sl_p.putConstraint(SpringLayout.NORTH, lblNewSupplier, 10, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, lblNewSupplier, 0, SpringLayout.WEST, formsPanel);
-		lblNewSupplier.setFont(utility.getFont(20f));
+		lblNewSupplier.setFont(gallery.getFont(20f));
 		p.add(lblNewSupplier);
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
@@ -97,46 +97,46 @@ public class SupplierAdd extends JFrame {
 		formsPanel.setLayout(null);
 		
 		lblSupplierID = new JLabel("Supplier ID");
-		lblSupplierID.setFont(utility.getFont(15f));
+		lblSupplierID.setFont(gallery.getFont(15f));
 		lblSupplierID.setBounds(10, 22, 80, 25);
 		formsPanel.add(lblSupplierID);
 		
 		lblName = new JLabel("Name");
-		lblName.setFont(utility.getFont(15f));
+		lblName.setFont(gallery.getFont(15f));
 		lblName.setBounds(10, 65, 80, 25);
 		formsPanel.add(lblName);
 		
 		txtName = new JTextField();
-		txtName.setFont(utility.getFont(15f));
+		txtName.setFont(gallery.getFont(15f));
 		txtName.setColumns(10);
 		txtName.setBounds(153, 59, 276, 27);
 		formsPanel.add(txtName);
 		
 		txtSupplierID = new JTextField();
-		txtSupplierID.setFont(utility.getFont(15f));
+		txtSupplierID.setFont(gallery.getFont(15f));
 		txtSupplierID.setEditable(false);
 		txtSupplierID.setColumns(10);
 		txtSupplierID.setBounds(153, 21, 151, 27);
 		formsPanel.add(txtSupplierID);
 		
 		lblContactNumber = new JLabel("Contact Number");
-		lblContactNumber.setFont(utility.getFont(15f));
+		lblContactNumber.setFont(gallery.getFont(15f));
 		lblContactNumber.setBounds(10, 99, 133, 25);
 		formsPanel.add(lblContactNumber);
 		
 		txtContactNumber = new JTextField();
-		txtContactNumber.setFont(utility.getFont(15f));
+		txtContactNumber.setFont(gallery.getFont(15f));
 		txtContactNumber.setColumns(10);
 		txtContactNumber.setBounds(153, 101, 276, 27);
 		formsPanel.add(txtContactNumber);
 		
 		lblAddress = new JLabel("Address");
-		lblAddress.setFont(utility.getFont(15f));
+		lblAddress.setFont(gallery.getFont(15f));
 		lblAddress.setBounds(10, 140, 133, 25);
 		formsPanel.add(lblAddress);
 		
 		txtAddress = new JTextField();
-		txtAddress.setFont(utility.getFont(15f));
+		txtAddress.setFont(gallery.getFont(15f));
 		txtAddress.setColumns(10);
 		txtAddress.setBounds(153, 139, 276, 27);
 		formsPanel.add(txtAddress);
@@ -155,7 +155,7 @@ public class SupplierAdd extends JFrame {
 		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnCancel, 10, SpringLayout.WEST, buttonPanel);
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnCancel, -10, SpringLayout.SOUTH, buttonPanel);
 		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnCancel, 173, SpringLayout.WEST, buttonPanel);
-		utility.styleLabelToButton(btnCancel, 15f, 15, 10);
+		gallery.styleLabelToButton(btnCancel, 15f, 15, 10);
 		buttonPanel.add(btnCancel);
 		
 		btnAdd = new JLabel("Add");
@@ -164,7 +164,7 @@ public class SupplierAdd extends JFrame {
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnAdd, -15, SpringLayout.NORTH, btnCancel);
 		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnAdd, 0, SpringLayout.EAST, btnCancel);
 		btnAdd.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		btnAdd.setFont(utility.getFont(15f));
+		btnAdd.setFont(gallery.getFont(15f));
 		btnAdd.setHorizontalAlignment(SwingConstants.CENTER);
 		buttonPanel.add(btnAdd);
 		
@@ -183,9 +183,9 @@ public class SupplierAdd extends JFrame {
 		
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { utility.buttonHovered(btnCancel);}
+			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnCancel);}
 			@Override
-			public void mouseExited(MouseEvent e) { utility.buttonNormalized(btnCancel);}
+			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnCancel);}
 			@Override
 			public void mouseClicked(MouseEvent e) { dispose();}
 		});
