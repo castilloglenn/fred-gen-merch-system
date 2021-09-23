@@ -126,29 +126,29 @@ public class Inventory extends JFrame {
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnDashboard, 104, SpringLayout.NORTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnDashboard, 0, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnDashboard, -1, SpringLayout.EAST, navigationalPanel);
-		btnDashboard.setIcon(utility.getImage("dashboard.png", 15));
-		btnDashboard.setFont(utility.getFont(20f));
+		btnDashboard.setIcon(gallery.getImage("dashboard.png", 15));
+		btnDashboard.setFont(gallery.getFont(20f));
 		btnDashboard.setForeground(new Color(237, 237, 233));
 		btnDashboard.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(btnDashboard);
 		
 		btnSupplier = new JLabel("Supplier");
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnSupplier, -1, SpringLayout.EAST, navigationalPanel);
-		btnSupplier.setFont(utility.getFont(20f));
+		btnSupplier.setFont(gallery.getFont(20f));
 		btnSupplier.setForeground(new Color(237, 237, 233));
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnSupplier, 18, SpringLayout.SOUTH, btnDashboard);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnSupplier, 0, SpringLayout.WEST, navigationalPanel);
-		btnSupplier.setIcon(utility.getImage("supplier.png", 15));
+		btnSupplier.setIcon(gallery.getImage("supplier.png", 15));
 		btnSupplier.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(btnSupplier);
 		
 		btnProduct = new JLabel("Product");
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnProduct, -1, SpringLayout.EAST, navigationalPanel);
 		btnProduct.setForeground(new Color(237, 237, 233));
-		btnProduct.setFont(utility.getFont(20f));
+		btnProduct.setFont(gallery.getFont(20f));
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnProduct, 19, SpringLayout.SOUTH, btnSupplier);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnProduct, 0, SpringLayout.WEST, navigationalPanel);
-		btnProduct.setIcon(utility.getImage("product.png", 15));
+		btnProduct.setIcon(gallery.getImage("product.png", 15));
 		btnProduct.setHorizontalAlignment(SwingConstants.CENTER);
 		navigationalPanel.add(btnProduct);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
@@ -188,7 +188,7 @@ public class Inventory extends JFrame {
 		));
 		tblSupplierList.setFont(new Font("Times New Roman", Font.BOLD, 12));
 		supplierPane.setViewportView(tblSupplierList);
-		lblSupplierList.setFont(utility.getFont(20f));
+		lblSupplierList.setFont(gallery.getFont(20f));
 		supplierPanel.add(lblSupplierList);
 		
 		supplierSearchPanel = new RoundedPanel(Gallery.WHITE);
@@ -207,11 +207,11 @@ public class Inventory extends JFrame {
 		sl_supplierSearchPanel.putConstraint(SpringLayout.WEST, lblSupplierSearchIcon, 10, SpringLayout.WEST, supplierSearchPanel);
 		sl_supplierSearchPanel.putConstraint(SpringLayout.SOUTH, lblSupplierSearchIcon, -10, SpringLayout.SOUTH, supplierSearchPanel);
 		sl_supplierSearchPanel.putConstraint(SpringLayout.EAST, lblSupplierSearchIcon, 27, SpringLayout.WEST, supplierSearchPanel);
-		lblSupplierSearchIcon.setIcon(utility.getImage("search.png", 15));
+		lblSupplierSearchIcon.setIcon(gallery.getImage("search.png", 15));
 		supplierSearchPanel.add(lblSupplierSearchIcon);
 		
 		txtSupplierSearch = new JTextField();
-		txtSupplierSearch.setFont(utility.getFont(20f));
+		txtSupplierSearch.setFont(gallery.getFont(20f));
 		txtSupplierSearch.setText("Search for supplier...");
 		txtSupplierSearch.setBorder(null);
 		sl_supplierSearchPanel.putConstraint(SpringLayout.NORTH, txtSupplierSearch, 0, SpringLayout.NORTH, supplierSearchPanel);
@@ -237,7 +237,7 @@ public class Inventory extends JFrame {
 		sl_supplierButtonPanel.putConstraint(SpringLayout.SOUTH, btnSupplierNew, -23, SpringLayout.SOUTH, supplierButtonPanel);
 		btnSupplierNew.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		btnSupplierNew.setHorizontalAlignment(SwingConstants.CENTER);
-		btnSupplierNew.setFont(utility.getFont(20f));
+		btnSupplierNew.setFont(gallery.getFont(20f));
 		supplierButtonPanel.add(btnSupplierNew);
 		
 		btnSupplierUpdate = new JLabel("Update");
@@ -247,7 +247,7 @@ public class Inventory extends JFrame {
 		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierNew, -6, SpringLayout.WEST, btnSupplierUpdate);
 		btnSupplierUpdate.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		btnSupplierUpdate.setHorizontalAlignment(SwingConstants.CENTER);
-		btnSupplierUpdate.setFont(utility.getFont(20f));
+		btnSupplierUpdate.setFont(gallery.getFont(20f));
 		supplierButtonPanel.add(btnSupplierUpdate);
 		
 		btnSupplierDelete = new JLabel("Delete");
@@ -258,7 +258,7 @@ public class Inventory extends JFrame {
 		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierDelete, -10, SpringLayout.EAST, supplierButtonPanel);
 		btnSupplierDelete.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		btnSupplierDelete.setHorizontalAlignment(SwingConstants.CENTER);
-		btnSupplierDelete.setFont(utility.getFont((20f)));
+		btnSupplierDelete.setFont(gallery.getFont((20f)));
 		supplierButtonPanel.add(btnSupplierDelete);
 		
 		productPanel = new RoundedPanel(Gallery.GRAY);
