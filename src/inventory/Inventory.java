@@ -41,6 +41,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * To be done by: Sebastian Garcia
+ * test
  */
 @SuppressWarnings("serial")
 public class Inventory extends JFrame {
@@ -48,13 +49,13 @@ public class Inventory extends JFrame {
 	private Gallery gallery;
 	private Utility utility;
 	
-	private JPanel mainPanel, navigationalPanel, displayPanel, supplierSearchPanel;
+	private JPanel mainPanel, navigationalPanel, displayPanel, supplierSearchPanel,
+				supplierPanel;
 	private JLabel btnDashboard, btnSupplier, btnProduct, btnSupplierNew;
 	private JPanel dashboardPanel, supplierButtonPanel;
 	private JScrollPane supplierPane;
 	
 	private CardLayout cardLayout;
-	private JPanel supplierPanel;
 	private JLabel lblSupplierList;
 	private JTable tblSupplierList;
 	private JLabel btnSupplierUpdate;
@@ -62,7 +63,6 @@ public class Inventory extends JFrame {
 	private JLabel lblSupplierSearchIcon;
 	private JTextField txtSupplierSearch;
 	private JPanel productPanel;
-
 
 
 	public static void main(String[] args) {
