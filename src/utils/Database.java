@@ -8,6 +8,11 @@ import java.sql.*;
 
 import javax.swing.ImageIcon;
 
+/**
+ * 
+ * @author Allen Glenn E. Castillo
+ *
+ */
 public class Database {
 	
 	private String db_url = "jdbc:mysql://localhost/?serverTimezone=UTC";
@@ -103,15 +108,29 @@ public class Database {
 		);
 	}
 	
-	public void uploadImage(String path) {
+	/**
+	 * 
+	 * @param productID The ID must be generated from the Utility class method generateProductID()
+	 * @param name The product's general name, may/may not include the brand and company name
+	 * @param path The path must come from the Utility's image chooser method namely showImageChooser()
+	 * @param stock The quantity of the initial stocks, default can be zero
+	 * @param uom The quantity description on how it will be sold or packaged, examples will be on kilograms or pieces
+	 * @param priceBought The buying price, this will be used in making statistics on the inventory
+	 * @param sellingPrice The selling price, this is also important for monitoring profit margin upon stocks
+	 * 
+	 * @see utils.Utility#showImageChooser()
+	 */
+	public void registerProduct(long productID, String name, 
+		String path, double stock, String uom, double priceBought, double sellingPrice
+	) {
 		try {
 			ps = con.prepareStatement(
 				"INSERT INTO product VALUES ("
 				+ "?, ?, ?, ?, ?, ?, ?"
 				+ ");"
 			);
-			ps.setLong(1, 5L);
-			ps.setString(2, "Apple");
+			ps.setLong(1, productID);
+			ps.setString(2, name);
 			//Inserting Blob type
 			InputStream in = new FileInputStream(path);
 			ps.setBinaryStream(3, in);
@@ -128,13 +147,15 @@ public class Database {
 		
 	}
 	
+	// TODO: Documentation and converting this method to get products 
+	// based on a keyword from any description like key-sensitive search engine
 	public ImageIcon getImage(long productID) {
 		try {
 			ps = con.prepareStatement(
-				  "SELECT image "
+				  "SELECT * "
 				  + "FROM product "
 				  + "WHERE product_id="
-				  + "5"
+				  + Long.toString(productID)
 				  + ";"
 			);
 			

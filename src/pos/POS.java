@@ -28,11 +28,14 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import utils.Database;
 import utils.Gallery;
 import utils.RoundedPanel;
+import utils.Utility;
 import utils.VerticalLabelUI;
 
 
 /**
+ * 
  * @author Allen Glenn E. Castillo
+ *
  */
 @SuppressWarnings("serial")
 public class POS extends JFrame {
@@ -62,11 +65,10 @@ public class POS extends JFrame {
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
 	
+	private Utility utility;
 	private Database database;
 	private Gallery gallery;
 	private VerticalLabelUI verticalUI;
-	
-	private File file;
 	
 	
 	public static void main(String[] args) {
@@ -79,6 +81,7 @@ public class POS extends JFrame {
 	}
 
 	public POS() {
+		utility = new Utility();
 		database = new Database();
 		gallery = new Gallery();
 		
@@ -341,26 +344,16 @@ public class POS extends JFrame {
 				System.out.println("Cancel");
 			}
 		});
-		
-		JFileChooser chooser = new JFileChooser();
-	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-	        "JPG, PNG & GIF Images", "jpg", "gif", "png");
-	    chooser.setFileFilter(filter);
-	    int returnVal = chooser.showOpenDialog(this);
-	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	       file = chooser.getSelectedFile();
-	       System.out.println(file.getPath());
-	    }
-	    
 		lblAddToCart.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblAddToCart); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblAddToCart); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println("Add To Cart");
 				// TODO: Test passed, refactor to adapt to system
-				
-				testTestTest.setIcon(database.getImage(5L));
+				String imagePath = utility.showImageChooser();
+				if (imagePath != null) {
+					
+				}testTestTest.setIcon(database.getImage(5L));
 			}
 		});
 		tfSearch.addFocusListener(new FocusAdapter() {
