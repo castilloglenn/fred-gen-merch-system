@@ -114,9 +114,9 @@ public class Inventory extends JFrame {
 		
 		
 		navigationalPanel = new RoundedPanel(Gallery.BLUE);
-		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationalPanel, 90, SpringLayout.NORTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationalPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, navigationalPanel, -15, SpringLayout.WEST, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationalPanel, 465, SpringLayout.NORTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationalPanel, 390, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, navigationalPanel, 75, SpringLayout.WEST, mainPanel);;	
 		navigationalPanel.setBackground(Gallery.BLUE);
 		mainPanel.add(navigationalPanel);
@@ -310,8 +310,8 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnSupplierNew);}
 			@Override
 			public void mouseClicked(MouseEvent e) { 	
-			invSupplierAdd.setVisible(true);
-			invSupplierAdd.setLocationRelativeTo(null);
+				invSupplierAdd.setVisible(true);
+				invSupplierAdd.setLocationRelativeTo(null);
 			;}
 		});
 		
