@@ -1,6 +1,12 @@
 package utils;
 
+import java.awt.Image;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.*;
+
+import javax.swing.ImageIcon;
 
 public class Database {
 	
@@ -97,4 +103,58 @@ public class Database {
 		);
 	}
 	
+	public void uploadImage(String path) {
+		try {
+			ps = con.prepareStatement(
+				"INSERT INTO product VALUES ("
+				+ "?, ?, ?, ?, ?, ?, ?"
+				+ ");"
+			);
+			ps.setLong(1, 5L);
+			ps.setString(2, "Apple");
+			//Inserting Blob type
+			InputStream in = new FileInputStream(path);
+			ps.setBinaryStream(3, in);
+			ps.setDouble(4, 5.5);
+			ps.setString(5, "piece");
+			ps.setDouble(6, 10.5);
+			ps.setDouble(7, 12.5);
+			ps.executeUpdate();
+		} catch (SQLException e ) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public ImageIcon getImage(long productID) {
+		try {
+			ps = con.prepareStatement(
+				  "SELECT image "
+				  + "FROM product "
+				  + "WHERE product_id="
+				  + "5"
+				  + ";"
+			);
+			
+			ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                byte[] img = rs.getBytes("image");
+                //Resize The ImageIcon
+                ImageIcon image = new ImageIcon(img);
+                Image im = image.getImage();
+                Image myImg = im.getScaledInstance(64, 64,Image.SCALE_SMOOTH);
+                ImageIcon newImage = new ImageIcon(myImg);
+                return newImage;
+            }
+            else{
+                System.out.println("Wala");
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+		
+		return null;
+	}
 }
