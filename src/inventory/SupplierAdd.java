@@ -29,7 +29,7 @@ public class SupplierAdd extends JFrame {
 	private Gallery gallery;
 	
 	private JPanel contentPane, p, formsPanel, buttonPanel;
-	private JLabel lblNewSupplier, btnCancel, btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress;
+	private JLabel btnCancel, btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress;
 	private JTextField txtName, txtSupplierID, txtContactNumber, txtAddress;
 	
 	/**
@@ -83,14 +83,6 @@ public class SupplierAdd extends JFrame {
 		sl_p.putConstraint(SpringLayout.EAST, formsPanel, -10, SpringLayout.EAST, p);
 		formsPanel.setBackground(gallery.WHITE);
 		p.add(formsPanel);
-		
-		lblNewSupplier = new JLabel("New Supplier");
-		sl_p.putConstraint(SpringLayout.SOUTH, lblNewSupplier, -6, SpringLayout.NORTH, formsPanel);
-		sl_p.putConstraint(SpringLayout.EAST, lblNewSupplier, 139, SpringLayout.WEST, formsPanel);
-		sl_p.putConstraint(SpringLayout.NORTH, lblNewSupplier, 10, SpringLayout.NORTH, p);
-		sl_p.putConstraint(SpringLayout.WEST, lblNewSupplier, 0, SpringLayout.WEST, formsPanel);
-		lblNewSupplier.setFont(gallery.getFont(20f));
-		p.add(lblNewSupplier);
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, 6, SpringLayout.SOUTH, formsPanel);
@@ -163,10 +155,25 @@ public class SupplierAdd extends JFrame {
 		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnAdd, 0, SpringLayout.WEST, btnCancel);
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnAdd, -15, SpringLayout.NORTH, btnCancel);
 		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnAdd, 0, SpringLayout.EAST, btnCancel);
-		btnAdd.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		btnAdd.setFont(gallery.getFont(15f));
-		btnAdd.setHorizontalAlignment(SwingConstants.CENTER);
+		btnAdd.setName("primary");
+		gallery.styleLabelToButton(btnAdd, 15f, 15, 10);
 		buttonPanel.add(btnAdd);
+		
+		JPanel newSupplierPanel = new RoundedPanel(Gallery.BLUE);
+		sl_p.putConstraint(SpringLayout.NORTH, newSupplierPanel, -15, SpringLayout.NORTH, p);
+		sl_p.putConstraint(SpringLayout.WEST, newSupplierPanel, -15, SpringLayout.WEST, p);
+		sl_p.putConstraint(SpringLayout.SOUTH, newSupplierPanel, 50, SpringLayout.NORTH, p);
+		sl_p.putConstraint(SpringLayout.EAST, newSupplierPanel, 200, SpringLayout.WEST, p);
+		p.add(newSupplierPanel);
+		SpringLayout sl_newSupplierPanel = new SpringLayout();
+		newSupplierPanel.setLayout(sl_newSupplierPanel);
+		
+		JLabel lblNewSupplier = new JLabel("New Supplier");
+		sl_newSupplierPanel.putConstraint(SpringLayout.NORTH, lblNewSupplier, 23, SpringLayout.NORTH, newSupplierPanel);
+		lblNewSupplier.setFont(gallery.getFont(22f));
+		lblNewSupplier.setForeground(Color.WHITE);
+		sl_newSupplierPanel.putConstraint(SpringLayout.WEST, lblNewSupplier, 30, SpringLayout.WEST, newSupplierPanel);
+		newSupplierPanel.add(lblNewSupplier);
 		
 		
 		
@@ -174,9 +181,9 @@ public class SupplierAdd extends JFrame {
 		
 		btnAdd.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { mouseEnter2(btnAdd);}
+			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnAdd);}
 			@Override
-			public void mouseExited(MouseEvent e) { mouseExit2(btnAdd);}
+			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnAdd);}
 			@Override
 			public void mouseClicked(MouseEvent e) { System.out.println("Added");}
 		});
@@ -192,17 +199,5 @@ public class SupplierAdd extends JFrame {
 		
 		
 	}
-		
-	//Methods
-	public void mouseEnter2(JLabel label) {
-		label.setBackground(Gallery.BLUE);
-		label.setForeground(Gallery.WHITE);
-		label.setOpaque(true);
-		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	}
 	
-	public void mouseExit2(JLabel label) {
-		label.setBackground(Gallery.WHITE);
-		label.setForeground(Gallery.BLACK);
-	}
 }

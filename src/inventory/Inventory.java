@@ -13,6 +13,7 @@ import utils.RoundedPanel;
 import utils.Database;
 
 import utils.Utility;
+import utils.VerticalLabelUI;
 
 import javax.swing.SpringLayout;
 import java.awt.Color;
@@ -37,6 +38,8 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 
 /**
@@ -63,7 +66,9 @@ public class Inventory extends JFrame {
 	private JLabel lblSupplierSearchIcon;
 	private JTextField txtSupplierSearch;
 	private JPanel productPanel;
+	private VerticalLabelUI verticalUI;
 
+	private String supplierSearchMessage = "Search for Supplier...";
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -94,7 +99,10 @@ public class Inventory extends JFrame {
 		 * lblNewLabel.setFont(gallery.font);
 		 */
 		
-		setMinimumSize(new Dimension(640, 480));
+		// rotated 90 degrees counter-clockwise
+		verticalUI = new VerticalLabelUI(false);
+		
+		setMinimumSize(new Dimension(990, 600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
 		mainPanel = new JPanel();
@@ -106,11 +114,11 @@ public class Inventory extends JFrame {
 		
 		
 		navigationalPanel = new RoundedPanel(Gallery.BLUE);
-		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationalPanel, 100, SpringLayout.NORTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationalPanel, 90, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, navigationalPanel, -15, SpringLayout.WEST, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationalPanel, -100, SpringLayout.SOUTH, mainPanel);;	
+		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationalPanel, 465, SpringLayout.NORTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.EAST, navigationalPanel, 75, SpringLayout.WEST, mainPanel);;	
 		navigationalPanel.setBackground(Gallery.BLUE);
-		sl_mainPanel.putConstraint(SpringLayout.EAST, navigationalPanel, 162, SpringLayout.WEST, mainPanel);
 		mainPanel.add(navigationalPanel);
 		
 		displayPanel = new JPanel();
@@ -121,38 +129,34 @@ public class Inventory extends JFrame {
 		navigationalPanel.setLayout(sl_navigationalPanel);
 		cardLayout = new CardLayout(0, 0);
 		
-		
 		btnDashboard = new JLabel("Dashboard");
-		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnDashboard, 104, SpringLayout.NORTH, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnDashboard, 0, SpringLayout.WEST, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnDashboard, -1, SpringLayout.EAST, navigationalPanel);
-		btnDashboard.setIcon(gallery.getImage("dashboard.png", 15));
-		btnDashboard.setFont(gallery.getFont(20f));
-		btnDashboard.setForeground(new Color(237, 237, 233));
-		btnDashboard.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnDashboard, 20, SpringLayout.NORTH, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnDashboard, 25, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnDashboard, -10, SpringLayout.EAST, navigationalPanel);
+		btnDashboard.setName("primary");
+		gallery.styleLabelToButton(btnDashboard, 15f, "dashboard.png", 15, 10, 10);
+		btnDashboard.setUI(verticalUI);
 		navigationalPanel.add(btnDashboard);
 		
 		btnSupplier = new JLabel("Supplier");
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnSupplier, -1, SpringLayout.EAST, navigationalPanel);
-		btnSupplier.setFont(gallery.getFont(20f));
-		btnSupplier.setForeground(new Color(237, 237, 233));
-		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnSupplier, 18, SpringLayout.SOUTH, btnDashboard);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnSupplier, 0, SpringLayout.WEST, navigationalPanel);
-		btnSupplier.setIcon(gallery.getImage("supplier.png", 15));
-		btnSupplier.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnSupplier, 10, SpringLayout.SOUTH, btnDashboard);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnSupplier, 25, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnSupplier, -10, SpringLayout.EAST, navigationalPanel);
+		btnSupplier.setName("primary");
+		gallery.styleLabelToButton(btnSupplier, 15f, "supplier.png", 15, 10, 10);
+		btnSupplier.setUI(verticalUI);
 		navigationalPanel.add(btnSupplier);
 		
 		btnProduct = new JLabel("Product");
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnProduct, -1, SpringLayout.EAST, navigationalPanel);
-		btnProduct.setForeground(new Color(237, 237, 233));
-		btnProduct.setFont(gallery.getFont(20f));
-		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnProduct, 19, SpringLayout.SOUTH, btnSupplier);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnProduct, 0, SpringLayout.WEST, navigationalPanel);
-		btnProduct.setIcon(gallery.getImage("product.png", 15));
-		btnProduct.setHorizontalAlignment(SwingConstants.CENTER);
-		navigationalPanel.add(btnProduct);
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnProduct, 10, SpringLayout.SOUTH, btnSupplier);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnProduct, 25, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnProduct, -10, SpringLayout.EAST, navigationalPanel);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, displayPanel, -15, SpringLayout.EAST, mainPanel);
+		btnProduct.setName("primary");
+		gallery.styleLabelToButton(btnProduct, 15f, "product.png", 15, 10, 10);
+		btnProduct.setUI(verticalUI);
+		navigationalPanel.add(btnProduct);
 		mainPanel.add(displayPanel);
 		displayPanel.setLayout(cardLayout);
 		
@@ -211,13 +215,13 @@ public class Inventory extends JFrame {
 		supplierSearchPanel.add(lblSupplierSearchIcon);
 		
 		txtSupplierSearch = new JTextField();
+		gallery.styleTextField(txtSupplierSearch, supplierSearchMessage, 15f);
+		sl_supplierSearchPanel.putConstraint(SpringLayout.NORTH, txtSupplierSearch, 5, SpringLayout.NORTH, supplierSearchPanel);
+		sl_supplierSearchPanel.putConstraint(SpringLayout.SOUTH, txtSupplierSearch, -5, SpringLayout.SOUTH, supplierSearchPanel);
+		sl_supplierSearchPanel.putConstraint(SpringLayout.EAST, txtSupplierSearch, -5, SpringLayout.EAST, supplierSearchPanel);
 		txtSupplierSearch.setFont(gallery.getFont(20f));
-		txtSupplierSearch.setText("Search for supplier...");
 		txtSupplierSearch.setBorder(null);
-		sl_supplierSearchPanel.putConstraint(SpringLayout.NORTH, txtSupplierSearch, 0, SpringLayout.NORTH, supplierSearchPanel);
 		sl_supplierSearchPanel.putConstraint(SpringLayout.WEST, txtSupplierSearch, 3, SpringLayout.EAST, lblSupplierSearchIcon);
-		sl_supplierSearchPanel.putConstraint(SpringLayout.SOUTH, txtSupplierSearch, 0, SpringLayout.SOUTH, supplierSearchPanel);
-		sl_supplierSearchPanel.putConstraint(SpringLayout.EAST, txtSupplierSearch, 1, SpringLayout.EAST, supplierSearchPanel);
 		supplierSearchPanel.add(txtSupplierSearch);
 		txtSupplierSearch.setColumns(10);
 		
@@ -275,25 +279,25 @@ public class Inventory extends JFrame {
 		
 		// NOTE: Please put all mouse listeners here at the end
 		btnDashboard.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { mouseEnter(btnDashboard);}
-			@Override public void mouseExited(MouseEvent e) { mouseExit(btnDashboard); }
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnDashboard);;}
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnDashboard); }
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {cardLayout.show(displayPanel, "dashboard");}
 
 		});
 		btnSupplier.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { mouseEnter(btnSupplier);}
-			@Override public void mouseExited(MouseEvent e) { mouseExit(btnSupplier); }
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnSupplier);}
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnSupplier); }
 			
 			@Override
 			public void mouseClicked(MouseEvent e) { cardLayout.show(displayPanel, "supplier");}
 
 		});
 		btnProduct.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) {mouseEnter(btnProduct);}
+			@Override public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnProduct);}
 			
-			@Override public void mouseExited(MouseEvent e) { mouseExit(btnProduct);}
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnProduct);}
 
 			@Override
 			public void mouseClicked(MouseEvent e) { cardLayout.show(displayPanel, "product");}
@@ -301,9 +305,9 @@ public class Inventory extends JFrame {
 		
 		btnSupplierNew.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) {mouseEnter2(btnSupplierNew);}
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnSupplierNew);}
 			@Override
-			public void mouseExited(MouseEvent e) {mouseExit2(btnSupplierNew);}
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnSupplierNew);}
 			@Override
 			public void mouseClicked(MouseEvent e) { 	
 			invSupplierAdd.setVisible(true);
@@ -313,51 +317,33 @@ public class Inventory extends JFrame {
 		
 		btnSupplierUpdate.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { mouseEnter2(btnSupplierUpdate);}
+			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnSupplierUpdate);}
 			@Override
-			public void mouseExited(MouseEvent e) { mouseExit2(btnSupplierUpdate);}
+			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnSupplierUpdate);}
 		});
 		
 		btnSupplierDelete.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) {mouseEnter2(btnSupplierDelete);}
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnSupplierDelete);}
 			@Override
-			public void mouseExited(MouseEvent e) {mouseExit2(btnSupplierDelete);}
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnSupplierDelete);}
 		});
 		
-		txtSupplierSearch.addMouseListener(new MouseAdapter() {
+		txtSupplierSearch.addFocusListener(new FocusAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) { txtSupplierSearch.setText("");}
+			public void focusGained(FocusEvent e) {
+				gallery.textFieldFocusGained(txtSupplierSearch, supplierSearchMessage);
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				gallery.textFieldFocusLost(txtSupplierSearch, supplierSearchMessage);
+			}
 		});
 		
 	}
 	
-
 	
-	/**
-	 *  Can be used to other UI's, if so, transfer to Utility class.
-	 */
-	public void mouseEnter(JLabel label) {
-		label.setBackground(Gallery.WHITE);
-		label.setForeground(Gallery.BLACK);
-		label.setOpaque(true);
-		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	}
 	
-	public void mouseEnter2(JLabel label) {
-		label.setBackground(Gallery.BLUE);
-		label.setForeground(Gallery.WHITE);
-		label.setOpaque(true);
-		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	}
 	
-	public void mouseExit(JLabel label) {
-		label.setBackground(Gallery.BLUE);
-		label.setForeground(Gallery.WHITE);
-	}
-	
-	public void mouseExit2(JLabel label) {
-		label.setBackground(Gallery.WHITE);
-		label.setForeground(Gallery.BLACK);
-	}
 }
+
