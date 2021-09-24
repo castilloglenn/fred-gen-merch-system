@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.ReadOnlyFileSystemException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -30,6 +31,8 @@ import utils.Gallery;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 /**
@@ -65,8 +68,11 @@ public class POS extends JFrame {
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
 	
+	private int querySize = 0;
+	private Object[][] queryResult;
+	
 	private Utility utility;
-	private Database database;
+	private Database database; 
 	private Gallery gallery;
 	private VerticalLabelUI verticalUI;
 	
@@ -349,11 +355,7 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblAddToCart); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO: Test passed, refactor to adapt to system
-				String imagePath = utility.showImageChooser();
-				if (imagePath != null) {
-					
-				}testTestTest.setIcon(database.getImage(5L));
+				System.out.println("Add to cart");
 			}
 		});
 		tfSearch.addFocusListener(new FocusAdapter() {
@@ -364,6 +366,22 @@ public class POS extends JFrame {
 			@Override
 			public void focusLost(FocusEvent e) {
 				gallery.textFieldFocusLost(tfSearch, defaultSearchMessage);
+			}
+		});
+		tfSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String keyword = tfSearch.getText();
+				Object[][] result = database.getProductsByKeyword(keyword);
+				if (result != null) {
+					System.out.println(result.length);
+					for (Object[] row : result) {
+						for (Object key : row) {
+							System.out.print(key + " ");
+						}
+						System.out.println();
+					}
+				}
 			}
 		});
 		tfQuantity.addFocusListener(new FocusAdapter() {

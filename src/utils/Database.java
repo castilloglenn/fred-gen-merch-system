@@ -23,7 +23,9 @@ public class Database {
 	private Connection con;
 	private Statement stmt;
 	private PreparedStatement ps;
-	private Utility ut;
+	
+	private ImageIcon image, newImage;
+	private Image im, myImg;
 	
 	public Database() {
 		try {
@@ -147,35 +149,61 @@ public class Database {
 		
 	}
 	
-	// TODO: Documentation and converting this method to get products 
-	// based on a keyword from any description like key-sensitive search engine
-	public ImageIcon getImage(long productID) {
+	/**
+	 * The information stored in the rows are only the following: product_id, name, image, uom and selling_price
+	 * 
+	 * @param keyword key-sensitive search term use to get products from the database.
+	 * @return 2-dimensional array of products.
+	 * 			<br> returns null if there are no results.
+	 */
+	public Object[][] getProductsByKeyword(String keyword) {
 		try {
 			ps = con.prepareStatement(
-				  "SELECT * "
-				  + "FROM product "
-				  + "WHERE product_id="
-				  + Long.toString(productID)
-				  + ";"
+					"SELECT * " 
+					+ "FROM product " 
+					+ "WHERE product_id LIKE ? " 
+					+ "OR name LIKE ? " 
+					+ "ORDER BY name"
+				+ ";", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
 			);
-			
+			ps.setString(1, "%" + keyword + "%");
+			ps.setString(2, "%" + keyword + "%");
 			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] resultProducts = new Object[size][5];
+			
+		    int index = 0;
             if(rs.next()){
+            	Object[] productRow = new Object[5];
+            	
+            	productRow[0] = rs.getLong("product_id");
+            	productRow[1] = rs.getString("name");
+            	
                 byte[] img = rs.getBytes("image");
-                //Resize The ImageIcon
-                ImageIcon image = new ImageIcon(img);
-                Image im = image.getImage();
-                Image myImg = im.getScaledInstance(64, 64,Image.SCALE_SMOOTH);
-                ImageIcon newImage = new ImageIcon(myImg);
-                return newImage;
+                image = new ImageIcon(img);
+                im = image.getImage();
+                myImg = im.getScaledInstance(64, 64,Image.SCALE_SMOOTH);
+                newImage = new ImageIcon(myImg);
+                
+                productRow[2] = newImage;
+                productRow[3] = rs.getString("uom");
+                productRow[4] = rs.getDouble("selling_price");
+                
+                resultProducts[index] = productRow;
+                index++;
             }
-            else{
-                System.out.println("Wala");
-            }
+            
+            return resultProducts;
         }catch(Exception ex){
             ex.printStackTrace();
+    		return null;
         }
-		
-		return null;
 	}
 }

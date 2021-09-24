@@ -27,7 +27,7 @@ public class Utility {
 	 * @return String - the absolute path of the image selected
 	 * 			<br> null - if the user did not press the select or closed the file chooser
 	 * 
-	 * @see java.swing.JFileChooser
+	 * @see javax.swing.JFileChooser
 	 */
 	public String showImageChooser() {
 	    filter = new FileNameExtensionFilter(
