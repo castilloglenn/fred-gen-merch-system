@@ -16,14 +16,22 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.JComboBox;
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.border.LineBorder;
 
 public class SupplierUpdate extends JFrame {
 
-	private JPanel contentPane, p, formsPanel, buttonPanel;
+	private JPanel contentPane, p, formsPanel, buttonPanel, manageSupplierPanel;
+	private JLabel lblName, lblManageSupplier, lblSupplierID, lblContactNumber, lblAddress, btnConfirm, btnCancel;
+	private JComboBox comboSupplierID;
+	private JTextField txtName, txtContactNumber;
+	private JTextArea txtAddress;
 	
 	private Utility utility;
 	private Gallery gallery;
-	private JLabel lblManageSupplier;
+	
 	
 	
 	/**
@@ -85,18 +93,62 @@ public class SupplierUpdate extends JFrame {
 		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, -193, SpringLayout.EAST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -11, SpringLayout.SOUTH, p);
 		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, -10, SpringLayout.EAST, p);
+		formsPanel.setLayout(null);
 		p.add(buttonPanel);
 		SpringLayout sl_buttonPanel = new SpringLayout();
 		buttonPanel.setLayout(sl_buttonPanel);
 		
-		JLabel btnConfirm = new JLabel("Confirm");
+		lblSupplierID = new JLabel("Supplier ID");
+		lblSupplierID.setFont(gallery.getFont(15f));
+		lblSupplierID.setBounds(10, 11, 80, 25);
+		formsPanel.add(lblSupplierID);
+		
+		comboSupplierID = new JComboBox();
+		comboSupplierID.setFont(gallery.getFont(15f));
+		comboSupplierID.setBounds(141, 11, 146, 25);
+		formsPanel.add(comboSupplierID);
+		
+		lblName = new JLabel("Name");
+		lblName.setFont(gallery.getFont(15f));
+		lblName.setBounds(10, 47, 80, 25);
+		formsPanel.add(lblName);
+		
+		lblContactNumber = new JLabel("Contact Number");
+		lblContactNumber.setFont(gallery.getFont(15f));
+		lblContactNumber.setBounds(10, 85, 131, 25);
+		formsPanel.add(lblContactNumber);
+		
+		lblAddress = new JLabel("Address");
+		lblAddress.setFont(gallery.getFont(15f));
+		lblAddress.setBounds(10, 121, 80, 25);
+		formsPanel.add(lblAddress);
+		
+		txtName = new JTextField();
+		txtName.setFont(gallery.getFont(15f));
+		txtName.setBounds(141, 47, 305, 25);
+		formsPanel.add(txtName);
+		txtName.setColumns(10);
+		
+		txtContactNumber = new JTextField();
+		txtContactNumber.setFont(gallery.getFont(15f));
+		txtContactNumber.setColumns(10);
+		txtContactNumber.setBounds(141, 85, 305, 25);
+		formsPanel.add(txtContactNumber);
+		
+		txtAddress = new JTextArea();
+		txtAddress.setFont(gallery.getFont(15f));
+		txtAddress.setBorder(new LineBorder(new Color(0, 0, 0)));
+		txtAddress.setBounds(141, 119, 305, 70);
+		formsPanel.add(txtAddress);
+				
+		btnConfirm = new JLabel("Confirm");
 		btnConfirm.setName("primary");
 		gallery.styleLabelToButton(btnConfirm, 15f, 15, 10);
 		btnConfirm.setHorizontalAlignment(SwingConstants.CENTER);
 		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnConfirm, 10, SpringLayout.NORTH, buttonPanel);
 		buttonPanel.add(btnConfirm);
 		
-		JLabel btnCancel = new JLabel("Cancel");
+		btnCancel = new JLabel("Cancel");
 		btnCancel.setName("danger");
 		gallery.styleLabelToButton(btnCancel, 15f, 15, 10);
 		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnConfirm, 0, SpringLayout.WEST, btnCancel);
@@ -109,7 +161,7 @@ public class SupplierUpdate extends JFrame {
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnCancel, -10, SpringLayout.SOUTH, buttonPanel);
 		buttonPanel.add(btnCancel);
 		
-		JPanel manageSupplierPanel = new RoundedPanel(gallery.BLUE);
+		manageSupplierPanel = new RoundedPanel(gallery.BLUE);
 		sl_p.putConstraint(SpringLayout.NORTH, manageSupplierPanel, -15, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, manageSupplierPanel, -15, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, manageSupplierPanel, 50, SpringLayout.NORTH, p);

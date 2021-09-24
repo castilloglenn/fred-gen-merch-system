@@ -22,6 +22,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.border.LineBorder;
 import javax.swing.JTextField;
+import javax.swing.JTextArea;
 
 public class SupplierAdd extends JFrame {
 	
@@ -30,7 +31,9 @@ public class SupplierAdd extends JFrame {
 	
 	private JPanel contentPane, p, formsPanel, buttonPanel, newSupplierPanel;
 	private JLabel btnCancel, btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress;
-	private JTextField txtName, txtSupplierID, txtContactNumber, txtAddress;
+	private JTextField txtName, txtSupplierID, txtContactNumber;
+	private JTextArea textArea;
+	private JTextArea txtAddress;
 	
 	/**
 	 * Launch the application.
@@ -90,47 +93,51 @@ public class SupplierAdd extends JFrame {
 		
 		lblSupplierID = new JLabel("Supplier ID");
 		lblSupplierID.setFont(gallery.getFont(15f));
-		lblSupplierID.setBounds(10, 22, 80, 25);
+		lblSupplierID.setBounds(10, 11, 80, 25);
 		formsPanel.add(lblSupplierID);
 		
 		lblName = new JLabel("Name");
 		lblName.setFont(gallery.getFont(15f));
-		lblName.setBounds(10, 65, 80, 25);
+		lblName.setBounds(10, 54, 80, 25);
 		formsPanel.add(lblName);
 		
 		txtName = new JTextField();
 		txtName.setFont(gallery.getFont(15f));
 		txtName.setColumns(10);
-		txtName.setBounds(153, 59, 276, 27);
+		txtName.setBounds(160, 49, 276, 27);
 		formsPanel.add(txtName);
 		
 		txtSupplierID = new JTextField();
 		txtSupplierID.setFont(gallery.getFont(15f));
 		txtSupplierID.setEditable(false);
 		txtSupplierID.setColumns(10);
-		txtSupplierID.setBounds(153, 21, 151, 27);
+		txtSupplierID.setBounds(160, 11, 151, 27);
 		formsPanel.add(txtSupplierID);
 		
 		lblContactNumber = new JLabel("Contact Number");
 		lblContactNumber.setFont(gallery.getFont(15f));
-		lblContactNumber.setBounds(10, 99, 133, 25);
+		lblContactNumber.setBounds(10, 88, 133, 25);
 		formsPanel.add(lblContactNumber);
 		
 		txtContactNumber = new JTextField();
 		txtContactNumber.setFont(gallery.getFont(15f));
 		txtContactNumber.setColumns(10);
-		txtContactNumber.setBounds(153, 101, 276, 27);
+		txtContactNumber.setBounds(160, 91, 276, 27);
 		formsPanel.add(txtContactNumber);
 		
 		lblAddress = new JLabel("Address");
 		lblAddress.setFont(gallery.getFont(15f));
-		lblAddress.setBounds(10, 140, 133, 25);
+		lblAddress.setBounds(10, 129, 126, 25);
 		formsPanel.add(lblAddress);
 		
-		txtAddress = new JTextField();
+		textArea = new JTextArea();
+		textArea.setBounds(153, 140, 5, 22);
+		formsPanel.add(textArea);
+		
+		txtAddress = new JTextArea();
 		txtAddress.setFont(gallery.getFont(15f));
-		txtAddress.setColumns(10);
-		txtAddress.setBounds(153, 139, 276, 27);
+		txtAddress.setBorder(new LineBorder(new Color(0, 0, 0)));
+		txtAddress.setBounds(160, 129, 276, 74);
 		formsPanel.add(txtAddress);
 		
 		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, -193, SpringLayout.EAST, p);
