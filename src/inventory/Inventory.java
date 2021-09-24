@@ -241,17 +241,19 @@ public class Inventory extends JFrame {
 		sl_supplierButtonPanel.putConstraint(SpringLayout.SOUTH, btnSupplierNew, -23, SpringLayout.SOUTH, supplierButtonPanel);
 		btnSupplierNew.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		btnSupplierNew.setHorizontalAlignment(SwingConstants.CENTER);
-		btnSupplierNew.setFont(gallery.getFont(20f));
+		btnSupplierNew.setName("primary");
+		gallery.styleLabelToButton(btnSupplierNew, 15f, 15, 10);
 		supplierButtonPanel.add(btnSupplierNew);
 		
-		btnSupplierUpdate = new JLabel("Update");
+		btnSupplierUpdate = new JLabel("Manage");
 		sl_supplierButtonPanel.putConstraint(SpringLayout.NORTH, btnSupplierUpdate, 22, SpringLayout.NORTH, supplierButtonPanel);
 		sl_supplierButtonPanel.putConstraint(SpringLayout.WEST, btnSupplierUpdate, 125, SpringLayout.WEST, supplierButtonPanel);
 		sl_supplierButtonPanel.putConstraint(SpringLayout.SOUTH, btnSupplierUpdate, -23, SpringLayout.SOUTH, supplierButtonPanel);
 		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierNew, -6, SpringLayout.WEST, btnSupplierUpdate);
 		btnSupplierUpdate.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		btnSupplierUpdate.setHorizontalAlignment(SwingConstants.CENTER);
-		btnSupplierUpdate.setFont(gallery.getFont(20f));
+		btnSupplierUpdate.setName("primary");
+		gallery.styleLabelToButton(btnSupplierUpdate, 15f, 15, 10);
 		supplierButtonPanel.add(btnSupplierUpdate);
 		
 		btnSupplierDelete = new JLabel("Delete");
@@ -262,7 +264,8 @@ public class Inventory extends JFrame {
 		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierDelete, -10, SpringLayout.EAST, supplierButtonPanel);
 		btnSupplierDelete.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		btnSupplierDelete.setHorizontalAlignment(SwingConstants.CENTER);
-		btnSupplierDelete.setFont(gallery.getFont((20f)));
+		btnSupplierDelete.setName("danger");
+		gallery.styleLabelToButton(btnSupplierDelete, 15f, 15, 10);
 		supplierButtonPanel.add(btnSupplierDelete);
 		
 		productPanel = new RoundedPanel(Gallery.GRAY);
