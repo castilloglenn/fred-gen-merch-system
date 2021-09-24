@@ -32,6 +32,7 @@ public class Gallery {
 	public static Color DARK_BLUE = new Color(0, 112, 224); // 2 down the palette
 	public static Color GRAY = new Color(237, 237, 233);
 	public static Color LIGHT_GRAY = new Color(218, 218, 210); // 2 down the palette
+	public static Color DARK_GRAY = new Color(145, 145, 120); // 10 down the palette
 	public static Color BLACK = new Color(5, 25, 35);
 	public static Color RED = new Color(216, 74, 49);
 	public static Color DARK_RED = new Color(188, 59, 36); // 2 down the palette
@@ -47,6 +48,8 @@ public class Gallery {
 	public static Color DANGER_BUTTON_BACKGROUND_HOVER = Gallery.RED;
 	public static Color DANGER_BUTTON_FOREGROUND = Gallery.RED;
 	public static Color DANGER_BUTTON_FOREGROUND_HOVER = Gallery.WHITE;
+	
+	
 	
 	private String fontName = "OpenSans-SemiBold";
 	private SimpleDateFormat sdf;

@@ -362,7 +362,17 @@ public class POS extends JFrame {
 			public void componentResized(ComponentEvent e) {
 				breakpointTrigger = getWidth() <= minWidth;
 				lblDateTime.setText(gallery.getTime(breakpointTrigger));
-				System.out.println(lblNotFoundLabel.getSize());
+				
+				// Not found query card sizing
+				Dimension querySize = queryEmptyPanel.getSize();
+				int messageWidth = lblNotFoundLabel.getWidth() + lblNotFoundImage.getWidth(); 
+				
+				sl_queryEmptyPanel.putConstraint(SpringLayout.NORTH, lblNotFoundImage, (int) (querySize.getHeight() - lblNotFoundImage.getHeight()) / 2, SpringLayout.NORTH, queryEmptyPanel);
+				sl_queryEmptyPanel.putConstraint(SpringLayout.WEST, lblNotFoundImage, (int) (querySize.getWidth() - messageWidth) / 2, SpringLayout.WEST, queryEmptyPanel);
+				
+				// Force update of the frame
+				repaint();
+				revalidate();
 			}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
