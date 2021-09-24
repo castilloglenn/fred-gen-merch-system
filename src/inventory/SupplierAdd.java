@@ -151,6 +151,7 @@ public class SupplierAdd extends JFrame {
 		buttonPanel.add(btnCancel);
 		
 		btnAdd = new JLabel("Add");
+		btnAdd.setHorizontalAlignment(SwingConstants.CENTER);
 		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnAdd, 10, SpringLayout.NORTH, buttonPanel);
 		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnAdd, 0, SpringLayout.WEST, btnCancel);
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnAdd, -15, SpringLayout.NORTH, btnCancel);
