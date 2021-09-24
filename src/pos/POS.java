@@ -42,6 +42,8 @@ import javax.swing.BoxLayout;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.FlowLayout;
+import java.awt.event.WindowStateListener;
+import java.awt.event.WindowEvent;
 
 
 /**
@@ -322,15 +324,14 @@ public class POS extends JFrame {
 		queryEmptyPanel.setLayout(sl_queryEmptyPanel);
 		
 		lblNotFoundImage = new JLabel(gallery.getImage("not-found.png", 170, 190));
-		sl_queryEmptyPanel.putConstraint(SpringLayout.NORTH, lblNotFoundImage, 14, SpringLayout.NORTH, queryEmptyPanel);
-		sl_queryEmptyPanel.putConstraint(SpringLayout.WEST, lblNotFoundImage, 56, SpringLayout.WEST, queryEmptyPanel);
+		sl_queryEmptyPanel.putConstraint(SpringLayout.NORTH, lblNotFoundImage, 0, SpringLayout.NORTH, queryEmptyPanel);
+		sl_queryEmptyPanel.putConstraint(SpringLayout.WEST, lblNotFoundImage, 0, SpringLayout.WEST, queryEmptyPanel);
+		sl_queryEmptyPanel.putConstraint(SpringLayout.SOUTH, lblNotFoundImage, 0, SpringLayout.SOUTH, queryEmptyPanel);
+		sl_queryEmptyPanel.putConstraint(SpringLayout.EAST, lblNotFoundImage, 0, SpringLayout.EAST, queryEmptyPanel);
+		// This set text must be set dynamically based on the input
+		lblNotFoundImage.setText("<html><p>No results found with the<br>keyword \"Bath Water\"");
+		lblNotFoundImage.setFont(gallery.getFont(15f));
 		queryEmptyPanel.add(lblNotFoundImage);
-		
-		lblNotFoundLabel = new JLabel("<html><p>No results found with the<br>keyword \"bath water\"</p></html>");
-		sl_queryEmptyPanel.putConstraint(SpringLayout.WEST, lblNotFoundLabel, 10, SpringLayout.EAST, lblNotFoundImage);
-		lblNotFoundLabel.setFont(gallery.getFont(15f));
-		sl_queryEmptyPanel.putConstraint(SpringLayout.NORTH, lblNotFoundLabel, 80, SpringLayout.NORTH, lblNotFoundImage);
-		queryEmptyPanel.add(lblNotFoundLabel);
 		
 		
 		
@@ -362,17 +363,6 @@ public class POS extends JFrame {
 			public void componentResized(ComponentEvent e) {
 				breakpointTrigger = getWidth() <= minWidth;
 				lblDateTime.setText(gallery.getTime(breakpointTrigger));
-				
-				// Not found query card sizing
-				Dimension querySize = queryEmptyPanel.getSize();
-				int messageWidth = lblNotFoundLabel.getWidth() + lblNotFoundImage.getWidth(); 
-				
-				sl_queryEmptyPanel.putConstraint(SpringLayout.NORTH, lblNotFoundImage, (int) (querySize.getHeight() - lblNotFoundImage.getHeight()) / 2, SpringLayout.NORTH, queryEmptyPanel);
-				sl_queryEmptyPanel.putConstraint(SpringLayout.WEST, lblNotFoundImage, (int) (querySize.getWidth() - messageWidth) / 2, SpringLayout.WEST, queryEmptyPanel);
-				
-				// Force update of the frame
-				repaint();
-				revalidate();
 			}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
