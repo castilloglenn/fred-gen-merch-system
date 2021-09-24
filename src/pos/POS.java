@@ -12,7 +12,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,15 +23,19 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import utils.Database;
 import utils.Gallery;
 import utils.RoundedPanel;
+import utils.Utility;
 import utils.VerticalLabelUI;
 
 
 /**
+ * 
  * @author Allen Glenn E. Castillo
+ *
  */
 @SuppressWarnings("serial")
 public class POS extends JFrame {
@@ -58,6 +65,7 @@ public class POS extends JFrame {
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
 	
+	private Utility utility;
 	private Database database;
 	private Gallery gallery;
 	private VerticalLabelUI verticalUI;
@@ -73,6 +81,7 @@ public class POS extends JFrame {
 	}
 
 	public POS() {
+		utility = new Utility();
 		database = new Database();
 		gallery = new Gallery();
 		
@@ -259,7 +268,13 @@ public class POS extends JFrame {
 		sl_searchPanel.putConstraint(SpringLayout.EAST, lblQuantityIcon, 0, SpringLayout.WEST, tfQuantity);
 		searchPanel.add(lblQuantityIcon);
 		posPanel.add(tablePanel);
-		tablePanel.setLayout(new SpringLayout());
+		SpringLayout sl_tablePanel = new SpringLayout();
+		tablePanel.setLayout(sl_tablePanel);
+		
+		JLabel testTestTest = new JLabel("test");
+		sl_tablePanel.putConstraint(SpringLayout.WEST, testTestTest, 247, SpringLayout.WEST, tablePanel);
+		sl_tablePanel.putConstraint(SpringLayout.SOUTH, testTestTest, -125, SpringLayout.SOUTH, tablePanel);
+		tablePanel.add(testTestTest);
 		
 		transactionPanel = new RoundedPanel(Color.BLUE); // Gallery.GRAY
 		displayPanel.add(transactionPanel, "transaction");
@@ -268,6 +283,8 @@ public class POS extends JFrame {
 		reportPanel = new RoundedPanel(Color.GREEN); // Gallery.GRAY
 		displayPanel.add(reportPanel, "report");
 		reportPanel.setLayout(new SpringLayout());
+		
+		
 		
 		
 		
@@ -332,8 +349,11 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblAddToCart); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println("Add To Cart");
-				// TODO: Test image upload from this button then test the download of image
+				// TODO: Test passed, refactor to adapt to system
+				String imagePath = utility.showImageChooser();
+				if (imagePath != null) {
+					
+				}testTestTest.setIcon(database.getImage(5L));
 			}
 		});
 		tfSearch.addFocusListener(new FocusAdapter() {

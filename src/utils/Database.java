@@ -1,7 +1,18 @@
 package utils;
 
+import java.awt.Image;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.sql.*;
 
+import javax.swing.ImageIcon;
+
+/**
+ * 
+ * @author Allen Glenn E. Castillo
+ *
+ */
 public class Database {
 	
 	private String db_url = "jdbc:mysql://localhost/?serverTimezone=UTC";
@@ -97,4 +108,74 @@ public class Database {
 		);
 	}
 	
+	/**
+	 * 
+	 * @param productID The ID must be generated from the Utility class method generateProductID()
+	 * @param name The product's general name, may/may not include the brand and company name
+	 * @param path The path must come from the Utility's image chooser method namely showImageChooser()
+	 * @param stock The quantity of the initial stocks, default can be zero
+	 * @param uom The quantity description on how it will be sold or packaged, examples will be on kilograms or pieces
+	 * @param priceBought The buying price, this will be used in making statistics on the inventory
+	 * @param sellingPrice The selling price, this is also important for monitoring profit margin upon stocks
+	 * 
+	 * @see utils.Utility#showImageChooser()
+	 */
+	public void registerProduct(long productID, String name, 
+		String path, double stock, String uom, double priceBought, double sellingPrice
+	) {
+		try {
+			ps = con.prepareStatement(
+				"INSERT INTO product VALUES ("
+				+ "?, ?, ?, ?, ?, ?, ?"
+				+ ");"
+			);
+			ps.setLong(1, productID);
+			ps.setString(2, name);
+			//Inserting Blob type
+			InputStream in = new FileInputStream(path);
+			ps.setBinaryStream(3, in);
+			ps.setDouble(4, 5.5);
+			ps.setString(5, "piece");
+			ps.setDouble(6, 10.5);
+			ps.setDouble(7, 12.5);
+			ps.executeUpdate();
+		} catch (SQLException e ) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	// TODO: Documentation and converting this method to get products 
+	// based on a keyword from any description like key-sensitive search engine
+	public ImageIcon getImage(long productID) {
+		try {
+			ps = con.prepareStatement(
+				  "SELECT * "
+				  + "FROM product "
+				  + "WHERE product_id="
+				  + Long.toString(productID)
+				  + ";"
+			);
+			
+			ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                byte[] img = rs.getBytes("image");
+                //Resize The ImageIcon
+                ImageIcon image = new ImageIcon(img);
+                Image im = image.getImage();
+                Image myImg = im.getScaledInstance(64, 64,Image.SCALE_SMOOTH);
+                ImageIcon newImage = new ImageIcon(myImg);
+                return newImage;
+            }
+            else{
+                System.out.println("Wala");
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+		
+		return null;
+	}
 }

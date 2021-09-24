@@ -1,2 +1,2 @@
 # fred-gen-merch-system
-Thesis project for the subject  INSY 55 - SYSTEM ANALYSIS AND DESIGN. 
+Thesis project for the subject INSY 55 - System Analysis And Design.

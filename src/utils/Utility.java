@@ -1,34 +1,49 @@
 package utils;
 
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.io.File;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.text.AttributeSet.ColorAttribute;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-
+/**
+ * 
+ * @author Allen Glenn E. Castillo
+ *
+ */
 public class Utility {
+
+	private File file;
+	private JFileChooser chooser;
+	private FileNameExtensionFilter filter;
 
 	
 	public Utility() {
-		
+		chooser = new JFileChooser();
 	}
+	
+	/**
+	 * Shows a JFileChooser with Images-only filter
+	 * 
+	 * @return String - the absolute path of the image selected
+	 * 			<br> null - if the user did not press the select or closed the file chooser
+	 * 
+	 * @see java.swing.JFileChooser
+	 */
+	public String showImageChooser() {
+	    filter = new FileNameExtensionFilter(
+	    	"JPG & PNG Images", 
+	    	"jpg", "jpeg", "png", "bmp"
+	    );
+	    chooser.setFileFilter(filter);
+	    
+	    int returnVal = chooser.showOpenDialog(null);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	       file = chooser.getSelectedFile();
+	       return file.getPath();
+	    }
+	    
+	    return null;
+	}
+	
 }
 
