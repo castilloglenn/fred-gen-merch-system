@@ -28,7 +28,7 @@ public class SupplierAdd extends JFrame {
 	private Utility utility;
 	private Gallery gallery;
 	
-	private JPanel contentPane, p, formsPanel, buttonPanel;
+	private JPanel contentPane, p, formsPanel, buttonPanel, newSupplierPanel;
 	private JLabel btnCancel, btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress;
 	private JTextField txtName, txtSupplierID, txtContactNumber, txtAddress;
 	
@@ -160,7 +160,7 @@ public class SupplierAdd extends JFrame {
 		gallery.styleLabelToButton(btnAdd, 15f, 15, 10);
 		buttonPanel.add(btnAdd);
 		
-		JPanel newSupplierPanel = new RoundedPanel(Gallery.BLUE);
+		newSupplierPanel = new RoundedPanel(Gallery.BLUE);
 		sl_p.putConstraint(SpringLayout.NORTH, newSupplierPanel, -15, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, newSupplierPanel, -15, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, newSupplierPanel, 50, SpringLayout.NORTH, p);
@@ -171,7 +171,7 @@ public class SupplierAdd extends JFrame {
 		
 		JLabel lblNewSupplier = new JLabel("New Supplier");
 		sl_newSupplierPanel.putConstraint(SpringLayout.NORTH, lblNewSupplier, 23, SpringLayout.NORTH, newSupplierPanel);
-		lblNewSupplier.setFont(gallery.getFont(22f));
+		lblNewSupplier.setFont(gallery.getFont(20f));
 		lblNewSupplier.setForeground(Color.WHITE);
 		sl_newSupplierPanel.putConstraint(SpringLayout.WEST, lblNewSupplier, 30, SpringLayout.WEST, newSupplierPanel);
 		newSupplierPanel.add(lblNewSupplier);

@@ -54,15 +54,15 @@ public class Inventory extends JFrame {
 	
 	private JPanel mainPanel, navigationalPanel, displayPanel, supplierSearchPanel,
 				supplierPanel;
-	private JLabel btnDashboard, btnSupplier, btnProduct, btnSupplierNew;
+	private JLabel btnDashboard, btnSupplier, btnProduct, btnSupplierCreate;
 	private JPanel dashboardPanel, supplierButtonPanel;
 	private JScrollPane supplierPane;
 	
 	private CardLayout cardLayout;
 	private JLabel lblSupplierList;
 	private JTable tblSupplierList;
-	private JLabel btnSupplierUpdate;
-	private JLabel btnSupplierDelete;
+	private JLabel btnSupplierManage;
+	private JLabel btnSupplierRemove;
 	private JLabel lblSupplierSearchIcon;
 	private JTextField txtSupplierSearch;
 	private JPanel productPanel;
@@ -88,7 +88,9 @@ public class Inventory extends JFrame {
 		
 		gallery = new Gallery();
 		utility = new Utility();
+		
 		SupplierAdd invSupplierAdd = new SupplierAdd();
+		SupplierUpdate invSupplierUpdate = new SupplierUpdate();
 		
 		/**
 		 *  	After designing, change all Panel to Rounded Panel like this:
@@ -235,38 +237,38 @@ public class Inventory extends JFrame {
 		SpringLayout sl_supplierButtonPanel = new SpringLayout();
 		supplierButtonPanel.setLayout(sl_supplierButtonPanel);
 		
-		btnSupplierNew = new JLabel("New");
-		sl_supplierButtonPanel.putConstraint(SpringLayout.NORTH, btnSupplierNew, 22, SpringLayout.NORTH, supplierButtonPanel);
-		sl_supplierButtonPanel.putConstraint(SpringLayout.WEST, btnSupplierNew, 10, SpringLayout.WEST, supplierButtonPanel);
-		sl_supplierButtonPanel.putConstraint(SpringLayout.SOUTH, btnSupplierNew, -23, SpringLayout.SOUTH, supplierButtonPanel);
-		btnSupplierNew.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		btnSupplierNew.setHorizontalAlignment(SwingConstants.CENTER);
-		btnSupplierNew.setName("primary");
-		gallery.styleLabelToButton(btnSupplierNew, 15f, 15, 10);
-		supplierButtonPanel.add(btnSupplierNew);
+		btnSupplierCreate = new JLabel("Create");
+		sl_supplierButtonPanel.putConstraint(SpringLayout.NORTH, btnSupplierCreate, 22, SpringLayout.NORTH, supplierButtonPanel);
+		sl_supplierButtonPanel.putConstraint(SpringLayout.WEST, btnSupplierCreate, 10, SpringLayout.WEST, supplierButtonPanel);
+		sl_supplierButtonPanel.putConstraint(SpringLayout.SOUTH, btnSupplierCreate, -23, SpringLayout.SOUTH, supplierButtonPanel);
+		btnSupplierCreate.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		btnSupplierCreate.setHorizontalAlignment(SwingConstants.CENTER);
+		btnSupplierCreate.setName("primary");
+		gallery.styleLabelToButton(btnSupplierCreate, 15f, 15, 10);
+		supplierButtonPanel.add(btnSupplierCreate);
 		
-		btnSupplierUpdate = new JLabel("Manage");
-		sl_supplierButtonPanel.putConstraint(SpringLayout.NORTH, btnSupplierUpdate, 22, SpringLayout.NORTH, supplierButtonPanel);
-		sl_supplierButtonPanel.putConstraint(SpringLayout.WEST, btnSupplierUpdate, 125, SpringLayout.WEST, supplierButtonPanel);
-		sl_supplierButtonPanel.putConstraint(SpringLayout.SOUTH, btnSupplierUpdate, -23, SpringLayout.SOUTH, supplierButtonPanel);
-		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierNew, -6, SpringLayout.WEST, btnSupplierUpdate);
-		btnSupplierUpdate.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		btnSupplierUpdate.setHorizontalAlignment(SwingConstants.CENTER);
-		btnSupplierUpdate.setName("primary");
-		gallery.styleLabelToButton(btnSupplierUpdate, 15f, 15, 10);
-		supplierButtonPanel.add(btnSupplierUpdate);
+		btnSupplierManage = new JLabel("Manage");
+		sl_supplierButtonPanel.putConstraint(SpringLayout.NORTH, btnSupplierManage, 22, SpringLayout.NORTH, supplierButtonPanel);
+		sl_supplierButtonPanel.putConstraint(SpringLayout.WEST, btnSupplierManage, 125, SpringLayout.WEST, supplierButtonPanel);
+		sl_supplierButtonPanel.putConstraint(SpringLayout.SOUTH, btnSupplierManage, -23, SpringLayout.SOUTH, supplierButtonPanel);
+		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierCreate, -6, SpringLayout.WEST, btnSupplierManage);
+		btnSupplierManage.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		btnSupplierManage.setHorizontalAlignment(SwingConstants.CENTER);
+		btnSupplierManage.setName("primary");
+		gallery.styleLabelToButton(btnSupplierManage, 15f, 15, 10);
+		supplierButtonPanel.add(btnSupplierManage);
 		
-		btnSupplierDelete = new JLabel("Delete");
-		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierUpdate, -6, SpringLayout.WEST, btnSupplierDelete);
-		sl_supplierButtonPanel.putConstraint(SpringLayout.WEST, btnSupplierDelete, 248, SpringLayout.WEST, supplierButtonPanel);
-		sl_supplierButtonPanel.putConstraint(SpringLayout.NORTH, btnSupplierDelete, 22, SpringLayout.NORTH, supplierButtonPanel);
-		sl_supplierButtonPanel.putConstraint(SpringLayout.SOUTH, btnSupplierDelete, -23, SpringLayout.SOUTH, supplierButtonPanel);
-		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierDelete, -10, SpringLayout.EAST, supplierButtonPanel);
-		btnSupplierDelete.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
-		btnSupplierDelete.setHorizontalAlignment(SwingConstants.CENTER);
-		btnSupplierDelete.setName("danger");
-		gallery.styleLabelToButton(btnSupplierDelete, 15f, 15, 10);
-		supplierButtonPanel.add(btnSupplierDelete);
+		btnSupplierRemove = new JLabel("Remove");
+		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierManage, -6, SpringLayout.WEST, btnSupplierRemove);
+		sl_supplierButtonPanel.putConstraint(SpringLayout.WEST, btnSupplierRemove, 248, SpringLayout.WEST, supplierButtonPanel);
+		sl_supplierButtonPanel.putConstraint(SpringLayout.NORTH, btnSupplierRemove, 22, SpringLayout.NORTH, supplierButtonPanel);
+		sl_supplierButtonPanel.putConstraint(SpringLayout.SOUTH, btnSupplierRemove, -23, SpringLayout.SOUTH, supplierButtonPanel);
+		sl_supplierButtonPanel.putConstraint(SpringLayout.EAST, btnSupplierRemove, -10, SpringLayout.EAST, supplierButtonPanel);
+		btnSupplierRemove.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
+		btnSupplierRemove.setHorizontalAlignment(SwingConstants.CENTER);
+		btnSupplierRemove.setName("danger");
+		gallery.styleLabelToButton(btnSupplierRemove, 15f, 15, 10);
+		supplierButtonPanel.add(btnSupplierRemove);
 		
 		productPanel = new RoundedPanel(Gallery.GRAY);
 		productPanel.setBackground(Gallery.GRAY);
@@ -306,11 +308,11 @@ public class Inventory extends JFrame {
 			public void mouseClicked(MouseEvent e) { cardLayout.show(displayPanel, "product");}
 		});
 		
-		btnSupplierNew.addMouseListener(new MouseAdapter() {
+		btnSupplierCreate.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnSupplierNew);}
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnSupplierCreate);}
 			@Override
-			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnSupplierNew);}
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnSupplierCreate);}
 			@Override
 			public void mouseClicked(MouseEvent e) { 	
 				invSupplierAdd.setVisible(true);
@@ -318,18 +320,23 @@ public class Inventory extends JFrame {
 			;}
 		});
 		
-		btnSupplierUpdate.addMouseListener(new MouseAdapter() {
+		btnSupplierManage.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnSupplierUpdate);}
+			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnSupplierManage);}
 			@Override
-			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnSupplierUpdate);}
+			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnSupplierManage);}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				invSupplierUpdate.setVisible(true);
+				invSupplierUpdate.setLocationRelativeTo(null);
+			}
 		});
 		
-		btnSupplierDelete.addMouseListener(new MouseAdapter() {
+		btnSupplierRemove.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnSupplierDelete);}
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnSupplierRemove);}
 			@Override
-			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnSupplierDelete);}
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnSupplierRemove);}
 		});
 		
 		txtSupplierSearch.addFocusListener(new FocusAdapter() {
