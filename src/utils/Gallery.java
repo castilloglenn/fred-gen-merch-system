@@ -79,10 +79,10 @@ public class Gallery {
 		return font;
 	}
 	
-	public ImageIcon getImage(String name, int size) {
+	public ImageIcon getImage(String name, int width, int height) {
 		ImageIcon image = new ImageIcon("assets/images/" + name);
 		Image img = image.getImage();
-		Image scaledIcon = img.getScaledInstance(size, size, Image.SCALE_SMOOTH);
+		Image scaledIcon = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		ImageIcon finalImage = new ImageIcon(scaledIcon);
 		return finalImage;
 	}
@@ -114,7 +114,7 @@ public class Gallery {
 	}
 	
 	public void styleLabelToButton(JLabel label, float size, String icon, int iconSize,  int marginWidth, int marginHeight) {
-		label.setIcon(getImage(icon, iconSize));
+		label.setIcon(getImage(icon, iconSize, iconSize));
 		styleLabelToButton(label, size, marginWidth, marginHeight);
 	}
 	

@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import utils.Database;
@@ -33,6 +34,14 @@ import utils.Utility;
 import utils.VerticalLabelUI;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import java.awt.GridLayout;
+import javax.swing.JButton;
+import javax.swing.BoxLayout;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.FlowLayout;
 
 
 /**
@@ -42,23 +51,9 @@ import java.awt.event.KeyEvent;
  */
 @SuppressWarnings("serial")
 public class POS extends JFrame {
-
-	private JPanel mainPanel;
-	private RoundedPanel navigationPanel, displayPanel, 
-					posPanel, transactionPanel, reportPanel,
-					cartPanel, paymentPanel, checkoutPanel,
-					searchPanel, tablePanel;
-	private JLabel lblDashboardNav, lblTransactionNav, lblReportNav,
-					lblTransactionNo, lblDateTime, lblCheckoutButton,
-					lblCancelButton, lblSearchIcon, lblAddToCart,
-					lblQuantityIcon;
-	private JTextField tfSearch, tfQuantity;
 	
-	private SpringLayout sl_mainPanel, sl_posPanel;
-	private CardLayout cardLayout;
-	
-	private int defaultHeight = 600;
-	private int defaultWidth = 1000;
+	private int defaultHeight = 600; // 600
+	private int defaultWidth = 990; // 1000
 	private int minHeight = 600;
 	private int minWidth = 990;
 	
@@ -75,6 +70,22 @@ public class POS extends JFrame {
 	private Database database; 
 	private Gallery gallery;
 	private VerticalLabelUI verticalUI;
+	
+	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel;
+	private RoundedPanel navigationPanel, displayPanel, 
+					posPanel, transactionPanel, reportPanel,
+					cartPanel, paymentPanel, checkoutPanel,
+					searchPanel, tableContainerPanel;
+	private JLabel lblDashboardNav, lblTransactionNav, lblReportNav,
+					lblTransactionNo, lblDateTime, lblCheckoutButton,
+					lblCancelButton, lblSearchIcon, lblAddToCart,
+					lblQuantityIcon, lblDownButton, lblUpButton;
+	private JTextField tfSearch, tfQuantity;
+	
+	private SpringLayout sl_mainPanel, sl_posPanel;
+	private CardLayout cardLayout, queryCardLayout;
+	private JLabel lblNotFoundImage;
+	private JLabel lblNotFoundLabel;
 	
 	
 	public static void main(String[] args) {
@@ -223,19 +234,18 @@ public class POS extends JFrame {
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, searchPanel, 60, SpringLayout.SOUTH, lblTransactionNo);
 		sl_posPanel.putConstraint(SpringLayout.WEST, searchPanel, 20, SpringLayout.WEST, posPanel);
 		sl_posPanel.putConstraint(SpringLayout.EAST, searchPanel, -15, SpringLayout.WEST, cartPanel);
-		cartPanel.setLayout(new SpringLayout());
+		cartPanel.setLayout(new BoxLayout(cartPanel, BoxLayout.X_AXIS));
 		posPanel.add(searchPanel);
 		SpringLayout sl_searchPanel = new SpringLayout();
 		searchPanel.setLayout(sl_searchPanel);
 		
 		lblAddToCart = new JLabel();
 		sl_searchPanel.putConstraint(SpringLayout.WEST, lblAddToCart, -60, SpringLayout.EAST, searchPanel);
-		sl_searchPanel.putConstraint(SpringLayout.EAST, lblAddToCart, -20, SpringLayout.EAST, searchPanel);
+		sl_searchPanel.putConstraint(SpringLayout.EAST, lblAddToCart, -15, SpringLayout.EAST, searchPanel);
 		lblAddToCart.setName("primary");
-		gallery.styleLabelToButton(lblAddToCart, 1f, "arrow.png", 20, 0, 0);
+		gallery.styleLabelToButton(lblAddToCart, 1f, "cart.png", 22, 0, 0);
 		sl_searchPanel.putConstraint(SpringLayout.NORTH, lblAddToCart, 10, SpringLayout.NORTH, searchPanel);
 		sl_searchPanel.putConstraint(SpringLayout.SOUTH, lblAddToCart, -10, SpringLayout.SOUTH, searchPanel);
-		gallery.styleLabelToButton(lblAddToCart, 15f, 20, 5);
 		searchPanel.add(lblAddToCart);
 		
 		tfSearch = new JTextField();
@@ -243,7 +253,7 @@ public class POS extends JFrame {
 		tfSearch.setCaretPosition(0);
 		searchPanel.add(tfSearch);
 		
-		lblSearchIcon = new JLabel(gallery.getImage("search.png", 20));
+		lblSearchIcon = new JLabel(gallery.getImage("search.png", 20, 20));
 		sl_searchPanel.putConstraint(SpringLayout.NORTH, tfSearch, 0, SpringLayout.NORTH, lblSearchIcon);
 		sl_searchPanel.putConstraint(SpringLayout.WEST, tfSearch, 5, SpringLayout.EAST, lblSearchIcon);
 		sl_searchPanel.putConstraint(SpringLayout.SOUTH, tfSearch, 0, SpringLayout.SOUTH, lblSearchIcon);
@@ -251,12 +261,6 @@ public class POS extends JFrame {
 		sl_searchPanel.putConstraint(SpringLayout.WEST, lblSearchIcon, 15, SpringLayout.WEST, searchPanel);
 		sl_searchPanel.putConstraint(SpringLayout.SOUTH, lblSearchIcon, -10, SpringLayout.SOUTH, searchPanel);
 		searchPanel.add(lblSearchIcon);
-		
-		tablePanel = new RoundedPanel(Gallery.WHITE);
-		sl_posPanel.putConstraint(SpringLayout.NORTH, tablePanel, 15, SpringLayout.SOUTH, searchPanel);
-		sl_posPanel.putConstraint(SpringLayout.WEST, tablePanel, 0, SpringLayout.WEST, searchPanel);
-		sl_posPanel.putConstraint(SpringLayout.SOUTH, tablePanel, -15, SpringLayout.NORTH, paymentPanel);
-		sl_posPanel.putConstraint(SpringLayout.EAST, tablePanel, 0, SpringLayout.EAST, searchPanel);
 		
 		tfQuantity = new JTextField();
 		sl_searchPanel.putConstraint(SpringLayout.WEST, tfQuantity, -120, SpringLayout.WEST, lblAddToCart);
@@ -267,34 +271,84 @@ public class POS extends JFrame {
 		sl_searchPanel.putConstraint(SpringLayout.EAST, tfQuantity, 0, SpringLayout.WEST, lblAddToCart);
 		searchPanel.add(tfQuantity);
 		
-		lblQuantityIcon = new JLabel(gallery.getImage("scale.png", 20));
+		lblQuantityIcon = new JLabel(gallery.getImage("scale.png", 20, 20));
 		sl_searchPanel.putConstraint(SpringLayout.EAST, tfSearch, 0, SpringLayout.WEST, lblQuantityIcon);
 		sl_searchPanel.putConstraint(SpringLayout.NORTH, lblQuantityIcon, 0, SpringLayout.NORTH, tfQuantity);
 		sl_searchPanel.putConstraint(SpringLayout.SOUTH, lblQuantityIcon, 0, SpringLayout.SOUTH, tfQuantity);
 		sl_searchPanel.putConstraint(SpringLayout.EAST, lblQuantityIcon, 0, SpringLayout.WEST, tfQuantity);
 		searchPanel.add(lblQuantityIcon);
-		posPanel.add(tablePanel);
-		SpringLayout sl_tablePanel = new SpringLayout();
-		tablePanel.setLayout(sl_tablePanel);
 		
-		JLabel testTestTest = new JLabel("test");
-		sl_tablePanel.putConstraint(SpringLayout.WEST, testTestTest, 247, SpringLayout.WEST, tablePanel);
-		sl_tablePanel.putConstraint(SpringLayout.SOUTH, testTestTest, -125, SpringLayout.SOUTH, tablePanel);
-		tablePanel.add(testTestTest);
+		tableContainerPanel = new RoundedPanel(Gallery.WHITE);
+		sl_posPanel.putConstraint(SpringLayout.NORTH, tableContainerPanel, 15, SpringLayout.SOUTH, searchPanel);
+		sl_posPanel.putConstraint(SpringLayout.WEST, tableContainerPanel, 0, SpringLayout.WEST, searchPanel);
+		sl_posPanel.putConstraint(SpringLayout.SOUTH, tableContainerPanel, -15, SpringLayout.NORTH, checkoutPanel);
+		sl_posPanel.putConstraint(SpringLayout.EAST, tableContainerPanel, 0, SpringLayout.EAST, searchPanel);
+		posPanel.add(tableContainerPanel);
+		SpringLayout sl_tableContainerPanel = new SpringLayout();
+		tableContainerPanel.setLayout(sl_tableContainerPanel);
+		
+		cardLayoutPanel = new JPanel();
+		queryCardLayout = new CardLayout();
+		cardLayoutPanel.setBackground(Gallery.WHITE);
+		sl_tableContainerPanel.putConstraint(SpringLayout.SOUTH, cardLayoutPanel, -15, SpringLayout.SOUTH, tableContainerPanel);
+		sl_tableContainerPanel.putConstraint(SpringLayout.NORTH, cardLayoutPanel, 15, SpringLayout.NORTH, tableContainerPanel);
+		sl_tableContainerPanel.putConstraint(SpringLayout.WEST, cardLayoutPanel, 15, SpringLayout.WEST, tableContainerPanel);
+		tableContainerPanel.add(cardLayoutPanel);
+		cardLayoutPanel.setLayout(queryCardLayout);
+		
+		lblDownButton = new JLabel();
+		sl_tableContainerPanel.putConstraint(SpringLayout.EAST, cardLayoutPanel, -15, SpringLayout.WEST, lblDownButton);
+		sl_tableContainerPanel.putConstraint(SpringLayout.WEST, lblDownButton, -50, SpringLayout.EAST, tableContainerPanel);
+		sl_tableContainerPanel.putConstraint(SpringLayout.EAST, lblDownButton, -15, SpringLayout.EAST, tableContainerPanel);
+		lblDownButton.setName("primary");
+		gallery.styleLabelToButton(lblDownButton, 1f, "arrow-down.png", 22, 0, 0);
+		sl_tableContainerPanel.putConstraint(SpringLayout.NORTH, lblDownButton, -50, SpringLayout.SOUTH, tableContainerPanel);
+		sl_tableContainerPanel.putConstraint(SpringLayout.SOUTH, lblDownButton, -15, SpringLayout.SOUTH, tableContainerPanel);
+		tableContainerPanel.add(lblDownButton);
+		
+		lblUpButton = new JLabel();
+		sl_tableContainerPanel.putConstraint(SpringLayout.NORTH, lblUpButton, -40, SpringLayout.NORTH, lblDownButton);
+		sl_tableContainerPanel.putConstraint(SpringLayout.SOUTH, lblUpButton, -5, SpringLayout.NORTH, lblDownButton);
+		lblUpButton.setName("primary");
+		gallery.styleLabelToButton(lblUpButton, 1f, "arrow-up.png", 22, 0, 0);
+		sl_tableContainerPanel.putConstraint(SpringLayout.WEST, lblUpButton, 0, SpringLayout.WEST, lblDownButton);
+		sl_tableContainerPanel.putConstraint(SpringLayout.EAST, lblUpButton, 0, SpringLayout.EAST, lblDownButton);
+		tableContainerPanel.add(lblUpButton);
+
+		queryEmptyPanel = new JPanel();
+		queryEmptyPanel.setBackground(Gallery.WHITE);
+		cardLayoutPanel.add(queryEmptyPanel, "none");
+		SpringLayout sl_queryEmptyPanel = new SpringLayout();
+		queryEmptyPanel.setLayout(sl_queryEmptyPanel);
+		
+		lblNotFoundImage = new JLabel(gallery.getImage("not-found.png", 170, 190));
+		sl_queryEmptyPanel.putConstraint(SpringLayout.NORTH, lblNotFoundImage, 14, SpringLayout.NORTH, queryEmptyPanel);
+		sl_queryEmptyPanel.putConstraint(SpringLayout.WEST, lblNotFoundImage, 56, SpringLayout.WEST, queryEmptyPanel);
+		queryEmptyPanel.add(lblNotFoundImage);
+		
+		lblNotFoundLabel = new JLabel("<html><p>No results found with the<br>keyword \"bath water\"</p></html>");
+		sl_queryEmptyPanel.putConstraint(SpringLayout.WEST, lblNotFoundLabel, 10, SpringLayout.EAST, lblNotFoundImage);
+		lblNotFoundLabel.setFont(gallery.getFont(15f));
+		sl_queryEmptyPanel.putConstraint(SpringLayout.NORTH, lblNotFoundLabel, 80, SpringLayout.NORTH, lblNotFoundImage);
+		queryEmptyPanel.add(lblNotFoundLabel);
+		
+		
+		
+		
+		
 		
 		transactionPanel = new RoundedPanel(Color.BLUE); // Gallery.GRAY
 		displayPanel.add(transactionPanel, "transaction");
 		transactionPanel.setLayout(new SpringLayout());
 		
+		
+		
+		
+		
+		
 		reportPanel = new RoundedPanel(Color.GREEN); // Gallery.GRAY
 		displayPanel.add(reportPanel, "report");
 		reportPanel.setLayout(new SpringLayout());
-		
-		
-		
-		
-		
-		
 		
 		
 		
@@ -308,6 +362,7 @@ public class POS extends JFrame {
 			public void componentResized(ComponentEvent e) {
 				breakpointTrigger = getWidth() <= minWidth;
 				lblDateTime.setText(gallery.getTime(breakpointTrigger));
+				System.out.println(lblNotFoundLabel.getSize());
 			}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
@@ -358,6 +413,22 @@ public class POS extends JFrame {
 				System.out.println("Add to cart");
 			}
 		});
+		lblDownButton.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblDownButton); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblDownButton); }
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				System.out.println("Scroll Down/Next Page");
+			}
+		});
+		lblUpButton.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblUpButton); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblUpButton); }
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				System.out.println("Scroll Up/Previous Page");
+			}
+		});
 		tfSearch.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -394,6 +465,9 @@ public class POS extends JFrame {
 				gallery.textFieldFocusLost(tfQuantity, defaultQuantityMessage);
 			}
 		});
+		tableContainerPanel.addMouseWheelListener(new MouseWheelListener() {
+			public void mouseWheelMoved(MouseWheelEvent e) { scrollTable(e); }
+		});
 		
 		timer = new Timer(1000, new ActionListener() {
 			@Override
@@ -404,6 +478,17 @@ public class POS extends JFrame {
 		timer.start();
 		
 		setLocationRelativeTo(null);
+	}
+	
+	private void scrollTable(MouseWheelEvent e) {
+		int rotation = e.getWheelRotation();
+		if (rotation == 1) {
+			// Mouse is rotated downward
+			System.out.println("Down");
+		} else {
+			// Mouse is rotated upward
+			System.out.println("Up");
+		}
 	}
 }
 
