@@ -213,7 +213,7 @@ public class Inventory extends JFrame {
 		sl_supplierSearchPanel.putConstraint(SpringLayout.WEST, lblSupplierSearchIcon, 10, SpringLayout.WEST, supplierSearchPanel);
 		sl_supplierSearchPanel.putConstraint(SpringLayout.SOUTH, lblSupplierSearchIcon, -10, SpringLayout.SOUTH, supplierSearchPanel);
 		sl_supplierSearchPanel.putConstraint(SpringLayout.EAST, lblSupplierSearchIcon, 27, SpringLayout.WEST, supplierSearchPanel);
-		lblSupplierSearchIcon.setIcon(gallery.getImage("search.png", 15));
+		lblSupplierSearchIcon.setIcon(gallery.getImage("search.png", 15, 15));
 		supplierSearchPanel.add(lblSupplierSearchIcon);
 		
 		txtSupplierSearch = new JTextField();
