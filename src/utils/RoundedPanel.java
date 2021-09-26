@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 public class RoundedPanel extends JPanel
 {
     public Color backgroundColor;
+    public Color borderColor;
     public int defaultRadius = 30;
 
     
@@ -27,10 +28,24 @@ public class RoundedPanel extends JPanel
         backgroundColor = bgColor;
         setOpaque(false);
     }
+
+    public RoundedPanel(int radius, Color bgColor, Color borderColor) {
+        super();
+        defaultRadius = radius;
+        backgroundColor = bgColor;
+        this.borderColor = borderColor;
+        setOpaque(false);
+    }
     
     
     public void setBackgroundColor(Color color) {
     	backgroundColor = color;
+    	repaint();
+    	revalidate();
+    }
+    
+    public void setBorderColor(Color color) {
+    	borderColor = color;
     	repaint();
     	revalidate();
     }
@@ -45,5 +60,10 @@ public class RoundedPanel extends JPanel
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics.setColor(backgroundColor);
         graphics.fillRoundRect(0, 0, width-1, height-1, defaultRadius, defaultRadius);
+        
+        if (borderColor != null) {
+        	graphics.setColor(borderColor);
+        	graphics.drawRoundRect(0, 0, width-1, height-1, defaultRadius, defaultRadius);
+        }
     }
 }

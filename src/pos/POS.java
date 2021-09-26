@@ -73,7 +73,8 @@ public class POS extends JFrame {
 	private Gallery gallery;
 	private VerticalLabelUI verticalUI;
 	
-	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel;
+	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel,
+					queryResultPanel;
 	private RoundedPanel navigationPanel, displayPanel, 
 					posPanel, transactionPanel, reportPanel,
 					cartPanel, paymentPanel, checkoutPanel,
@@ -81,13 +82,13 @@ public class POS extends JFrame {
 	private JLabel lblDashboardNav, lblTransactionNav, lblReportNav,
 					lblTransactionNo, lblDateTime, lblCheckoutButton,
 					lblCancelButton, lblSearchIcon, lblAddToCart,
-					lblQuantityIcon, lblDownButton, lblUpButton;
+					lblQuantityIcon, lblDownButton, lblUpButton,
+					lblNotFoundImage;
 	private JTextField tfSearch, tfQuantity;
 	
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	private CardLayout cardLayout, queryCardLayout;
-	private JLabel lblNotFoundImage;
-	private JLabel lblNotFoundLabel;
+	private JPanel panel;
 	
 	
 	public static void main(String[] args) {
@@ -220,7 +221,7 @@ public class POS extends JFrame {
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, lblCheckoutButton, -487, SpringLayout.NORTH, paymentPanel);
 		paymentPanel.setLayout(new SpringLayout());
 		checkoutPanel.add(lblCheckoutButton);
-		
+		 
 		lblCancelButton = new JLabel("CANCEL");
 		lblCancelButton.setName("danger");
 		gallery.styleLabelToButton(lblCancelButton, 15f, 15, 10);
@@ -302,7 +303,7 @@ public class POS extends JFrame {
 		sl_tableContainerPanel.putConstraint(SpringLayout.EAST, cardLayoutPanel, -15, SpringLayout.WEST, lblDownButton);
 		sl_tableContainerPanel.putConstraint(SpringLayout.WEST, lblDownButton, -50, SpringLayout.EAST, tableContainerPanel);
 		sl_tableContainerPanel.putConstraint(SpringLayout.EAST, lblDownButton, -15, SpringLayout.EAST, tableContainerPanel);
-		lblDownButton.setName("primary");
+		lblDownButton.setName("secondary");
 		gallery.styleLabelToButton(lblDownButton, 1f, "arrow-down.png", 22, 0, 0);
 		sl_tableContainerPanel.putConstraint(SpringLayout.NORTH, lblDownButton, -50, SpringLayout.SOUTH, tableContainerPanel);
 		sl_tableContainerPanel.putConstraint(SpringLayout.SOUTH, lblDownButton, -15, SpringLayout.SOUTH, tableContainerPanel);
@@ -311,7 +312,7 @@ public class POS extends JFrame {
 		lblUpButton = new JLabel();
 		sl_tableContainerPanel.putConstraint(SpringLayout.NORTH, lblUpButton, -40, SpringLayout.NORTH, lblDownButton);
 		sl_tableContainerPanel.putConstraint(SpringLayout.SOUTH, lblUpButton, -5, SpringLayout.NORTH, lblDownButton);
-		lblUpButton.setName("primary");
+		lblUpButton.setName("secondary");
 		gallery.styleLabelToButton(lblUpButton, 1f, "arrow-up.png", 22, 0, 0);
 		sl_tableContainerPanel.putConstraint(SpringLayout.WEST, lblUpButton, 0, SpringLayout.WEST, lblDownButton);
 		sl_tableContainerPanel.putConstraint(SpringLayout.EAST, lblUpButton, 0, SpringLayout.EAST, lblDownButton);
@@ -319,7 +320,6 @@ public class POS extends JFrame {
 
 		queryEmptyPanel = new JPanel();
 		queryEmptyPanel.setBackground(Gallery.WHITE);
-		cardLayoutPanel.add(queryEmptyPanel, "none");
 		SpringLayout sl_queryEmptyPanel = new SpringLayout();
 		queryEmptyPanel.setLayout(sl_queryEmptyPanel);
 		
@@ -332,6 +332,15 @@ public class POS extends JFrame {
 		lblNotFoundImage.setText("<html><p>No results found with the<br>keyword \"Bath Water\"");
 		lblNotFoundImage.setFont(gallery.getFont(15f));
 		queryEmptyPanel.add(lblNotFoundImage);
+		
+		queryResultPanel = new JPanel();
+		cardLayoutPanel.add(queryResultPanel, "result");
+		cardLayoutPanel.add(queryEmptyPanel, "none");
+		queryResultPanel.setBackground(Gallery.WHITE);
+		queryResultPanel.setLayout(null);
+		
+		
+		
 		
 		
 		
@@ -361,6 +370,8 @@ public class POS extends JFrame {
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
+				super.componentResized(e);
+				
 				breakpointTrigger = getWidth() <= minWidth;
 				lblDateTime.setText(gallery.getTime(breakpointTrigger));
 			}
@@ -394,7 +405,7 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCheckoutButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println("Checkout");
+				// TODO: Add function for the checkout button
 			}
 		});
 		lblCancelButton.addMouseListener(new MouseAdapter() {
@@ -402,7 +413,7 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCancelButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println("Cancel");
+				// TODO: Cancel means clear the cart
 			}
 		});
 		lblAddToCart.addMouseListener(new MouseAdapter() {
@@ -410,23 +421,48 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblAddToCart); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println("Add to cart");
+				// TODO: Add to cart list the product selected
+				
+				queryResultPanel.add(new ProductDisplay(queryResultPanel.getSize(), 0, null, gallery));
+				repaint();
+				revalidate();
 			}
 		});
 		lblDownButton.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblDownButton); }
-			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblDownButton); }
+			@Override public void mouseEntered(MouseEvent e) {
+				gallery.buttonHovered(lblDownButton);
+				lblDownButton.setIcon(gallery.getImage("arrow-down-hovered.png", 22, 22));
+			}
+			
+			@Override public void mouseExited(MouseEvent e) {
+				gallery.buttonNormalized(lblDownButton);
+				lblDownButton.setIcon(gallery.getImage("arrow-down.png", 22, 22));
+			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println("Scroll Down/Next Page");
+				// TODO: Turn the page to the next set
+				
+				queryResultPanel.removeAll();
+				repaint();
+				revalidate();
 			}
 		});
 		lblUpButton.addMouseListener(new MouseAdapter() {
-			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblUpButton); }
-			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblUpButton); }
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				gallery.buttonHovered(lblUpButton);
+				lblUpButton.setIcon(gallery.getImage("arrow-up-hovered.png", 22, 22));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				gallery.buttonNormalized(lblUpButton);
+				lblUpButton.setIcon(gallery.getImage("arrow-up.png", 22, 22));
+			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println("Scroll Up/Previous Page");
+				// TODO: Turn the page to the previous set
+				
 			}
 		});
 		tfSearch.addFocusListener(new FocusAdapter() {
@@ -444,6 +480,8 @@ public class POS extends JFrame {
 			public void keyReleased(KeyEvent e) {
 				String keyword = tfSearch.getText();
 				Object[][] result = database.getProductsByKeyword(keyword);
+				
+				// TODO: Send the 2D array to to be processed and displayeds
 				if (result != null) {
 					System.out.println(result.length);
 					for (Object[] row : result) {
@@ -484,10 +522,10 @@ public class POS extends JFrame {
 		int rotation = e.getWheelRotation();
 		if (rotation == 1) {
 			// Mouse is rotated downward
-			System.out.println("Down");
+			
 		} else {
 			// Mouse is rotated upward
-			System.out.println("Up");
+			
 		}
 	}
 }

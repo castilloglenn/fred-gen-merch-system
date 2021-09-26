@@ -38,18 +38,24 @@ public class Gallery {
 	public static Color DARK_RED = new Color(188, 59, 36); // 2 down the palette
 	public static Color WHITE = new Color(255, 255, 255);
 	
+	// External Colors
+	public static Color BOOTSTRAP_SECONDARY = new Color(108, 117, 125);
+	
 	// System Colors
-	public static Color PRIMARY_BUTTON_BACKGROUND = Gallery.BLUE;
-	public static Color PRIMARY_BUTTON_BACKGROUND_HOVER = Gallery.DARK_BLUE;
 	public static Color PRIMARY_BUTTON_FOREGROUND = Gallery.WHITE;
+	public static Color PRIMARY_BUTTON_BACKGROUND = Gallery.BLUE;
 	public static Color PRIMARY_BUTTON_FOREGROUND_HOVER = Gallery.WHITE;
+	public static Color PRIMARY_BUTTON_BACKGROUND_HOVER = Gallery.DARK_BLUE;
 
-	public static Color DANGER_BUTTON_BACKGROUND = Gallery.WHITE;
-	public static Color DANGER_BUTTON_BACKGROUND_HOVER = Gallery.RED;
+	public static Color SECONDARY_BUTTON_FOREGROUND = Gallery.WHITE;
+	public static Color SECONDARY_BUTTON_BACKGROUND = BOOTSTRAP_SECONDARY;
+	public static Color SECONDARY_BUTTON_FOREGROUND_HOVER = BOOTSTRAP_SECONDARY;
+	public static Color SECONDARY_BUTTON_BACKGROUND_HOVER = Gallery.WHITE;
+
 	public static Color DANGER_BUTTON_FOREGROUND = Gallery.RED;
+	public static Color DANGER_BUTTON_BACKGROUND = Gallery.WHITE;
 	public static Color DANGER_BUTTON_FOREGROUND_HOVER = Gallery.WHITE;
-	
-	
+	public static Color DANGER_BUTTON_BACKGROUND_HOVER = Gallery.RED;
 	
 	private String fontName = "OpenSans-SemiBold";
 	private SimpleDateFormat sdf;
@@ -104,14 +110,21 @@ public class Gallery {
 		label.setFont(getFont(size));
 		buttonNormalized(label);
 		
-		if (label.getName().equals("primary")) {
+		if (label.getName() == null) {}
+		else if (label.getName().equals("primary")) {
 			label.setBorder(new EmptyBorder(marginHeight, marginWidth, marginHeight, marginWidth));
+			
+		} else if (label.getName().equals("secondary")) {
+			label.setBorder(new CompoundBorder(
+				new LineBorder(Gallery.SECONDARY_BUTTON_BACKGROUND), 
+				new EmptyBorder(marginHeight, marginWidth, marginHeight, marginWidth)));
+			
 		} else if (label.getName().equals("danger")) {
 			label.setBorder(new CompoundBorder(
 				new LineBorder(Gallery.DANGER_BUTTON_FOREGROUND), 
-				new EmptyBorder(marginHeight, marginWidth, marginHeight, marginWidth))
-			);
-		}
+				new EmptyBorder(marginHeight, marginWidth, marginHeight, marginWidth)));
+		} 
+		
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setOpaque(true);
 	}
@@ -122,9 +135,16 @@ public class Gallery {
 	}
 	
 	public void buttonNormalized(JLabel label) {
-		if (label.getName().equals("primary")) {
+		if (label.getName() == null) {}
+		
+		else if (label.getName().equals("primary")) {
 			label.setBackground(Gallery.PRIMARY_BUTTON_BACKGROUND);
 			label.setForeground(Gallery.PRIMARY_BUTTON_FOREGROUND);
+		}
+
+		else if (label.getName().equals("secondary")) {
+			label.setBackground(Gallery.SECONDARY_BUTTON_BACKGROUND);
+			label.setForeground(Gallery.SECONDARY_BUTTON_FOREGROUND);
 		}
 		
 		else if (label.getName().equals("danger")) {
@@ -136,9 +156,16 @@ public class Gallery {
 	public void buttonHovered(JLabel label) { 
 		label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		
-		if (label.getName().equals("primary")) {
+		if (label.getName() == null) {}
+		
+		else if (label.getName().equals("primary")) {
 			label.setBackground(Gallery.PRIMARY_BUTTON_BACKGROUND_HOVER);
 			label.setForeground(Gallery.PRIMARY_BUTTON_FOREGROUND_HOVER);
+		}
+
+		else if (label.getName().equals("secondary")) {
+			label.setBackground(Gallery.SECONDARY_BUTTON_BACKGROUND_HOVER);
+			label.setForeground(Gallery.SECONDARY_BUTTON_FOREGROUND_HOVER);
 		}
 		
 		else if (label.getName().equals("danger")) {
