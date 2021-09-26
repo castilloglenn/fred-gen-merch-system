@@ -30,7 +30,7 @@ public class SupplierAdd extends JFrame {
 	private Gallery gallery;
 	
 	private JPanel contentPane, p, formsPanel, buttonPanel, newSupplierPanel;
-	private JLabel btnCancel, btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress;
+	private JLabel btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress, lblNewSupplier;
 	private JTextField txtName, txtSupplierID, txtContactNumber;
 	private JTextArea textArea;
 	private JTextArea txtAddress;
@@ -61,6 +61,7 @@ public class SupplierAdd extends JFrame {
 		gallery = new Gallery();
 		
 		setResizable(false);
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		contentPane = new JPanel();
@@ -147,36 +148,36 @@ public class SupplierAdd extends JFrame {
 		SpringLayout sl_buttonPanel = new SpringLayout();
 		buttonPanel.setLayout(sl_buttonPanel);
 		
-		btnCancel = new JLabel("Cancel");
-		btnCancel.setName("danger");
-		btnCancel.setHorizontalAlignment(SwingConstants.CENTER);
-		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnCancel, -48, SpringLayout.SOUTH, buttonPanel);
-		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnCancel, 10, SpringLayout.WEST, buttonPanel);
-		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnCancel, -10, SpringLayout.SOUTH, buttonPanel);
-		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnCancel, 173, SpringLayout.WEST, buttonPanel);
-		gallery.styleLabelToButton(btnCancel, 15f, 15, 10);
-		buttonPanel.add(btnCancel);
-		
 		btnAdd = new JLabel("Add");
-		btnAdd.setHorizontalAlignment(SwingConstants.CENTER);
-		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnAdd, 10, SpringLayout.NORTH, buttonPanel);
-		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnAdd, 0, SpringLayout.WEST, btnCancel);
-		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnAdd, -15, SpringLayout.NORTH, btnCancel);
-		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnAdd, 0, SpringLayout.EAST, btnCancel);
 		btnAdd.setName("primary");
 		gallery.styleLabelToButton(btnAdd, 15f, 15, 10);
+		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnAdd, 15, SpringLayout.NORTH, buttonPanel);
+		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnAdd, 15, SpringLayout.WEST, buttonPanel);
+		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnAdd, -60, SpringLayout.SOUTH, buttonPanel);
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnAdd, -15, SpringLayout.EAST, buttonPanel);
+		btnAdd.setHorizontalAlignment(SwingConstants.CENTER);
 		buttonPanel.add(btnAdd);
+		
+		JLabel btnDelete = new JLabel("Delete");
+		btnDelete.setName("danger");
+		gallery.styleLabelToButton(btnDelete, 15f, 15, 10);
+		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnDelete, 0, SpringLayout.WEST, btnAdd);
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnDelete, 0, SpringLayout.EAST, btnAdd);
+		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnDelete, 10, SpringLayout.SOUTH, btnAdd);
+		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnDelete, -15, SpringLayout.SOUTH, buttonPanel);
+		btnDelete.setHorizontalAlignment(SwingConstants.CENTER);
+		buttonPanel.add(btnDelete);
 		
 		newSupplierPanel = new RoundedPanel(Gallery.BLUE);
 		sl_p.putConstraint(SpringLayout.NORTH, newSupplierPanel, -15, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, newSupplierPanel, -15, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, newSupplierPanel, 50, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.EAST, newSupplierPanel, 200, SpringLayout.WEST, p);
-		p.add(newSupplierPanel);
 		SpringLayout sl_newSupplierPanel = new SpringLayout();
 		newSupplierPanel.setLayout(sl_newSupplierPanel);
+		p.add(newSupplierPanel);
 		
-		JLabel lblNewSupplier = new JLabel("New Supplier");
+		lblNewSupplier = new JLabel("New Supplier");
 		sl_newSupplierPanel.putConstraint(SpringLayout.NORTH, lblNewSupplier, 23, SpringLayout.NORTH, newSupplierPanel);
 		lblNewSupplier.setFont(gallery.getFont(20f));
 		lblNewSupplier.setForeground(Color.WHITE);
@@ -196,16 +197,13 @@ public class SupplierAdd extends JFrame {
 			public void mouseClicked(MouseEvent e) { System.out.println("Added");}
 		});
 		
-		btnCancel.addMouseListener(new MouseAdapter() {
+		btnDelete.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnCancel);}
+			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnDelete);}
 			@Override
-			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnCancel);}
+			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnDelete);}
 			@Override
-			public void mouseClicked(MouseEvent e) { dispose();}
+			public void mouseClicked(MouseEvent e) {dispose();}
 		});
-		
-		
 	}
-	
 }
