@@ -26,6 +26,7 @@ public class Database {
 	
 	private ImageIcon image, newImage;
 	private Image im, myImg;
+	public int imageSize = 48;
 	
 	public Database() {
 		try {
@@ -189,7 +190,10 @@ public class Database {
                 byte[] img = rs.getBytes("image");
                 image = new ImageIcon(img);
                 im = image.getImage();
-                myImg = im.getScaledInstance(64, 64,Image.SCALE_SMOOTH);
+                myImg = im.getScaledInstance(
+                	imageSize, imageSize,
+                	Image.SCALE_SMOOTH
+                );
                 newImage = new ImageIcon(myImg);
                 
                 productRow[2] = newImage;

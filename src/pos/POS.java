@@ -65,8 +65,10 @@ public class POS extends JFrame {
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
 	
-	private int querySize = 0;
 	private Object[][] queryResult;
+	private int selectedIndex = 0;
+	private int currentPage = 1;
+	private int totalPage = 1;
 	
 	private Utility utility;
 	private Database database; 
@@ -74,22 +76,22 @@ public class POS extends JFrame {
 	private VerticalLabelUI verticalUI;
 	
 	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel,
-					queryResultPanel;
+		queryResultPanel;
+	
 	private RoundedPanel navigationPanel, displayPanel, 
-					posPanel, transactionPanel, reportPanel,
-					cartPanel, paymentPanel, checkoutPanel,
-					searchPanel, tableContainerPanel;
+		posPanel, transactionPanel, reportPanel,
+		cartPanel, paymentPanel, checkoutPanel,
+		searchPanel, tableContainerPanel;
+	
 	private JLabel lblDashboardNav, lblTransactionNav, lblReportNav,
-					lblTransactionNo, lblDateTime, lblCheckoutButton,
-					lblCancelButton, lblSearchIcon, lblAddToCart,
-					lblQuantityIcon, lblDownButton, lblUpButton,
-					lblNotFoundImage;
+		lblTransactionNo, lblDateTime, lblCheckoutButton,
+		lblCancelButton, lblSearchIcon, lblAddToCart,
+		lblQuantityIcon, lblDownButton, lblUpButton,
+		lblNotFoundImage;
 	private JTextField tfSearch, tfQuantity;
 	
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	private CardLayout cardLayout, queryCardLayout;
-	private JPanel panel;
-	
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -329,7 +331,7 @@ public class POS extends JFrame {
 		sl_queryEmptyPanel.putConstraint(SpringLayout.SOUTH, lblNotFoundImage, 0, SpringLayout.SOUTH, queryEmptyPanel);
 		sl_queryEmptyPanel.putConstraint(SpringLayout.EAST, lblNotFoundImage, 0, SpringLayout.EAST, queryEmptyPanel);
 		// This set text must be set dynamically based on the input
-		lblNotFoundImage.setText("<html><p>No results found with the<br>keyword \"Bath Water\"");
+		lblNotFoundImage.setText("<html><p>No results found with the<br>keyword");
 		lblNotFoundImage.setFont(gallery.getFont(15f));
 		queryEmptyPanel.add(lblNotFoundImage);
 		
@@ -422,10 +424,6 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO: Add to cart list the product selected
-				
-				queryResultPanel.add(new ProductDisplay(queryResultPanel.getSize(), 0, null, gallery));
-				repaint();
-				revalidate();
 			}
 		});
 		lblDownButton.addMouseListener(new MouseAdapter() {
@@ -441,10 +439,6 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO: Turn the page to the next set
-				
-				queryResultPanel.removeAll();
-				repaint();
-				revalidate();
 			}
 		});
 		lblUpButton.addMouseListener(new MouseAdapter() {
@@ -478,19 +472,7 @@ public class POS extends JFrame {
 		tfSearch.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				String keyword = tfSearch.getText();
-				Object[][] result = database.getProductsByKeyword(keyword);
-				
-				// TODO: Send the 2D array to to be processed and displayeds
-				if (result != null) {
-					System.out.println(result.length);
-					for (Object[] row : result) {
-						for (Object key : row) {
-							System.out.print(key + " ");
-						}
-						System.out.println();
-					}
-				}
+				searchQuery();
 			}
 		});
 		tfQuantity.addFocusListener(new FocusAdapter() {
@@ -516,6 +498,33 @@ public class POS extends JFrame {
 		timer.start();
 		
 		setLocationRelativeTo(null);
+	}
+	
+	private void searchQuery() {
+		String keyword = (tfSearch.getText() == null) ? "" : tfSearch.getText();
+		queryResult = database.getProductsByKeyword(keyword);
+		
+		// Empty query result
+		if (queryResult.length == 0) {
+			lblNotFoundImage.setText(
+				String.format("<html><p>No results found with the<br>keyword \"%s\"</p></html>", 
+					(keyword.length() > 7) 
+					? keyword.substring(0, Math.min(keyword.length(), 6)) + "..."
+					: keyword
+			));
+			queryCardLayout.show(cardLayoutPanel, "none");
+		
+		// Query Result
+		} else {
+//			for (Object[] row : queryResult) {
+//				
+//			}
+			queryResultPanel.add(new ProductDisplay(queryResultPanel.getSize(), 0, database.getProductsByKeyword("apple")[0], gallery));
+			repaint();
+			revalidate();
+			
+			queryCardLayout.show(cardLayoutPanel, "result");
+		}
 	}
 	
 	private void scrollTable(MouseWheelEvent e) {
