@@ -124,18 +124,21 @@ public class SupplierUpdate extends JFrame {
 		formsPanel.add(lblAddress);
 		
 		txtName = new JTextField();
+		txtName.setEnabled(false);
 		txtName.setFont(gallery.getFont(15f));
 		txtName.setBounds(141, 47, 305, 25);
 		formsPanel.add(txtName);
 		txtName.setColumns(10);
 		
 		txtContactNumber = new JTextField();
+		txtContactNumber.setEnabled(false);
 		txtContactNumber.setFont(gallery.getFont(15f));
 		txtContactNumber.setColumns(10);
 		txtContactNumber.setBounds(141, 85, 305, 25);
 		formsPanel.add(txtContactNumber);
 		
 		txtAddress = new JTextArea();
+		txtAddress.setEnabled(false);
 		txtAddress.setFont(gallery.getFont(15f));
 		txtAddress.setBorder(new LineBorder(new Color(0, 0, 0)));
 		txtAddress.setBounds(141, 119, 305, 70);
@@ -169,7 +172,6 @@ public class SupplierUpdate extends JFrame {
 		p.add(manageSupplierPanel);
 		SpringLayout sl_manageSupplierPanel = new SpringLayout();
 		manageSupplierPanel.setLayout(sl_manageSupplierPanel);
-		
 		lblManageSupplier = new JLabel("Manage Supplier");
 		sl_manageSupplierPanel.putConstraint(SpringLayout.WEST, lblManageSupplier, 20, SpringLayout.WEST, manageSupplierPanel);
 		lblManageSupplier.setFont(gallery.getFont(20f));
