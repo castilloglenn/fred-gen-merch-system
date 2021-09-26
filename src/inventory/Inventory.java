@@ -53,18 +53,24 @@ public class Inventory extends JFrame {
 	private Gallery gallery;
 	private Utility utility;
 	
-	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel, supplierSearchPanel;
+	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
+	private JPanel productSearchPanel, supplierSearchPanel;
 	private JLabel btnDashboard, btnSupplier, btnProduct, lblSupplierList, lblProductList, lblSearchIcon;
-	private JTextField txtSearchField;
+	private JTextField txtSupplierSearch;
 	
 	private CardLayout cardLayout;
 	private VerticalLabelUI verticalUI;
 
 	private String supplierSearchMessage = "Search for Supplier...";
+	private String productSearchMessage = "Search for Products...";
 	private JScrollPane supplierScrollPane;
 	private JLabel btnNew;
 	private JLabel btnManage;
 	private JLabel btnDelete;
+	private JLabel lblProductSearchIcon;
+	private JTextField txtProductSearch;
+	private JPanel productButtonPanel;
+	private JPanel panel;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -191,16 +197,16 @@ public class Inventory extends JFrame {
 		sl_supplierSearchPanel.putConstraint(SpringLayout.SOUTH, lblSearchIcon, -10, SpringLayout.SOUTH, supplierSearchPanel);
 		supplierSearchPanel.add(lblSearchIcon);
 		
-		txtSearchField = new JTextField();
-		txtSearchField.setBorder(null);
-		gallery.styleTextField(txtSearchField, supplierSearchMessage, 15f);
-		sl_supplierSearchPanel.putConstraint(SpringLayout.EAST, lblSearchIcon, -8, SpringLayout.WEST, txtSearchField);
-		sl_supplierSearchPanel.putConstraint(SpringLayout.NORTH, txtSearchField, 5, SpringLayout.NORTH, supplierSearchPanel);
-		sl_supplierSearchPanel.putConstraint(SpringLayout.WEST, txtSearchField, 30, SpringLayout.WEST, lblSearchIcon);
-		sl_supplierSearchPanel.putConstraint(SpringLayout.SOUTH, txtSearchField, -5, SpringLayout.SOUTH, supplierSearchPanel);
-		sl_supplierSearchPanel.putConstraint(SpringLayout.EAST, txtSearchField, -10, SpringLayout.EAST, supplierSearchPanel);
-		supplierSearchPanel.add(txtSearchField);
-		txtSearchField.setColumns(10);
+		txtSupplierSearch = new JTextField();
+		txtSupplierSearch.setBorder(null);
+		gallery.styleTextField(txtSupplierSearch, supplierSearchMessage, 15f);
+		sl_supplierSearchPanel.putConstraint(SpringLayout.EAST, lblSearchIcon, -8, SpringLayout.WEST, txtSupplierSearch);
+		sl_supplierSearchPanel.putConstraint(SpringLayout.NORTH, txtSupplierSearch, 5, SpringLayout.NORTH, supplierSearchPanel);
+		sl_supplierSearchPanel.putConstraint(SpringLayout.WEST, txtSupplierSearch, 30, SpringLayout.WEST, lblSearchIcon);
+		sl_supplierSearchPanel.putConstraint(SpringLayout.SOUTH, txtSupplierSearch, -5, SpringLayout.SOUTH, supplierSearchPanel);
+		sl_supplierSearchPanel.putConstraint(SpringLayout.EAST, txtSupplierSearch, -10, SpringLayout.EAST, supplierSearchPanel);
+		supplierSearchPanel.add(txtSupplierSearch);
+		txtSupplierSearch.setColumns(10);
 		
 		supplierScrollPane = new JScrollPane();
 		sl_supplierPanel.putConstraint(SpringLayout.WEST, supplierScrollPane, 15, SpringLayout.WEST, supplierPanel);
@@ -211,10 +217,10 @@ public class Inventory extends JFrame {
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
 		sl_supplierPanel.putConstraint(SpringLayout.WEST, buttonPanel, -355, SpringLayout.EAST, supplierPanel);
+		sl_supplierPanel.putConstraint(SpringLayout.SOUTH, buttonPanel, -15, SpringLayout.SOUTH, supplierPanel);
 		sl_supplierPanel.putConstraint(SpringLayout.EAST, buttonPanel, -15, SpringLayout.EAST, supplierPanel);
 		sl_supplierPanel.putConstraint(SpringLayout.SOUTH, supplierScrollPane, -15, SpringLayout.NORTH, buttonPanel);
 		sl_supplierPanel.putConstraint(SpringLayout.NORTH, buttonPanel, -100, SpringLayout.SOUTH, supplierPanel);
-		sl_supplierPanel.putConstraint(SpringLayout.SOUTH, buttonPanel, -10, SpringLayout.SOUTH, supplierPanel);
 		supplierPanel.add(buttonPanel);
 		SpringLayout sl_buttonPanel = new SpringLayout();
 		buttonPanel.setLayout(sl_buttonPanel);
@@ -256,19 +262,62 @@ public class Inventory extends JFrame {
 		productPanel.setLayout(sl_productPanel);
 		
 		lblProductList = new JLabel("Product List");
-		sl_productPanel.putConstraint(SpringLayout.SOUTH, lblProductList, 31, SpringLayout.NORTH, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.NORTH, lblProductList, 15, SpringLayout.NORTH, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.WEST, lblProductList, 15, SpringLayout.WEST, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.SOUTH, lblProductList, 45, SpringLayout.NORTH, productPanel);
 		sl_productPanel.putConstraint(SpringLayout.EAST, lblProductList, 143, SpringLayout.WEST, productPanel);
 		lblProductList.setFont(gallery.getFont(20f));
-		sl_productPanel.putConstraint(SpringLayout.NORTH, lblProductList, 10, SpringLayout.NORTH, productPanel);
-		sl_productPanel.putConstraint(SpringLayout.WEST, lblProductList, 10, SpringLayout.WEST, productPanel);
 		productPanel.add(lblProductList);
 		
+		productSearchPanel = new RoundedPanel(Gallery.WHITE);
+		sl_productPanel.putConstraint(SpringLayout.NORTH, productSearchPanel, 15, SpringLayout.SOUTH, lblProductList);
+		sl_productPanel.putConstraint(SpringLayout.WEST, productSearchPanel, 0, SpringLayout.WEST, lblProductList);
+		sl_productPanel.putConstraint(SpringLayout.SOUTH, productSearchPanel, 55, SpringLayout.SOUTH, lblProductList);
+		sl_productPanel.putConstraint(SpringLayout.EAST, productSearchPanel, -15, SpringLayout.EAST, productPanel);
+		productPanel.add(productSearchPanel);
+		SpringLayout sl_productSearchPanel = new SpringLayout();
+		productSearchPanel.setLayout(sl_productSearchPanel);
 		
+		lblProductSearchIcon = new JLabel(gallery.getImage("search.png", 20, 20));		
+		sl_productSearchPanel.putConstraint(SpringLayout.NORTH, lblProductSearchIcon, 10, SpringLayout.NORTH, productSearchPanel);
+		sl_productSearchPanel.putConstraint(SpringLayout.WEST, lblProductSearchIcon, 10, SpringLayout.WEST, productSearchPanel);
+		sl_productSearchPanel.putConstraint(SpringLayout.SOUTH, lblProductSearchIcon, -10, SpringLayout.SOUTH, productSearchPanel);
+		productSearchPanel.add(lblProductSearchIcon);
 		
+		txtProductSearch = new JTextField();
+		txtProductSearch.setBorder(null);
+		gallery.styleTextField(txtProductSearch, productSearchMessage, 15f);
+		sl_productSearchPanel.putConstraint(SpringLayout.EAST, lblProductSearchIcon, -8, SpringLayout.WEST, txtProductSearch);
+		sl_productSearchPanel.putConstraint(SpringLayout.WEST, txtProductSearch, 30, SpringLayout.WEST, lblProductSearchIcon);
+		sl_productSearchPanel.putConstraint(SpringLayout.NORTH, txtProductSearch, 5, SpringLayout.NORTH, productSearchPanel);
+		sl_productSearchPanel.putConstraint(SpringLayout.SOUTH, txtProductSearch, -5, SpringLayout.SOUTH, productSearchPanel);
+		sl_productSearchPanel.putConstraint(SpringLayout.EAST, txtProductSearch, -10, SpringLayout.EAST, productSearchPanel);
+		productSearchPanel.add(txtProductSearch);
+		txtProductSearch.setColumns(10);
 		
+		JPanel productImagePanel = new RoundedPanel(gallery.WHITE);
+		sl_productPanel.putConstraint(SpringLayout.NORTH, productImagePanel, 15, SpringLayout.SOUTH, productSearchPanel);
+		sl_productPanel.putConstraint(SpringLayout.WEST, productImagePanel, -315, SpringLayout.EAST, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.SOUTH, productImagePanel, 315, SpringLayout.SOUTH, productSearchPanel);
+		sl_productPanel.putConstraint(SpringLayout.EAST, productImagePanel, -15, SpringLayout.EAST, productPanel);
+		productPanel.add(productImagePanel);
 		
+		productButtonPanel = new RoundedPanel(gallery.WHITE);
+		sl_productPanel.putConstraint(SpringLayout.WEST, productButtonPanel, 0, SpringLayout.WEST, productImagePanel);
+		productButtonPanel.setBackground(Color.RED);
+		sl_productPanel.putConstraint(SpringLayout.NORTH, productButtonPanel, -100, SpringLayout.SOUTH, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.SOUTH, productButtonPanel, -15, SpringLayout.SOUTH, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.EAST, productButtonPanel, 0, SpringLayout.EAST, productImagePanel);
+		productPanel.add(productButtonPanel);
 		
+		panel = new RoundedPanel(Gallery.WHITE);
+		sl_productPanel.putConstraint(SpringLayout.NORTH, panel, 15, SpringLayout.SOUTH, productSearchPanel);
+		sl_productPanel.putConstraint(SpringLayout.WEST, panel, 0, SpringLayout.WEST, productSearchPanel);
+		sl_productPanel.putConstraint(SpringLayout.SOUTH, panel, -15, SpringLayout.SOUTH, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.EAST, panel, -15, SpringLayout.WEST, productImagePanel);
+		productPanel.add(panel);
 		
+
 		
 		// NOTE: Please put all mouse listeners here at the end
 		btnDashboard.addMouseListener(new MouseAdapter() {
@@ -296,13 +345,13 @@ public class Inventory extends JFrame {
 			public void mouseClicked(MouseEvent e) { cardLayout.show(displayPanel, "product");}
 		});
 		
-		txtSearchField.addFocusListener(new FocusAdapter() {
+		txtSupplierSearch.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				gallery.textFieldFocusGained(txtSearchField, supplierSearchMessage);}
+				gallery.textFieldFocusGained(txtSupplierSearch, supplierSearchMessage);}
 			@Override
 			public void focusLost(FocusEvent e) {
-				gallery.textFieldFocusLost(txtSearchField, supplierSearchMessage);}
+				gallery.textFieldFocusLost(txtSupplierSearch, supplierSearchMessage);}
 		});
 		
 		btnNew.addMouseListener(new MouseAdapter() {
@@ -324,6 +373,13 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnManage);}
 			@Override
 			public void mouseClicked(MouseEvent e) {invSupplierUpdate.setVisible(true);}
+		});
+		
+		txtProductSearch.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {gallery.textFieldFocusGained(txtProductSearch, productSearchMessage);}
+			@Override
+			public void focusLost(FocusEvent e) {	gallery.textFieldFocusLost(txtProductSearch, productSearchMessage);}
 		});
 	}
 }
