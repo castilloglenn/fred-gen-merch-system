@@ -21,21 +21,22 @@ import javax.swing.SwingConstants;
  */
 public class ProductDisplay extends RoundedPanel {
 	
-	public int x, y;
-	public int defaultWidth = 150;
-	public int defaultHeight = 100;
-	public int margin = 5;
+	private int x, y;
+	private int defaultWidth = 150;
+	private int defaultHeight = 100;
+	private int marginWidth = 8;
+	private int marginHeight = 10;
 	
-	public int index;
-	public int maxColumn;
-	public int maxRow;
-	public int maxPerPage;
+	private int index;
+	private int maxColumn;
+	private int maxRow;
+	private int maxPerPage;
 	
-	public Object[] product;
-	public boolean isSelected = false;
+	private boolean isSelected = false;
 	
-	private JLabel lblName, lblImage, lblPrice;
-	private JLabel lblUOM;
+	private JLabel lblName, lblImage, lblPrice, lblUOM;
+	
+	private Object[] product;
 
 	/**
 	 * 
@@ -47,13 +48,21 @@ public class ProductDisplay extends RoundedPanel {
 	 * 
 	 * @see utils.Database#getProductsByKeyword(String)
 	 */
-	public ProductDisplay(Dimension parentPanel, int index, Object[] product, Gallery gallery) {
+	public ProductDisplay(Dimension parentPanel, int index, Object[] product, Gallery gallery, POS pos) {
 		super(15, Gallery.GRAY, Gallery.WHITE);
-
 		this.product = product;
-		maxColumn = (parentPanel.width / (defaultWidth + margin));
-		maxRow = (parentPanel.height / (defaultHeight + margin));
-		maxPerPage = maxColumn + maxRow;
+
+		maxColumn = (parentPanel.width / (defaultWidth + marginWidth));
+		maxRow = (parentPanel.height / (defaultHeight + marginHeight));
+		maxPerPage = maxColumn * maxRow;
+		
+		/*
+		 * This comment displays a basic statistics overview about the sizes and position
+		 */
+//		System.out.println(String.format("(%d, %d), margin: %d\nParent Panel: (%d, %d)\nMax Col: %d\nMax Row: %d", 
+//			defaultWidth, defaultHeight, margin,
+//			parentPanel.width, parentPanel.height,
+//			maxColumn, maxRow));
 		
 		/*
 		 * The process calculates the absolute coordinates of 
@@ -61,10 +70,10 @@ public class ProductDisplay extends RoundedPanel {
 		 */
 		this.index = index % maxPerPage;
 		int columnIndex = this.index % maxColumn;
-		int rowIndex = this.index % maxRow;
+		int rowIndex = this.index / maxColumn;
 		
-		x = (defaultWidth + margin) * columnIndex;
-		y = (defaultHeight + margin) * rowIndex;
+		x = (defaultWidth + marginWidth) * columnIndex;
+		y = (defaultHeight + marginHeight) * rowIndex;
 		
 		setBounds(x, y, defaultWidth, defaultHeight);
 		setLayout(null);
@@ -72,12 +81,12 @@ public class ProductDisplay extends RoundedPanel {
 		lblName = new JLabel(product[1].toString());
 		lblName.setFont(gallery.getFont(13f));
 		lblName.setOpaque(false);
-		lblName.setBounds(8, 12, 134, 14);
+		lblName.setBounds(8, 12, 134, 16);
 		add(lblName);
 		
 		lblImage = new JLabel();
 		lblImage.setIcon((ImageIcon) product[2]);
-		lblImage.setBounds(8, 34, 54, 54);
+		lblImage.setBounds(14, 38, 48, 48);
 		add(lblImage);
 		
 		DecimalFormat formatter = new DecimalFormat("#,###.00");
@@ -87,13 +96,13 @@ public class ProductDisplay extends RoundedPanel {
 		lblPrice.setVerticalAlignment(SwingConstants.BOTTOM);
 		lblPrice.setFont(gallery.getFont(16f));
 		lblPrice.setOpaque(false);
-		lblPrice.setBounds(70, 34, 72, 32);
+		lblPrice.setBounds(70, 32, 72, 32);
 		add(lblPrice);
 		
 		lblUOM = new JLabel("per " + product[3].toString());
 		lblUOM.setVerticalAlignment(SwingConstants.TOP);
 		lblUOM.setFont(gallery.getFont(10f));
-		lblUOM.setBounds(70, 62, 72, 26);
+		lblUOM.setBounds(70, 60, 72, 26);
 		add(lblUOM);
 		
 		addMouseListener(new MouseAdapter() {
@@ -104,15 +113,61 @@ public class ProductDisplay extends RoundedPanel {
 				setBackgroundColor(Gallery.BLUE);
 				labelHovered(new JLabel[] {lblName, lblPrice, lblUOM});
 			}
+			
 			@Override
 			public void mouseExited(MouseEvent e) {
 				setBorderColor(Color.WHITE);
-				setBackgroundColor(Gallery.GRAY);
+				labelNormalized(new JLabel[] {lblName, lblPrice, lblUOM});
+				
+				if (isSelected) {
+					setBackgroundColor(Gallery.BLUE);
+				} else {
+					setBackgroundColor(Gallery.GRAY);
+				}
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				setBackgroundColor(Gallery.DARK_BLUE);
+				labelHovered(new JLabel[] {lblName, lblPrice, lblUOM});
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				isSelected = !isSelected;
+				
+				if (isSelected) {
+					pos.setSelectedIndex(index);
+					setBackgroundColor(Gallery.BLUE);
+				} else {
+					setBackgroundColor(Gallery.GRAY);
+				}
+
 				labelNormalized(new JLabel[] {lblName, lblPrice, lblUOM});
 			}
 		});
 	}
 	
+	public Object[] getProduct() {
+		return product;
+	}
+	
+	public int getMaxPerPage() {
+		return maxPerPage;
+	}
+	
+	public int getMaxRow() {
+		return maxRow;
+	}
+	
+	public int getMaxColumn() {
+		return maxColumn;
+	}
+	
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
+
 	public void labelHovered(JLabel[] labels) {
 		for (JLabel label : labels) {
 			label.setForeground(Gallery.WHITE);
@@ -121,10 +176,13 @@ public class ProductDisplay extends RoundedPanel {
 	}
 	
 	public void labelNormalized(JLabel[] labels) {
-		for (JLabel label : labels) {
-			label.setForeground(Gallery.BLACK);
-			label.setBackground(Gallery.GRAY);
+		if (isSelected) {
+			labelHovered(labels);
+		} else {
+			for (JLabel label : labels) {
+				label.setForeground(Gallery.BLACK);
+				label.setBackground(Gallery.GRAY);
+			}
 		}
 	}
-
 }

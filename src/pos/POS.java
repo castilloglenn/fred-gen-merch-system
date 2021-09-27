@@ -44,6 +44,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.FlowLayout;
 import java.awt.event.WindowStateListener;
 import java.awt.event.WindowEvent;
+import javax.swing.SwingConstants;
 
 
 /**
@@ -66,6 +67,9 @@ public class POS extends JFrame {
 	private String defaultQuantityMessage = "How many?";
 	
 	private Object[][] queryResult;
+	private ProductDisplay[] productUIs;
+	
+	private int maxPerPage = 6;
 	private int selectedIndex = 0;
 	private int currentPage = 1;
 	private int totalPage = 1;
@@ -87,7 +91,7 @@ public class POS extends JFrame {
 		lblTransactionNo, lblDateTime, lblCheckoutButton,
 		lblCancelButton, lblSearchIcon, lblAddToCart,
 		lblQuantityIcon, lblDownButton, lblUpButton,
-		lblNotFoundImage;
+		lblNotFoundImage, lblPageIndicator;
 	private JTextField tfSearch, tfQuantity;
 	
 	private SpringLayout sl_mainPanel, sl_posPanel;
@@ -293,11 +297,11 @@ public class POS extends JFrame {
 		tableContainerPanel.setLayout(sl_tableContainerPanel);
 		
 		cardLayoutPanel = new JPanel();
+		sl_tableContainerPanel.putConstraint(SpringLayout.NORTH, cardLayoutPanel, 15, SpringLayout.NORTH, tableContainerPanel);
+		sl_tableContainerPanel.putConstraint(SpringLayout.WEST, cardLayoutPanel, 10, SpringLayout.WEST, tableContainerPanel);
+		sl_tableContainerPanel.putConstraint(SpringLayout.SOUTH, cardLayoutPanel, -14, SpringLayout.SOUTH, tableContainerPanel);
 		queryCardLayout = new CardLayout();
 		cardLayoutPanel.setBackground(Gallery.WHITE);
-		sl_tableContainerPanel.putConstraint(SpringLayout.SOUTH, cardLayoutPanel, -15, SpringLayout.SOUTH, tableContainerPanel);
-		sl_tableContainerPanel.putConstraint(SpringLayout.NORTH, cardLayoutPanel, 15, SpringLayout.NORTH, tableContainerPanel);
-		sl_tableContainerPanel.putConstraint(SpringLayout.WEST, cardLayoutPanel, 15, SpringLayout.WEST, tableContainerPanel);
 		tableContainerPanel.add(cardLayoutPanel);
 		cardLayoutPanel.setLayout(queryCardLayout);
 		
@@ -330,7 +334,6 @@ public class POS extends JFrame {
 		sl_queryEmptyPanel.putConstraint(SpringLayout.WEST, lblNotFoundImage, 0, SpringLayout.WEST, queryEmptyPanel);
 		sl_queryEmptyPanel.putConstraint(SpringLayout.SOUTH, lblNotFoundImage, 0, SpringLayout.SOUTH, queryEmptyPanel);
 		sl_queryEmptyPanel.putConstraint(SpringLayout.EAST, lblNotFoundImage, 0, SpringLayout.EAST, queryEmptyPanel);
-		// This set text must be set dynamically based on the input
 		lblNotFoundImage.setText("<html><p>No results found with the<br>keyword");
 		lblNotFoundImage.setFont(gallery.getFont(15f));
 		queryEmptyPanel.add(lblNotFoundImage);
@@ -340,6 +343,14 @@ public class POS extends JFrame {
 		cardLayoutPanel.add(queryEmptyPanel, "none");
 		queryResultPanel.setBackground(Gallery.WHITE);
 		queryResultPanel.setLayout(null);
+		
+		lblPageIndicator = new JLabel();
+		lblPageIndicator.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPageIndicator.setFont(gallery.getFont(15f));
+		sl_tableContainerPanel.putConstraint(SpringLayout.NORTH, lblPageIndicator, 15, SpringLayout.NORTH, tableContainerPanel);
+		sl_tableContainerPanel.putConstraint(SpringLayout.WEST, lblPageIndicator, 0, SpringLayout.WEST, lblDownButton);
+		sl_tableContainerPanel.putConstraint(SpringLayout.EAST, lblPageIndicator, 0, SpringLayout.EAST, lblDownButton);
+		tableContainerPanel.add(lblPageIndicator);
 		
 		
 		
@@ -376,6 +387,8 @@ public class POS extends JFrame {
 				
 				breakpointTrigger = getWidth() <= minWidth;
 				lblDateTime.setText(gallery.getTime(breakpointTrigger));
+				
+				searchQuery();
 			}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
@@ -424,6 +437,11 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO: Add to cart list the product selected
+				
+				String path = utility.showImageChooser();
+				if (path != null) {
+					database.registerProduct(2543, "Mango", path, 52.0, "sack", 24.25, 25.75);
+				}
 			}
 		});
 		lblDownButton.addMouseListener(new MouseAdapter() {
@@ -438,7 +456,7 @@ public class POS extends JFrame {
 			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO: Turn the page to the next set
+				nextPage();
 			}
 		});
 		lblUpButton.addMouseListener(new MouseAdapter() {
@@ -455,14 +473,14 @@ public class POS extends JFrame {
 			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO: Turn the page to the previous set
-				
+				previousPage();
 			}
 		});
 		tfSearch.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
 				gallery.textFieldFocusGained(tfSearch, defaultSearchMessage);
+				searchQuery();
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -500,8 +518,20 @@ public class POS extends JFrame {
 		setLocationRelativeTo(null);
 	}
 	
+	public void setSelectedIndex(int selectedIndex) {
+		this.selectedIndex = selectedIndex;
+		System.out.println(this.selectedIndex);
+	}
+	
+	public int getSelectedIndex(int selectedIndex) {
+		return selectedIndex;
+	}
+	
 	private void searchQuery() {
-		String keyword = (tfSearch.getText() == null) ? "" : tfSearch.getText();
+		String keyword = 
+			(tfSearch.getText() == null || tfSearch.getText().equals(defaultSearchMessage)) 
+			? "" : tfSearch.getText();
+		
 		queryResult = database.getProductsByKeyword(keyword);
 		
 		// Empty query result
@@ -512,29 +542,72 @@ public class POS extends JFrame {
 					? keyword.substring(0, Math.min(keyword.length(), 6)) + "..."
 					: keyword
 			));
+			lblPageIndicator.setText("");
 			queryCardLayout.show(cardLayoutPanel, "none");
 		
 		// Query Result
 		} else {
-//			for (Object[] row : queryResult) {
-//				
-//			}
-			queryResultPanel.add(new ProductDisplay(queryResultPanel.getSize(), 0, database.getProductsByKeyword("apple")[0], gallery));
-			repaint();
-			revalidate();
-			
-			queryCardLayout.show(cardLayoutPanel, "result");
+			displayResults();
 		}
+	}
+	
+	private void displayResults() {
+		// First, we will clean the panel of its child components
+		queryResultPanel.removeAll();
+		Dimension panelSize = queryResultPanel.getSize();
+		productUIs = new ProductDisplay[queryResult.length];
+		
+		maxPerPage = new ProductDisplay(panelSize, 0, 
+				queryResult[0], gallery, this).getMaxPerPage();
+		totalPage = (queryResult.length / maxPerPage) + 
+			((queryResult.length % maxPerPage > 0) ? 1 : 0);
+		currentPage = (currentPage > totalPage) ? totalPage : currentPage;
+
+		lblPageIndicator.setText(String.format("%s/%s", currentPage, totalPage));
+		
+		for (int queryIndex = (currentPage - 1) * maxPerPage; 
+			queryIndex < currentPage * maxPerPage; 
+			queryIndex++) 
+		{
+			try {
+				queryResultPanel.add(
+					new ProductDisplay(
+						panelSize, queryIndex, 
+						queryResult[queryIndex], 
+						gallery, this)
+				);
+				repaint();
+				revalidate();
+			} catch (ArrayIndexOutOfBoundsException e) {
+				break;
+			}
+		}
+		
+		queryCardLayout.show(cardLayoutPanel, "result");
 	}
 	
 	private void scrollTable(MouseWheelEvent e) {
 		int rotation = e.getWheelRotation();
 		if (rotation == 1) {
 			// Mouse is rotated downward
-			
+			nextPage();
 		} else {
 			// Mouse is rotated upward
-			
+			previousPage();
+		}
+	}
+	
+	private void nextPage() {
+		if (currentPage < totalPage) { 
+			currentPage++;
+			searchQuery();
+		}
+	}
+	
+	private void previousPage() {
+		if (currentPage > 1) { 
+			currentPage--; 
+			searchQuery();
 		}
 	}
 }

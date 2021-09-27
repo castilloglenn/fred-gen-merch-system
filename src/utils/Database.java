@@ -137,10 +137,10 @@ public class Database {
 			//Inserting Blob type
 			InputStream in = new FileInputStream(path);
 			ps.setBinaryStream(3, in);
-			ps.setDouble(4, 5.5);
-			ps.setString(5, "piece");
-			ps.setDouble(6, 10.5);
-			ps.setDouble(7, 12.5);
+			ps.setDouble(4, stock);
+			ps.setString(5, uom);
+			ps.setDouble(6, priceBought);
+			ps.setDouble(7, sellingPrice);
 			ps.executeUpdate();
 		} catch (SQLException e ) {
 			e.printStackTrace();
@@ -179,9 +179,9 @@ public class Database {
 		    rs.beforeFirst();
 		    
 		    Object[][] resultProducts = new Object[size][5];
-			
+
 		    int index = 0;
-            if(rs.next()){
+            while (rs.next()){
             	Object[] productRow = new Object[5];
             	
             	productRow[0] = rs.getLong("product_id");
