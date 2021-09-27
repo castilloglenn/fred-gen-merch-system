@@ -520,7 +520,6 @@ public class POS extends JFrame {
 	
 	public void setSelectedIndex(int selectedIndex) {
 		this.selectedIndex = selectedIndex;
-		System.out.println(this.selectedIndex);
 	}
 	
 	public int getSelectedIndex(int selectedIndex) {
@@ -555,34 +554,30 @@ public class POS extends JFrame {
 		// First, we will clean the panel of its child components
 		queryResultPanel.removeAll();
 		Dimension panelSize = queryResultPanel.getSize();
-		productUIs = new ProductDisplay[queryResult.length];
 		
 		maxPerPage = new ProductDisplay(panelSize, 0, 
 				queryResult[0], gallery, this).getMaxPerPage();
 		totalPage = (queryResult.length / maxPerPage) + 
 			((queryResult.length % maxPerPage > 0) ? 1 : 0);
 		currentPage = (currentPage > totalPage) ? totalPage : currentPage;
+		productUIs = new ProductDisplay[maxPerPage];
 
 		lblPageIndicator.setText(String.format("%s/%s", currentPage, totalPage));
 		
-		for (int queryIndex = (currentPage - 1) * maxPerPage; 
-			queryIndex < currentPage * maxPerPage; 
-			queryIndex++) 
-		{
+		for (int queryIndex = (currentPage - 1) * maxPerPage; queryIndex < currentPage * maxPerPage; queryIndex++) {
 			try {
-				queryResultPanel.add(
-					new ProductDisplay(
-						panelSize, queryIndex, 
-						queryResult[queryIndex], 
-						gallery, this)
-				);
-				repaint();
-				revalidate();
+				productUIs[queryIndex % maxPerPage] = new ProductDisplay(
+						panelSize, queryIndex, queryResult[queryIndex], gallery, this);
+				queryResultPanel.add(productUIs[queryIndex % maxPerPage]);
 			} catch (ArrayIndexOutOfBoundsException e) {
+				// This catch is essential to the final page of a query 
+				// that is a remainder of the maxPerPage computation
 				break;
 			}
 		}
-		
+
+		repaint();
+		revalidate();
 		queryCardLayout.show(cardLayoutPanel, "result");
 	}
 	
