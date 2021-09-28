@@ -3,22 +3,23 @@ package pos;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-
-import utils.Gallery;
-import utils.RoundedPanel;
-import javax.swing.JLabel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+
+import utils.Gallery;
+import utils.RoundedPanel;
 
 /**
  * 
  * @author Allen Glenn E. Castillo
  *
  */
+@SuppressWarnings("serial")
 public class ProductDisplay extends RoundedPanel {
 	
 	private int x, y;
@@ -111,8 +112,15 @@ public class ProductDisplay extends RoundedPanel {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
 				setBorderColor(Color.WHITE);
-				setBackgroundColor(Gallery.BLUE);
+				if (isSelected) {
+					setBackgroundColor(Gallery.BLUE);
+				} else {
+					setBackgroundColor(Gallery.LIGHT_BLUE);
+				}
+				
+				
 				labelHovered(new JLabel[] {lblName, lblPrice, lblUOM});
 			}
 			
@@ -138,6 +146,8 @@ public class ProductDisplay extends RoundedPanel {
 			public void mouseClicked(MouseEvent e) {
 				isSelected = !isSelected;
 				panelClicked();
+
+				System.out.println("clicked, select status: " + isSelected);
 			}
 		});
 	}
@@ -159,9 +169,16 @@ public class ProductDisplay extends RoundedPanel {
 	}
 
 	public void labelHovered(JLabel[] labels) {
-		for (JLabel label : labels) {
-			label.setForeground(Gallery.WHITE);
-			label.setBackground(Gallery.BLUE);
+		if (isSelected) {
+			for (JLabel label : labels) {
+				label.setForeground(Gallery.WHITE);
+				label.setBackground(Gallery.BLUE);
+			}
+		} else {
+			for (JLabel label : labels) {
+				label.setForeground(Gallery.WHITE);
+				label.setBackground(Gallery.LIGHT_BLUE);
+			}
 		}
 	}
 	

@@ -14,7 +14,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
@@ -31,7 +30,6 @@ import javax.swing.Timer;
 import utils.Database;
 import utils.Gallery;
 import utils.RoundedPanel;
-import utils.Utility;
 import utils.VerticalLabelUI;
 
 
@@ -461,7 +459,6 @@ public class POS extends JFrame {
 			@Override
 			public void focusGained(FocusEvent e) {
 				gallery.textFieldFocusGained(tfSearch, defaultSearchMessage);
-				searchQuery();
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -472,6 +469,7 @@ public class POS extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				searchQuery();
+				selectFirst();
 			}
 		});
 		tfQuantity.addFocusListener(new FocusAdapter() {
@@ -520,6 +518,7 @@ public class POS extends JFrame {
 		
 		// Empty query result
 		if (queryResult.length == 0) {
+			selectedIndex = -1;
 			lblNotFoundImage.setText(
 				String.format("<html><p>No results found with the<br>keyword \"%s\"</p></html>", 
 					(keyword.length() > 7) 
@@ -553,16 +552,9 @@ public class POS extends JFrame {
 		for (int queryIndex = (currentPage - 1) * maxPerPage; 
 				 queryIndex < (currentPage * maxPerPage) - (maxPerPage - productUIs.length); 
 				 queryIndex++) {
-			try {
-				productUIs[queryIndex % maxPerPage] = new ProductDisplay(
-						panelSize, queryIndex, queryResult[queryIndex], gallery, this);
-				queryResultPanel.add(productUIs[queryIndex % maxPerPage]);
-			} catch (ArrayIndexOutOfBoundsException e) {
-				// This catch is essential to the final page of a query 
-				// that is a remainder of the maxPerPage computation
-				System.out.println("Is this even called?");
-				break;
-			}
+			productUIs[queryIndex % maxPerPage] = new ProductDisplay(
+				panelSize, queryIndex, queryResult[queryIndex], gallery, this);
+			queryResultPanel.add(productUIs[queryIndex % maxPerPage]);
 		}
 
 		repaint();
@@ -585,6 +577,7 @@ public class POS extends JFrame {
 		if (currentPage < totalPage) { 
 			currentPage++;
 			searchQuery();
+			selectFirst();
 		}
 	}
 	
@@ -592,12 +585,19 @@ public class POS extends JFrame {
 		if (currentPage > 1) { 
 			currentPage--; 
 			searchQuery();
+			selectFirst();
 		}
 	}
 	
 	private void resetPage() {
 		currentPage = 1;
 		searchQuery();
+		selectFirst();
+	}
+	
+	private void selectFirst() {
+		MouseEvent me = new MouseEvent(productUIs[0], 0, 0, 0, 100, 100, 1, false);
+		productUIs[0].getMouseListeners()[0].mouseClicked(me);
 	}
 }
 
