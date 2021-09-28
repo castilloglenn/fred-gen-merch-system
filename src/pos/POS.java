@@ -10,41 +10,29 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.ReadOnlyFileSystemException;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
-import javax.swing.JFileChooser;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import utils.Database;
 import utils.Gallery;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import java.awt.GridLayout;
-import javax.swing.JButton;
-import javax.swing.BoxLayout;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.FlowLayout;
-import java.awt.event.WindowStateListener;
-import java.awt.event.WindowEvent;
-import javax.swing.SwingConstants;
 
 
 /**
@@ -74,7 +62,6 @@ public class POS extends JFrame {
 	private int currentPage = 1;
 	private int totalPage = 1;
 	
-	private Utility utility;
 	private Database database; 
 	private Gallery gallery;
 	private VerticalLabelUI verticalUI;
@@ -107,7 +94,6 @@ public class POS extends JFrame {
 	}
 
 	public POS() {
-		utility = new Utility();
 		database = new Database();
 		gallery = new Gallery();
 		
@@ -388,7 +374,7 @@ public class POS extends JFrame {
 				breakpointTrigger = getWidth() <= minWidth;
 				lblDateTime.setText(gallery.getTime(breakpointTrigger));
 				
-				searchQuery();
+				resetPage();
 			}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
@@ -437,11 +423,6 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO: Add to cart list the product selected
-				
-				String path = utility.showImageChooser();
-				if (path != null) {
-					database.registerProduct(2543, "Mango", path, 52.0, "sack", 24.25, 25.75);
-				}
 			}
 		});
 		lblDownButton.addMouseListener(new MouseAdapter() {
@@ -520,10 +501,14 @@ public class POS extends JFrame {
 	
 	public void setSelectedIndex(int selectedIndex) {
 		this.selectedIndex = selectedIndex;
-	}
-	
-	public int getSelectedIndex(int selectedIndex) {
-		return selectedIndex;
+		
+		for (ProductDisplay productDisplay : productUIs) {
+			if (productDisplay.getSelected() && productDisplay.getIndex() != this.selectedIndex) {
+				productDisplay.unselect();
+			}
+		}
+		
+		System.out.println("The selected index is " + this.selectedIndex + ", and the product's name is " + productUIs[selectedIndex].getName());
 	}
 	
 	private void searchQuery() {
@@ -554,17 +539,20 @@ public class POS extends JFrame {
 		// First, we will clean the panel of its child components
 		queryResultPanel.removeAll();
 		Dimension panelSize = queryResultPanel.getSize();
-		
+
+		selectedIndex = 0;
 		maxPerPage = new ProductDisplay(panelSize, 0, 
 				queryResult[0], gallery, this).getMaxPerPage();
 		totalPage = (queryResult.length / maxPerPage) + 
 			((queryResult.length % maxPerPage > 0) ? 1 : 0);
-		currentPage = (currentPage > totalPage) ? totalPage : currentPage;
-		productUIs = new ProductDisplay[maxPerPage];
+		productUIs = new ProductDisplay[Math.min(
+		    maxPerPage - ((maxPerPage * currentPage) - queryResult.length), 
+		    maxPerPage)];
 
 		lblPageIndicator.setText(String.format("%s/%s", currentPage, totalPage));
-		
-		for (int queryIndex = (currentPage - 1) * maxPerPage; queryIndex < currentPage * maxPerPage; queryIndex++) {
+		for (int queryIndex = (currentPage - 1) * maxPerPage; 
+				 queryIndex < (currentPage * maxPerPage) - (maxPerPage - productUIs.length); 
+				 queryIndex++) {
 			try {
 				productUIs[queryIndex % maxPerPage] = new ProductDisplay(
 						panelSize, queryIndex, queryResult[queryIndex], gallery, this);
@@ -572,6 +560,7 @@ public class POS extends JFrame {
 			} catch (ArrayIndexOutOfBoundsException e) {
 				// This catch is essential to the final page of a query 
 				// that is a remainder of the maxPerPage computation
+				System.out.println("Is this even called?");
 				break;
 			}
 		}
@@ -604,6 +593,11 @@ public class POS extends JFrame {
 			currentPage--; 
 			searchQuery();
 		}
+	}
+	
+	private void resetPage() {
+		currentPage = 1;
+		searchQuery();
 	}
 }
 

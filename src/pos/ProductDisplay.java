@@ -37,6 +37,7 @@ public class ProductDisplay extends RoundedPanel {
 	private JLabel lblName, lblImage, lblPrice, lblUOM;
 	
 	private Object[] product;
+	private POS pos;
 
 	/**
 	 * 
@@ -51,6 +52,7 @@ public class ProductDisplay extends RoundedPanel {
 	public ProductDisplay(Dimension parentPanel, int index, Object[] product, Gallery gallery, POS pos) {
 		super(15, Gallery.GRAY, Gallery.WHITE);
 		this.product = product;
+		this.pos = pos;
 
 		maxColumn = (parentPanel.width / (defaultWidth + marginWidth));
 		maxRow = (parentPanel.height / (defaultHeight + marginHeight));
@@ -135,37 +137,25 @@ public class ProductDisplay extends RoundedPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				isSelected = !isSelected;
-				
-				if (isSelected) {
-					pos.setSelectedIndex(index);
-					setBackgroundColor(Gallery.BLUE);
-				} else {
-					setBackgroundColor(Gallery.GRAY);
-				}
-
-				labelNormalized(new JLabel[] {lblName, lblPrice, lblUOM});
+				panelClicked();
 			}
 		});
 	}
 	
-	public Object[] getProduct() {
-		return product;
+	public void unselect() {
+		this.isSelected = false;
+		panelClicked();
 	}
 	
-	public int getMaxPerPage() {
-		return maxPerPage;
-	}
-	
-	public int getMaxRow() {
-		return maxRow;
-	}
-	
-	public int getMaxColumn() {
-		return maxColumn;
-	}
-	
-	public void setSelected(boolean isSelected) {
-		this.isSelected = isSelected;
+	public void panelClicked() {
+		if (isSelected) {
+			pos.setSelectedIndex(index);
+			setBackgroundColor(Gallery.BLUE);
+		} else {
+			setBackgroundColor(Gallery.GRAY);
+		}
+
+		labelNormalized(new JLabel[] {lblName, lblPrice, lblUOM});
 	}
 
 	public void labelHovered(JLabel[] labels) {
@@ -184,5 +174,33 @@ public class ProductDisplay extends RoundedPanel {
 				label.setBackground(Gallery.GRAY);
 			}
 		}
+	}
+	
+	public Object[] getProduct() {
+		return product;
+	}
+	
+	public int getMaxPerPage() {
+		return maxPerPage;
+	}
+	
+	public int getMaxRow() {
+		return maxRow;
+	}
+	
+	public int getMaxColumn() {
+		return maxColumn;
+	}
+	
+	public boolean getSelected() {
+		return isSelected;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+	
+	public String getName() {
+		return product[1].toString();
 	}
 }
