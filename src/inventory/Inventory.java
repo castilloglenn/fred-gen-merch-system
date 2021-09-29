@@ -71,6 +71,8 @@ public class Inventory extends JFrame {
 	private JTextField txtProductSearch;
 	private JPanel productButtonPanel;
 	private JPanel panel;
+	private JLabel btnProductManage;
+	private JLabel btnProductRemove;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -309,6 +311,38 @@ public class Inventory extends JFrame {
 		sl_productPanel.putConstraint(SpringLayout.SOUTH, productButtonPanel, -15, SpringLayout.SOUTH, productPanel);
 		sl_productPanel.putConstraint(SpringLayout.EAST, productButtonPanel, 0, SpringLayout.EAST, productImagePanel);
 		productPanel.add(productButtonPanel);
+		SpringLayout sl_productButtonPanel = new SpringLayout();
+		productButtonPanel.setLayout(sl_productButtonPanel);
+		
+		JLabel btnProductNew = new JLabel("New");
+		sl_productButtonPanel.putConstraint(SpringLayout.EAST, btnProductNew, -200, SpringLayout.EAST, productButtonPanel);
+		btnProductNew.setName("primary");
+		gallery.styleLabelToButton(btnProductNew, 14f, 15, 10);
+		sl_productButtonPanel.putConstraint(SpringLayout.WEST, btnProductNew, 10, SpringLayout.WEST, productButtonPanel);
+		sl_productButtonPanel.putConstraint(SpringLayout.NORTH, btnProductNew, 25, SpringLayout.NORTH, productButtonPanel);
+		sl_productButtonPanel.putConstraint(SpringLayout.SOUTH, btnProductNew, -25, SpringLayout.SOUTH, productButtonPanel);
+		btnProductNew.setHorizontalAlignment(SwingConstants.CENTER);
+		productButtonPanel.add(btnProductNew);
+		
+		btnProductManage = new JLabel("Manage");
+		btnProductManage.setName("primary");
+		gallery.styleLabelToButton(btnProductManage, 14f, 15, 10);
+		sl_productButtonPanel.putConstraint(SpringLayout.EAST, btnProductManage, 100, SpringLayout.EAST, btnProductNew);
+		sl_productButtonPanel.putConstraint(SpringLayout.WEST, btnProductManage, 10, SpringLayout.EAST, btnProductNew);
+		sl_productButtonPanel.putConstraint(SpringLayout.NORTH, btnProductManage, 0, SpringLayout.NORTH, btnProductNew);
+		sl_productButtonPanel.putConstraint(SpringLayout.SOUTH, btnProductManage, 0, SpringLayout.SOUTH, btnProductNew);
+		btnProductManage.setHorizontalAlignment(SwingConstants.CENTER);
+		productButtonPanel.add(btnProductManage);
+		
+		btnProductRemove = new JLabel("Remove");
+		btnProductRemove.setName("danger");
+		gallery.styleLabelToButton(btnProductRemove, 14f, 15, 10);
+		sl_productButtonPanel.putConstraint(SpringLayout.EAST, btnProductRemove, 200, SpringLayout.EAST, btnProductNew);
+		sl_productButtonPanel.putConstraint(SpringLayout.NORTH, btnProductRemove, 0, SpringLayout.NORTH, btnProductNew);
+		sl_productButtonPanel.putConstraint(SpringLayout.WEST, btnProductRemove, 10, SpringLayout.EAST, btnProductManage);
+		sl_productButtonPanel.putConstraint(SpringLayout.SOUTH, btnProductRemove, 0, SpringLayout.SOUTH, btnProductNew);
+		btnProductRemove.setHorizontalAlignment(SwingConstants.CENTER);
+		productButtonPanel.add(btnProductRemove);
 		
 		panel = new RoundedPanel(Gallery.WHITE);
 		sl_productPanel.putConstraint(SpringLayout.NORTH, panel, 15, SpringLayout.SOUTH, productSearchPanel);
@@ -380,6 +414,39 @@ public class Inventory extends JFrame {
 			public void focusGained(FocusEvent e) {gallery.textFieldFocusGained(txtProductSearch, productSearchMessage);}
 			@Override
 			public void focusLost(FocusEvent e) {	gallery.textFieldFocusLost(txtProductSearch, productSearchMessage);}
+		});
+		
+		btnProductNew.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnProductNew);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductNew);}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//code d2
+			}
+		});		
+		
+		btnProductManage.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnProductManage);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductManage);}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//code d2
+			}
+		});
+		
+		btnProductRemove.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnProductRemove);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductRemove);	}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//code d2
+			}
 		});
 	}
 }
