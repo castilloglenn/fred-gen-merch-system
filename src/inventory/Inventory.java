@@ -290,7 +290,7 @@ public class Inventory extends JFrame {
 		
 		JPanel productImagePanel = new RoundedPanel(gallery.WHITE);
 		sl_productPanel.putConstraint(SpringLayout.NORTH, productImagePanel, 15, SpringLayout.SOUTH, productSearchPanel);
-		sl_productPanel.putConstraint(SpringLayout.WEST, productImagePanel, -315, SpringLayout.EAST, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.WEST, productImagePanel, -325, SpringLayout.EAST, productPanel);
 		sl_productPanel.putConstraint(SpringLayout.SOUTH, productImagePanel, 315, SpringLayout.SOUTH, productSearchPanel);
 		sl_productPanel.putConstraint(SpringLayout.EAST, productImagePanel, -15, SpringLayout.EAST, productPanel);
 		productPanel.add(productImagePanel);
@@ -306,9 +306,9 @@ public class Inventory extends JFrame {
 		productButtonPanel.setLayout(sl_productButtonPanel);
 		
 		JLabel btnProductNew = new JLabel("New");
+		sl_productButtonPanel.putConstraint(SpringLayout.EAST, btnProductNew, -210, SpringLayout.EAST, productButtonPanel);
 		btnProductNew.setName("primary");
 		gallery.styleLabelToButton(btnProductNew, 14f, 15, 10);
-		sl_productButtonPanel.putConstraint(SpringLayout.EAST, btnProductNew, -200, SpringLayout.EAST, productButtonPanel);
 		sl_productButtonPanel.putConstraint(SpringLayout.WEST, btnProductNew, 10, SpringLayout.WEST, productButtonPanel);
 		sl_productButtonPanel.putConstraint(SpringLayout.NORTH, btnProductNew, 25, SpringLayout.NORTH, productButtonPanel);
 		sl_productButtonPanel.putConstraint(SpringLayout.SOUTH, btnProductNew, -25, SpringLayout.SOUTH, productButtonPanel);

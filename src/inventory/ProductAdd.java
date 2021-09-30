@@ -87,7 +87,7 @@ public class ProductAdd extends JFrame {
 		formPanel = new RoundedPanel(Gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.NORTH, formPanel, 15, SpringLayout.SOUTH, newProductPanel);
 		sl_p.putConstraint(SpringLayout.WEST, formPanel, 10, SpringLayout.WEST, p);
-		sl_p.putConstraint(SpringLayout.SOUTH, formPanel, -100, SpringLayout.SOUTH, p);
+		sl_p.putConstraint(SpringLayout.SOUTH, formPanel, -10, SpringLayout.SOUTH, p);
 		sl_p.putConstraint(SpringLayout.EAST, formPanel, -250, SpringLayout.EAST, p);
 		p.add(formPanel);
 		formPanel.setLayout(new SpringLayout());
@@ -95,13 +95,13 @@ public class ProductAdd extends JFrame {
 		imagePanel = new RoundedPanel(Gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.NORTH, imagePanel, 0, SpringLayout.NORTH, formPanel);
 		sl_p.putConstraint(SpringLayout.WEST, imagePanel, 10, SpringLayout.EAST, formPanel);
-		sl_p.putConstraint(SpringLayout.SOUTH, imagePanel, 0, SpringLayout.SOUTH, formPanel);
 		sl_p.putConstraint(SpringLayout.EAST, imagePanel, -10, SpringLayout.EAST, p);
 		p.add(imagePanel);
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
+		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, -100, SpringLayout.SOUTH, p);
+		sl_p.putConstraint(SpringLayout.SOUTH, imagePanel, -10, SpringLayout.NORTH, buttonPanel);
 		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, 0, SpringLayout.WEST, imagePanel);;
-		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, 10, SpringLayout.SOUTH, imagePanel);
 		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -10, SpringLayout.SOUTH, p);
 		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, 0, SpringLayout.EAST, imagePanel);
 		SpringLayout sl_imagePanel = new SpringLayout();
@@ -109,9 +109,9 @@ public class ProductAdd extends JFrame {
 		
 		lblImage = new JLabel("");
 		lblImage.setBorder(new LineBorder(new Color(0, 0, 0)));
+		sl_imagePanel.putConstraint(SpringLayout.SOUTH, lblImage, 240, SpringLayout.NORTH, imagePanel);
 		sl_imagePanel.putConstraint(SpringLayout.NORTH, lblImage, 10, SpringLayout.NORTH, imagePanel);
 		sl_imagePanel.putConstraint(SpringLayout.WEST, lblImage, 10, SpringLayout.WEST, imagePanel);
-		sl_imagePanel.putConstraint(SpringLayout.SOUTH, lblImage, 250, SpringLayout.NORTH, imagePanel);
 		sl_imagePanel.putConstraint(SpringLayout.EAST, lblImage, -10, SpringLayout.EAST, imagePanel);
 		imagePanel.add(lblImage);
 		
@@ -119,9 +119,9 @@ public class ProductAdd extends JFrame {
 		btnUploadImage.setName("primary");
 		gallery.styleLabelToButton(btnUploadImage, 14f, 15, 10);
 		btnUploadImage.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_imagePanel.putConstraint(SpringLayout.SOUTH, btnUploadImage, -10, SpringLayout.SOUTH, imagePanel);
 		sl_imagePanel.putConstraint(SpringLayout.NORTH, btnUploadImage, 10, SpringLayout.SOUTH, lblImage);
 		sl_imagePanel.putConstraint(SpringLayout.WEST, btnUploadImage, 50, SpringLayout.WEST, imagePanel);
-		sl_imagePanel.putConstraint(SpringLayout.SOUTH, btnUploadImage, -10, SpringLayout.SOUTH, imagePanel);
 		sl_imagePanel.putConstraint(SpringLayout.EAST, btnUploadImage, -50, SpringLayout.EAST, imagePanel);
 		imagePanel.add(btnUploadImage);
 		p.add(buttonPanel);
@@ -129,9 +129,9 @@ public class ProductAdd extends JFrame {
 		buttonPanel.setLayout(sl_buttonPanel);
 		
 		btnConfirm = new JLabel("Confirm");
-		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnConfirm, -43, SpringLayout.SOUTH, buttonPanel);
 		btnConfirm.setName("primary");
 		gallery.styleLabelToButton(btnConfirm, 14f, 15, 10);
+		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnConfirm, -49, SpringLayout.SOUTH, buttonPanel);
 		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnConfirm, 10, SpringLayout.WEST, buttonPanel);
 		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnConfirm, -10, SpringLayout.EAST, buttonPanel);
 		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnConfirm, 10, SpringLayout.NORTH, buttonPanel);
@@ -139,9 +139,9 @@ public class ProductAdd extends JFrame {
 		buttonPanel.add(btnConfirm);
 		
 		btnCancel = new JLabel("Cancel");
-		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnCancel, 7, SpringLayout.SOUTH, btnConfirm);
 		btnCancel.setName("danger");
 		gallery.styleLabelToButton(btnCancel, 14f, 15, 10);
+		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnCancel, 7, SpringLayout.SOUTH, btnConfirm);
 		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnCancel, 0, SpringLayout.WEST, btnConfirm);
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnCancel, -10, SpringLayout.SOUTH, buttonPanel);
 		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnCancel, 0, SpringLayout.EAST, btnConfirm);
