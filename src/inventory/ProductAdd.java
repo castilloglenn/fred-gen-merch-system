@@ -14,17 +14,19 @@ import utils.Utility;
 
 import javax.swing.SpringLayout;
 import javax.swing.JLabel;
+import javax.swing.border.LineBorder;
+import javax.swing.SwingConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ProductAdd extends JFrame {
 
 	private Utility utility;
 	private Gallery gallery;
+	private String imagePath;
 	
-	private JPanel contentPane, p, newProductPanel;
-	private JLabel lblNewProduct;
-	private JPanel imagePanel;
-	private JPanel buttonPanel;
-
+	private JPanel contentPane, p, newProductPanel, imagePanel, buttonPanel, formPanel;
+	private JLabel lblNewProduct, btnUploadImage, btnConfirm, btnCancel, lblImage;
 	/**
 	 * Launch the application.
 	 */
@@ -65,7 +67,6 @@ public class ProductAdd extends JFrame {
 		p.setLayout(sl_p);
 		contentPane.add(p);
 		
-		
 		newProductPanel = new RoundedPanel(gallery.BLUE);
 		sl_p.putConstraint(SpringLayout.NORTH, newProductPanel, -15, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, newProductPanel, -15, SpringLayout.WEST, p);
@@ -75,16 +76,15 @@ public class ProductAdd extends JFrame {
 		newProductPanel.setLayout(sl_newProductPanel);
 		p.add(newProductPanel);
 		
-		
 		lblNewProduct = new JLabel("New Product");
-		sl_newProductPanel.putConstraint(SpringLayout.NORTH, lblNewProduct, 30, SpringLayout.NORTH, newProductPanel);
-		sl_newProductPanel.putConstraint(SpringLayout.SOUTH, lblNewProduct, -20, SpringLayout.SOUTH, newProductPanel);
 		lblNewProduct.setFont(gallery.getFont(20f));
 		lblNewProduct.setForeground(Color.WHITE);
+		sl_newProductPanel.putConstraint(SpringLayout.NORTH, lblNewProduct, 30, SpringLayout.NORTH, newProductPanel);
+		sl_newProductPanel.putConstraint(SpringLayout.SOUTH, lblNewProduct, -20, SpringLayout.SOUTH, newProductPanel);
 		sl_newProductPanel.putConstraint(SpringLayout.WEST, lblNewProduct, 30, SpringLayout.WEST, newProductPanel);
 		newProductPanel.add(lblNewProduct);
 		
-		JPanel formPanel = new RoundedPanel(Gallery.WHITE);
+		formPanel = new RoundedPanel(Gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.NORTH, formPanel, 15, SpringLayout.SOUTH, newProductPanel);
 		sl_p.putConstraint(SpringLayout.WEST, formPanel, 10, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, formPanel, -100, SpringLayout.SOUTH, p);
@@ -99,12 +99,89 @@ public class ProductAdd extends JFrame {
 		sl_p.putConstraint(SpringLayout.EAST, imagePanel, -10, SpringLayout.EAST, p);
 		p.add(imagePanel);
 		
-		buttonPanel = new RoundedPanel(Gallery.WHITE);;
+		buttonPanel = new RoundedPanel(Gallery.WHITE);
+		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, 0, SpringLayout.WEST, imagePanel);;
 		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, 10, SpringLayout.SOUTH, imagePanel);
-		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, 0, SpringLayout.WEST, imagePanel);
 		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -10, SpringLayout.SOUTH, p);
 		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, 0, SpringLayout.EAST, imagePanel);
+		SpringLayout sl_imagePanel = new SpringLayout();
+		imagePanel.setLayout(sl_imagePanel);
+		
+		lblImage = new JLabel("");
+		lblImage.setBorder(new LineBorder(new Color(0, 0, 0)));
+		sl_imagePanel.putConstraint(SpringLayout.NORTH, lblImage, 10, SpringLayout.NORTH, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.WEST, lblImage, 10, SpringLayout.WEST, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.SOUTH, lblImage, 250, SpringLayout.NORTH, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.EAST, lblImage, -10, SpringLayout.EAST, imagePanel);
+		imagePanel.add(lblImage);
+		
+		btnUploadImage = new JLabel("Upload Image");
+		btnUploadImage.setName("primary");
+		gallery.styleLabelToButton(btnUploadImage, 14f, 15, 10);
+		btnUploadImage.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_imagePanel.putConstraint(SpringLayout.NORTH, btnUploadImage, 10, SpringLayout.SOUTH, lblImage);
+		sl_imagePanel.putConstraint(SpringLayout.WEST, btnUploadImage, 50, SpringLayout.WEST, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.SOUTH, btnUploadImage, -10, SpringLayout.SOUTH, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.EAST, btnUploadImage, -50, SpringLayout.EAST, imagePanel);
+		imagePanel.add(btnUploadImage);
 		p.add(buttonPanel);
+		SpringLayout sl_buttonPanel = new SpringLayout();
+		buttonPanel.setLayout(sl_buttonPanel);
+		
+		btnConfirm = new JLabel("Confirm");
+		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnConfirm, -43, SpringLayout.SOUTH, buttonPanel);
+		btnConfirm.setName("primary");
+		gallery.styleLabelToButton(btnConfirm, 14f, 15, 10);
+		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnConfirm, 10, SpringLayout.WEST, buttonPanel);
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnConfirm, -10, SpringLayout.EAST, buttonPanel);
+		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnConfirm, 10, SpringLayout.NORTH, buttonPanel);
+		btnConfirm.setHorizontalAlignment(SwingConstants.CENTER);
+		buttonPanel.add(btnConfirm);
+		
+		btnCancel = new JLabel("Cancel");
+		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnCancel, 7, SpringLayout.SOUTH, btnConfirm);
+		btnCancel.setName("danger");
+		gallery.styleLabelToButton(btnCancel, 14f, 15, 10);
+		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnCancel, 0, SpringLayout.WEST, btnConfirm);
+		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnCancel, -10, SpringLayout.SOUTH, buttonPanel);
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnCancel, 0, SpringLayout.EAST, btnConfirm);
+		btnCancel.setHorizontalAlignment(SwingConstants.CENTER);
+		buttonPanel.add(btnCancel);
+		
+		//Action Listeners
+		btnUploadImage.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnUploadImage);}
+			@Override
+			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnUploadImage);}
+			@Override
+			public void mouseClicked(MouseEvent e) { 
+				imagePath = utility.showImageChooser();
+								
+			}	
+		});
+		
+		btnConfirm.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnConfirm);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnConfirm);}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//backend here
+			}
+		});
+		
+		btnCancel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnCancel);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnCancel);}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+			}
+		});
 		
 	}
 }

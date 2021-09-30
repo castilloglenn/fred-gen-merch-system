@@ -306,9 +306,9 @@ public class Inventory extends JFrame {
 		productButtonPanel.setLayout(sl_productButtonPanel);
 		
 		JLabel btnProductNew = new JLabel("New");
-		sl_productButtonPanel.putConstraint(SpringLayout.EAST, btnProductNew, -200, SpringLayout.EAST, productButtonPanel);
 		btnProductNew.setName("primary");
 		gallery.styleLabelToButton(btnProductNew, 14f, 15, 10);
+		sl_productButtonPanel.putConstraint(SpringLayout.EAST, btnProductNew, -200, SpringLayout.EAST, productButtonPanel);
 		sl_productButtonPanel.putConstraint(SpringLayout.WEST, btnProductNew, 10, SpringLayout.WEST, productButtonPanel);
 		sl_productButtonPanel.putConstraint(SpringLayout.NORTH, btnProductNew, 25, SpringLayout.NORTH, productButtonPanel);
 		sl_productButtonPanel.putConstraint(SpringLayout.SOUTH, btnProductNew, -25, SpringLayout.SOUTH, productButtonPanel);
@@ -341,8 +341,6 @@ public class Inventory extends JFrame {
 		sl_productPanel.putConstraint(SpringLayout.SOUTH, panel, -15, SpringLayout.SOUTH, productPanel);
 		sl_productPanel.putConstraint(SpringLayout.EAST, panel, -15, SpringLayout.WEST, productImagePanel);
 		productPanel.add(panel);
-		
-
 		
 		// NOTE: Please put all mouse listeners here at the end
 		btnDashboard.addMouseListener(new MouseAdapter() {
