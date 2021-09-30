@@ -23,6 +23,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.border.LineBorder;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 public class SupplierAdd extends JFrame {
 	
@@ -33,7 +34,6 @@ public class SupplierAdd extends JFrame {
 	private JLabel btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress, lblNewSupplier;
 	private JTextField txtName, txtSupplierID, txtContactNumber;
 	private JTextArea textArea;
-	private JTextArea txtAddress;
 	
 	/**
 	 * Launch the application.
@@ -112,7 +112,7 @@ public class SupplierAdd extends JFrame {
 		txtSupplierID.setFont(gallery.getFont(15f));
 		txtSupplierID.setEditable(false);
 		txtSupplierID.setColumns(10);
-		txtSupplierID.setBounds(160, 11, 151, 27);
+		txtSupplierID.setBounds(163, 10, 151, 27);
 		formsPanel.add(txtSupplierID);
 		
 		lblContactNumber = new JLabel("Contact Number");
@@ -121,6 +121,7 @@ public class SupplierAdd extends JFrame {
 		formsPanel.add(lblContactNumber);
 		
 		txtContactNumber = new JTextField();
+		txtContactNumber.setBorder(new LineBorder(new Color(171, 173, 179)));
 		txtContactNumber.setFont(gallery.getFont(15f));
 		txtContactNumber.setColumns(10);
 		txtContactNumber.setBounds(160, 91, 276, 27);
@@ -134,12 +135,7 @@ public class SupplierAdd extends JFrame {
 		textArea = new JTextArea();
 		textArea.setBounds(153, 140, 5, 22);
 		formsPanel.add(textArea);
-		
-		txtAddress = new JTextArea();
-		txtAddress.setFont(gallery.getFont(15f));
-		txtAddress.setBorder(new LineBorder(new Color(0, 0, 0)));
-		txtAddress.setBounds(160, 129, 276, 74);
-		formsPanel.add(txtAddress);
+		txtContactNumber.setFont(gallery.getFont(15f));
 		
 		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, -193, SpringLayout.EAST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -11, SpringLayout.SOUTH, p);
@@ -178,9 +174,9 @@ public class SupplierAdd extends JFrame {
 		p.add(newSupplierPanel);
 		
 		lblNewSupplier = new JLabel("New Supplier");
-		sl_newSupplierPanel.putConstraint(SpringLayout.NORTH, lblNewSupplier, 23, SpringLayout.NORTH, newSupplierPanel);
 		lblNewSupplier.setFont(gallery.getFont(20f));
 		lblNewSupplier.setForeground(Color.WHITE);
+		sl_newSupplierPanel.putConstraint(SpringLayout.NORTH, lblNewSupplier, 23, SpringLayout.NORTH, newSupplierPanel);
 		sl_newSupplierPanel.putConstraint(SpringLayout.WEST, lblNewSupplier, 30, SpringLayout.WEST, newSupplierPanel);
 		newSupplierPanel.add(lblNewSupplier);
 		

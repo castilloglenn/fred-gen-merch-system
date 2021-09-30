@@ -42,7 +42,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import net.miginfocom.swing.MigLayout;
 
-
 /**
  * To be done by: Sebastian Garcia
  * test
@@ -54,26 +53,19 @@ public class Inventory extends JFrame {
 	private Utility utility;
 	
 	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
-	private JPanel productSearchPanel, supplierSearchPanel;
-	private JLabel btnDashboard, btnSupplier, btnProduct, lblSupplierList, lblProductList, lblSearchIcon;
-	private JTextField txtSupplierSearch;
+	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, panel;
+	private JLabel btnDashboard, btnSupplier, btnProduct, lblSupplierList, lblProductList, lblSearchIcon,btnNew, btnManage;
+	private JLabel btnDelete, lblProductSearchIcon, btnProductManage, btnProductRemove;
+	private JTextField txtSupplierSearch, txtProductSearch;
+	private JScrollPane supplierScrollPane;
 	
 	private CardLayout cardLayout;
 	private VerticalLabelUI verticalUI;
 
 	private String supplierSearchMessage = "Search for Supplier...";
 	private String productSearchMessage = "Search for Products...";
-	private JScrollPane supplierScrollPane;
-	private JLabel btnNew;
-	private JLabel btnManage;
-	private JLabel btnDelete;
-	private JLabel lblProductSearchIcon;
-	private JTextField txtProductSearch;
-	private JPanel productButtonPanel;
-	private JPanel panel;
-	private JLabel btnProductManage;
-	private JLabel btnProductRemove;
-
+	
+	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -87,7 +79,6 @@ public class Inventory extends JFrame {
 		});
 	}
 
-
 	public Inventory() {
 		
 		gallery = new Gallery();
@@ -95,6 +86,7 @@ public class Inventory extends JFrame {
 		
 		SupplierAdd invSupplierAdd = new SupplierAdd();
 		SupplierUpdate invSupplierUpdate = new SupplierUpdate();
+		ProductAdd invProductAdd = new ProductAdd();
 		
 		/**
 		 *  	After designing, change all Panel to Rounded Panel like this:
@@ -117,7 +109,6 @@ public class Inventory extends JFrame {
 		SpringLayout sl_mainPanel = new SpringLayout();
 		mainPanel.setLayout(sl_mainPanel);
 		setLocationRelativeTo(null); 
-		
 		
 		navigationalPanel = new RoundedPanel(Gallery.BLUE);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationalPanel, 15, SpringLayout.NORTH, mainPanel);
@@ -423,7 +414,8 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductNew);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//code d2
+				invProductAdd.setVisible(true);
+				invProductAdd.setLocationRelativeTo(null);
 			}
 		});		
 		
