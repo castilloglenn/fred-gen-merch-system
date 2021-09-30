@@ -44,7 +44,7 @@ public class RoundedPanel extends JPanel
     	revalidate();
     }
     
-    public void setBorderColor(Color color) {
+    public void setBorderColor(Color color) { 
     	borderColor = color;
     	repaint();
     	revalidate();

@@ -145,15 +145,21 @@ public class ProductDisplay extends RoundedPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				isSelected = !isSelected;
+				
+				if (!isSelected) 
+					pos.setSelectedIndex(-1);
+				
+				System.out.println(getName() + " has been clicked, its state is now on " + isSelected);
+				
 				panelClicked();
-
-				System.out.println("clicked, select status: " + isSelected);
 			}
 		});
 	}
 	
 	public void unselect() {
 		this.isSelected = false;
+		
+		System.out.println(getName() + " has been forcely unselected, its state is now on " + isSelected);
 		panelClicked();
 	}
 	

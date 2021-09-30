@@ -55,10 +55,14 @@ public class POS extends JFrame {
 	private Object[][] queryResult;
 	private ProductDisplay[] productUIs;
 	
+	private int maxPerColumn = 3;
+	private int maxPerRow = 2;
 	private int maxPerPage = 6;
-	private int selectedIndex = 0;
+	private int selectedIndex = -1;
 	private int currentPage = 1;
 	private int totalPage = 1;
+	
+	private boolean initialResizeAdjustment = true;
 	
 	private Database database; 
 	private Gallery gallery;
@@ -469,7 +473,7 @@ public class POS extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				searchQuery();
-				selectFirst();
+				System.out.println("keyReleased current index " + selectedIndex);
 			}
 		});
 		tfQuantity.addFocusListener(new FocusAdapter() {
@@ -490,6 +494,7 @@ public class POS extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				lblDateTime.setText(gallery.getTime(breakpointTrigger));
+				System.out.println(selectedIndex + " Name: " + ((selectedIndex != -1) ? productUIs[selectedIndex].getName() : "None"));
 			}
 		});
 		timer.start();
@@ -498,6 +503,7 @@ public class POS extends JFrame {
 	}
 	
 	public void setSelectedIndex(int selectedIndex) {
+		System.out.println("setSelectedIndex param: " + selectedIndex + " current index " + this.selectedIndex);
 		this.selectedIndex = selectedIndex;
 		
 		for (ProductDisplay productDisplay : productUIs) {
@@ -505,8 +511,6 @@ public class POS extends JFrame {
 				productDisplay.unselect();
 			}
 		}
-		
-		System.out.println("The selected index is " + this.selectedIndex + ", and the product's name is " + productUIs[selectedIndex].getName());
 	}
 	
 	private void searchQuery() {
@@ -530,7 +534,17 @@ public class POS extends JFrame {
 		
 		// Query Result
 		} else {
+			ProductDisplay firstProduct = new ProductDisplay(queryResultPanel.getSize(), 
+					0, queryResult[0], gallery, this);
+			maxPerPage = firstProduct.getMaxPerPage();
+			maxPerColumn = firstProduct.getMaxColumn();
+			maxPerRow = firstProduct.getMaxRow();
+			
+			totalPage = (queryResult.length / maxPerPage) + 
+				((queryResult.length % maxPerPage > 0) ? 1 : 0);
+			
 			displayResults();
+			selectProduct();
 		}
 	}
 	
@@ -539,11 +553,6 @@ public class POS extends JFrame {
 		queryResultPanel.removeAll();
 		Dimension panelSize = queryResultPanel.getSize();
 
-		selectedIndex = 0;
-		maxPerPage = new ProductDisplay(panelSize, 0, 
-				queryResult[0], gallery, this).getMaxPerPage();
-		totalPage = (queryResult.length / maxPerPage) + 
-			((queryResult.length % maxPerPage > 0) ? 1 : 0);
 		productUIs = new ProductDisplay[Math.min(
 		    maxPerPage - ((maxPerPage * currentPage) - queryResult.length), 
 		    maxPerPage)];
@@ -576,26 +585,25 @@ public class POS extends JFrame {
 	private void nextPage() {
 		if (currentPage < totalPage) { 
 			currentPage++;
-			searchQuery();
-			selectFirst();
+			displayResults();
+			selectProduct();
 		}
 	}
 	
 	private void previousPage() {
 		if (currentPage > 1) { 
 			currentPage--; 
-			searchQuery();
-			selectFirst();
+			displayResults();
+			selectProduct();
 		}
 	}
 	
 	private void resetPage() {
 		currentPage = 1;
 		searchQuery();
-		selectFirst();
 	}
 	
-	private void selectFirst() {
+	private void selectProduct() {
 		MouseEvent me = new MouseEvent(productUIs[0], 0, 0, 0, 100, 100, 1, false);
 		productUIs[0].getMouseListeners()[0].mouseClicked(me);
 	}
