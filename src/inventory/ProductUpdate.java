@@ -13,6 +13,9 @@ import utils.RoundedPanel;
 import utils.Utility;
 import javax.swing.SpringLayout;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ProductUpdate extends JFrame {
 	
@@ -20,7 +23,8 @@ public class ProductUpdate extends JFrame {
 	private Gallery gallery;
 	private String imagePath;
 
-	private JPanel contentPane;
+	private JPanel contentPane, p, manageProductPanel, formsPanel, imagePanel, buttonsPanel;
+	private JLabel btnCancel, btnConfirm, lblManageProduct;
 
 	/**
 	 * Launch the application.
@@ -55,7 +59,7 @@ public class ProductUpdate extends JFrame {
 		gallery = new Gallery();
 		utility = new Utility();
 		
-		JPanel p = new JPanel();
+		p = new JPanel();
 		sl_contentPane.putConstraint(SpringLayout.NORTH, p, -5, SpringLayout.NORTH, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.WEST, p, -5, SpringLayout.WEST, contentPane);
 		sl_contentPane.putConstraint(SpringLayout.SOUTH, p, 5, SpringLayout.SOUTH, contentPane);
@@ -64,7 +68,7 @@ public class ProductUpdate extends JFrame {
 		SpringLayout sl_p = new SpringLayout();
 		p.setLayout(sl_p);
 		
-		JPanel manageProductPanel = new RoundedPanel(gallery.BLUE);
+		manageProductPanel = new RoundedPanel(gallery.BLUE);
 		sl_p.putConstraint(SpringLayout.NORTH, manageProductPanel, -15, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, manageProductPanel, -15, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, manageProductPanel, 50, SpringLayout.NORTH, p);
@@ -73,7 +77,7 @@ public class ProductUpdate extends JFrame {
 		SpringLayout sl_manageProductPanel = new SpringLayout();
 		manageProductPanel.setLayout(sl_manageProductPanel);
 		
-		JLabel lblManageProduct = new JLabel("Manage Product");
+		lblManageProduct = new JLabel("Manage Product");
 		lblManageProduct.setFont(gallery.getFont(20f));
 		lblManageProduct.setForeground(Color.WHITE);
 		sl_manageProductPanel.putConstraint(SpringLayout.NORTH, lblManageProduct, 25, SpringLayout.NORTH, manageProductPanel);
@@ -81,27 +85,68 @@ public class ProductUpdate extends JFrame {
 		sl_manageProductPanel.putConstraint(SpringLayout.WEST, lblManageProduct, 30, SpringLayout.WEST, manageProductPanel);
 		manageProductPanel.add(lblManageProduct);
 		
-		JPanel formsPanel = new RoundedPanel(gallery.WHITE);
+		formsPanel = new RoundedPanel(gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.NORTH, formsPanel, 20, SpringLayout.SOUTH, manageProductPanel);
 		sl_p.putConstraint(SpringLayout.WEST, formsPanel, 10, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, formsPanel, -10, SpringLayout.SOUTH, p);
 		sl_p.putConstraint(SpringLayout.EAST, formsPanel, -250, SpringLayout.EAST, p);
 		p.add(formsPanel);
 		
-		JPanel imagePanel = new RoundedPanel(Gallery.WHITE);
+		imagePanel = new RoundedPanel(Gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.NORTH, imagePanel, 70, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, imagePanel, 10, SpringLayout.EAST, formsPanel);
+		formsPanel.setLayout(new SpringLayout());
 		sl_p.putConstraint(SpringLayout.EAST, imagePanel, -10, SpringLayout.EAST, p);
 		p.add(imagePanel);
 		
-		JPanel buttonsPanel = new RoundedPanel(Gallery.WHITE);
+		buttonsPanel = new RoundedPanel(Gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.SOUTH, imagePanel, -10, SpringLayout.NORTH, buttonsPanel);
 		sl_p.putConstraint(SpringLayout.NORTH, buttonsPanel, -100, SpringLayout.SOUTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, buttonsPanel, 0, SpringLayout.WEST, imagePanel);
 		sl_p.putConstraint(SpringLayout.SOUTH, buttonsPanel, -10, SpringLayout.SOUTH, p);
 		sl_p.putConstraint(SpringLayout.EAST, buttonsPanel, 0, SpringLayout.EAST, imagePanel);
+		imagePanel.setLayout(new SpringLayout());
 		p.add(buttonsPanel);
+		SpringLayout sl_buttonsPanel = new SpringLayout();
+		buttonsPanel.setLayout(sl_buttonsPanel);
+		
+		btnConfirm = new JLabel("Confirm");
+		btnConfirm.setName("primary");
+		gallery.styleLabelToButton(btnConfirm, 14f, 15, 10);
+		btnConfirm.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_buttonsPanel.putConstraint(SpringLayout.NORTH, btnConfirm, 10, SpringLayout.NORTH, buttonsPanel);
+		sl_buttonsPanel.putConstraint(SpringLayout.WEST, btnConfirm, 10, SpringLayout.WEST, buttonsPanel);
+		sl_buttonsPanel.putConstraint(SpringLayout.SOUTH, btnConfirm, -49, SpringLayout.SOUTH, buttonsPanel);
+		sl_buttonsPanel.putConstraint(SpringLayout.EAST, btnConfirm, -10, SpringLayout.EAST, buttonsPanel);
+		buttonsPanel.add(btnConfirm);
+		
+		btnCancel = new JLabel("Cancel");
+		btnCancel.setName("danger");
+		gallery.styleLabelToButton(btnCancel, 14f, 15, 10);
+		sl_buttonsPanel.putConstraint(SpringLayout.NORTH, btnCancel, 7, SpringLayout.SOUTH, btnConfirm);
+		sl_buttonsPanel.putConstraint(SpringLayout.WEST, btnCancel, 0, SpringLayout.WEST, btnConfirm);
+		sl_buttonsPanel.putConstraint(SpringLayout.EAST, btnCancel, 0, SpringLayout.EAST, btnConfirm);
+		btnCancel.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_buttonsPanel.putConstraint(SpringLayout.SOUTH, btnCancel, -10, SpringLayout.SOUTH, buttonsPanel);
+		buttonsPanel.add(btnCancel);
 
+		//Action Listeners
+		btnConfirm.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnConfirm);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnConfirm);}
+		});
+		
+		btnCancel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnCancel);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnCancel);}
+			@Override
+			public void mouseClicked(MouseEvent e) {dispose();}
+		});
+		
 		
 		
 	}

@@ -87,6 +87,7 @@ public class Inventory extends JFrame {
 		SupplierAdd invSupplierAdd = new SupplierAdd();
 		SupplierUpdate invSupplierUpdate = new SupplierUpdate();
 		ProductAdd invProductAdd = new ProductAdd();
+		ProductUpdate invProductUpdate = new ProductUpdate();
 		
 		/**
 		 *  	After designing, change all Panel to Rounded Panel like this:
@@ -424,7 +425,8 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductManage);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//code d2
+				invProductUpdate.setVisible(true);
+				invProductUpdate.setLocationRelativeTo(null);
 			}
 		});
 		
