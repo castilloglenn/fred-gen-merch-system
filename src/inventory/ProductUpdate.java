@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.border.LineBorder;
 
 public class ProductUpdate extends JFrame {
 	
@@ -105,7 +106,16 @@ public class ProductUpdate extends JFrame {
 		sl_p.putConstraint(SpringLayout.WEST, buttonsPanel, 0, SpringLayout.WEST, imagePanel);
 		sl_p.putConstraint(SpringLayout.SOUTH, buttonsPanel, -10, SpringLayout.SOUTH, p);
 		sl_p.putConstraint(SpringLayout.EAST, buttonsPanel, 0, SpringLayout.EAST, imagePanel);
-		imagePanel.setLayout(new SpringLayout());
+		SpringLayout sl_imagePanel = new SpringLayout();
+		imagePanel.setLayout(sl_imagePanel);
+		
+		JLabel lblImageDisplay = new JLabel("");
+		lblImageDisplay.setBorder(new LineBorder(new Color(0, 0, 0)));
+		sl_imagePanel.putConstraint(SpringLayout.NORTH, lblImageDisplay, 10, SpringLayout.NORTH, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.WEST, lblImageDisplay, 10, SpringLayout.WEST, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.SOUTH, lblImageDisplay, 240, SpringLayout.NORTH, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.EAST, lblImageDisplay, -10, SpringLayout.EAST, imagePanel);
+		imagePanel.add(lblImageDisplay);
 		p.add(buttonsPanel);
 		SpringLayout sl_buttonsPanel = new SpringLayout();
 		buttonsPanel.setLayout(sl_buttonsPanel);

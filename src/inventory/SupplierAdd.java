@@ -31,7 +31,7 @@ public class SupplierAdd extends JFrame {
 	private Gallery gallery;
 	
 	private JPanel contentPane, p, formsPanel, buttonPanel, newSupplierPanel;
-	private JLabel btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress, lblNewSupplier;
+	private JLabel btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress, lblNewSupplier,btnCancel;
 	private JTextField txtName, txtSupplierID, txtContactNumber;
 	private JTextArea textArea;
 	
@@ -154,15 +154,15 @@ public class SupplierAdd extends JFrame {
 		btnAdd.setHorizontalAlignment(SwingConstants.CENTER);
 		buttonPanel.add(btnAdd);
 		
-		JLabel btnDelete = new JLabel("Delete");
-		btnDelete.setName("danger");
-		gallery.styleLabelToButton(btnDelete, 15f, 15, 10);
-		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnDelete, 0, SpringLayout.WEST, btnAdd);
-		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnDelete, 0, SpringLayout.EAST, btnAdd);
-		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnDelete, 10, SpringLayout.SOUTH, btnAdd);
-		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnDelete, -15, SpringLayout.SOUTH, buttonPanel);
-		btnDelete.setHorizontalAlignment(SwingConstants.CENTER);
-		buttonPanel.add(btnDelete);
+		btnCancel = new JLabel("Cancel");
+		btnCancel.setName("danger");
+		gallery.styleLabelToButton(btnCancel, 15f, 15, 10);
+		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnCancel, 0, SpringLayout.WEST, btnAdd);
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnCancel, 0, SpringLayout.EAST, btnAdd);
+		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnCancel, 10, SpringLayout.SOUTH, btnAdd);
+		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnCancel, -15, SpringLayout.SOUTH, buttonPanel);
+		btnCancel.setHorizontalAlignment(SwingConstants.CENTER);
+		buttonPanel.add(btnCancel);
 		
 		newSupplierPanel = new RoundedPanel(Gallery.BLUE);
 		sl_p.putConstraint(SpringLayout.NORTH, newSupplierPanel, -15, SpringLayout.NORTH, p);
@@ -193,11 +193,11 @@ public class SupplierAdd extends JFrame {
 			public void mouseClicked(MouseEvent e) { System.out.println("Added");}
 		});
 		
-		btnDelete.addMouseListener(new MouseAdapter() {
+		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnDelete);}
+			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnCancel);}
 			@Override
-			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnDelete);}
+			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnCancel);}
 			@Override
 			public void mouseClicked(MouseEvent e) {dispose();}
 		});
