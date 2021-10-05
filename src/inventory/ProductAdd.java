@@ -274,7 +274,6 @@ public class ProductAdd extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) { 
 				imagePath = utility.showImageChooser();
-								
 			}	
 		});
 		

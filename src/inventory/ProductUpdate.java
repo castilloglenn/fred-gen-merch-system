@@ -25,7 +25,7 @@ public class ProductUpdate extends JFrame {
 	private String imagePath;
 
 	private JPanel contentPane, p, manageProductPanel, formsPanel, imagePanel, buttonsPanel;
-	private JLabel btnCancel, btnConfirm, lblManageProduct;
+	private JLabel btnCancel, btnConfirm, lblManageProduct, lblImageDisplay, btnUploadImage;
 
 	/**
 	 * Launch the application.
@@ -109,13 +109,23 @@ public class ProductUpdate extends JFrame {
 		SpringLayout sl_imagePanel = new SpringLayout();
 		imagePanel.setLayout(sl_imagePanel);
 		
-		JLabel lblImageDisplay = new JLabel("");
+		lblImageDisplay = new JLabel("");
 		lblImageDisplay.setBorder(new LineBorder(new Color(0, 0, 0)));
 		sl_imagePanel.putConstraint(SpringLayout.NORTH, lblImageDisplay, 10, SpringLayout.NORTH, imagePanel);
 		sl_imagePanel.putConstraint(SpringLayout.WEST, lblImageDisplay, 10, SpringLayout.WEST, imagePanel);
 		sl_imagePanel.putConstraint(SpringLayout.SOUTH, lblImageDisplay, 240, SpringLayout.NORTH, imagePanel);
 		sl_imagePanel.putConstraint(SpringLayout.EAST, lblImageDisplay, -10, SpringLayout.EAST, imagePanel);
 		imagePanel.add(lblImageDisplay);
+		
+		btnUploadImage = new JLabel("Upload Image");
+		btnUploadImage.setName("primary");
+		gallery.styleLabelToButton(btnUploadImage, 14f, 15, 10);
+		btnUploadImage.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_imagePanel.putConstraint(SpringLayout.NORTH, btnUploadImage, 10, SpringLayout.SOUTH, lblImageDisplay);
+		sl_imagePanel.putConstraint(SpringLayout.WEST, btnUploadImage, 50, SpringLayout.WEST, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.SOUTH, btnUploadImage, -10, SpringLayout.SOUTH, imagePanel);
+		sl_imagePanel.putConstraint(SpringLayout.EAST, btnUploadImage, -50, SpringLayout.EAST, imagePanel);
+		imagePanel.add(btnUploadImage);
 		p.add(buttonsPanel);
 		SpringLayout sl_buttonsPanel = new SpringLayout();
 		buttonsPanel.setLayout(sl_buttonsPanel);
@@ -157,6 +167,16 @@ public class ProductUpdate extends JFrame {
 			public void mouseClicked(MouseEvent e) {dispose();}
 		});
 		
+		btnUploadImage.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnUploadImage);}
+			@Override
+			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnUploadImage);}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				imagePath = utility.showImageChooser();
+			}
+		});
 		
 		
 	}
