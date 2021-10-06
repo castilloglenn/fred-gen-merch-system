@@ -149,8 +149,6 @@ public class ProductDisplay extends RoundedPanel {
 				if (!isSelected) 
 					pos.setSelectedIndex(-1);
 				
-				System.out.println(getName() + " has been clicked, its state is now on " + isSelected);
-				
 				panelClicked();
 			}
 		});
@@ -159,7 +157,6 @@ public class ProductDisplay extends RoundedPanel {
 	public void unselect() {
 		this.isSelected = false;
 		
-		System.out.println(getName() + " has been forcely unselected, its state is now on " + isSelected);
 		panelClicked();
 	}
 	

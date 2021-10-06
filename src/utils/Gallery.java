@@ -60,10 +60,10 @@ public class Gallery {
 	public static Color SECONDARY_BUTTON_FOREGROUND_HOVER = BOOTSTRAP_SECONDARY;
 	public static Color SECONDARY_BUTTON_BACKGROUND_HOVER = Gallery.WHITE;
 
-	public static Color DANGER_BUTTON_FOREGROUND = Gallery.RED;
-	public static Color DANGER_BUTTON_BACKGROUND = Gallery.WHITE;
+	public static Color DANGER_BUTTON_FOREGROUND = Gallery.WHITE;
+	public static Color DANGER_BUTTON_BACKGROUND = Gallery.RED;
 	public static Color DANGER_BUTTON_FOREGROUND_HOVER = Gallery.WHITE;
-	public static Color DANGER_BUTTON_BACKGROUND_HOVER = Gallery.RED;
+	public static Color DANGER_BUTTON_BACKGROUND_HOVER = Gallery.DARK_RED;
 	
 	private String fontName = "OpenSans-SemiBold";
 	private SimpleDateFormat sdf;
