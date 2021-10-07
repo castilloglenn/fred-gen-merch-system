@@ -465,6 +465,10 @@ public class POS extends JFrame {
 				// TODO: Add to cart list the product selected
 				// Only if the selected Index is not -1
 				System.out.println("Add to cart, Selected Index: " + selectedIndex);
+				cartListPanel.add(new CartItem(0, queryResult[selectedIndex + (maxPerPage * (currentPage - 1))], 5, gallery));
+				
+				repaint();
+				revalidate();
 			}
 		});
 		lblDownButton.addMouseListener(new MouseAdapter() {
@@ -576,7 +580,6 @@ public class POS extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				lblDateTime.setText(gallery.getTime(breakpointTrigger));
 //				System.out.println(selectedIndex + " Name: " + ((selectedIndex != -1) ? productUIs[selectedIndex].getName() : "None"));
-				System.out.println(cartListPanel.getSize());
 			}
 		});
 		timer.start();

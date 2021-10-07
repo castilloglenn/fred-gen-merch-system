@@ -104,6 +104,12 @@ public class Gallery {
 		return finalImage;
 	}
 	
+	public ImageIcon resizeImage(ImageIcon oldImage, int newWidth, int newHeight) {
+		Image image = oldImage.getImage();
+		Image newimg = image.getScaledInstance(newWidth, newHeight,  java.awt.Image.SCALE_SMOOTH);
+		return new ImageIcon(newimg);
+	}
+	
 	public String getTime(boolean shorten) {
 		if (shorten) {
 			sdf = new SimpleDateFormat("MM/dd/yyy, hh:mm:ss aa");

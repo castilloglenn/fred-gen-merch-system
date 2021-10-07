@@ -1,6 +1,7 @@
 package pos;
 
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import utils.Gallery;
 
@@ -33,38 +34,40 @@ public class CartItem extends JPanel {
 	private JLabel lblCartItem, lblCartAdd, lblCartQuantity, lblCartLess, lblCartRemove;
 	
 	
-	public CartItem(int indexOrder, Object[] product, Gallery gallery) {
+	public CartItem(int indexOrder, Object[] product, int quantity, Gallery gallery) {
 		this.product = product;
 		this.gallery = gallery;
-		quantity = (int) product[5];
+		this.quantity = quantity;
 		
 		setBounds(0, indexOrder * height, width, height);
+		setBackground(Gallery.WHITE);
 		setLayout(null);
 
 		String productName = product[1].toString();
 		int nameLength = productName.length();
-		lblCartItem = new JLabel((ImageIcon) product[2]);
+		lblCartItem = new JLabel(gallery.resizeImage((ImageIcon) product[2], squareImageSize, squareImageSize));
 		if (nameLength <= oneLineColumnLimit) {
 			lblCartItem.setText("<html>" + productName + "</html>");
 			lblCartItem.setFont(gallery.getFont(14f));
-			lblCartItem.setBounds(0, oneLineTextMargin, textWidth, width - (oneLineTextMargin * 2));
+			lblCartItem.setBounds(0, oneLineTextMargin, textWidth, height - (oneLineTextMargin * 2));
 		} else if (nameLength > twoLineColumnLimit) {
 			lblCartItem.setText("<html>" + productName.substring(0, twoLineColumnLimit - 1) + "...</html>");
 			lblCartItem.setFont(gallery.getFont(10f));
-			lblCartItem.setBounds(0, twoLineTextMargin, textWidth, width - (twoLineTextMargin * 2));
+			lblCartItem.setBounds(0, twoLineTextMargin, textWidth, height - (twoLineTextMargin * 2));
 		} else {
 			lblCartItem.setText("<html>" + productName + "</html>");
 			lblCartItem.setFont(gallery.getFont(10f));
-			lblCartItem.setBounds(0, twoLineTextMargin, textWidth, width - (twoLineTextMargin * 2));
+			lblCartItem.setBounds(0, twoLineTextMargin, textWidth, height - (twoLineTextMargin * 2));
 		}
 		lblCartItem.setIconTextGap(textIconGapMargin);
+		lblCartItem.setHorizontalAlignment(SwingConstants.LEADING);
 		add(lblCartItem);
 		
 		lblCartAdd = new JLabel(gallery.getImage("add.png", squareImageSize, squareImageSize));
 		lblCartAdd.setBounds(151, 5, 24, 24);
 		add(lblCartAdd);
 		
-		lblCartQuantity = new JLabel(product[5].toString());
+		lblCartQuantity = new JLabel(Integer.toString(quantity));
 		lblCartQuantity.setFont(gallery.getFont(14f));
 		lblCartAdd.setBounds(176, 5, 24 ,24);
 		add(lblCartQuantity);
@@ -90,7 +93,8 @@ public class CartItem extends JPanel {
 			}
 			@Override public void mouseClicked(MouseEvent e) {
 				System.out.println("Increment product quantity on product: " + product[1].toString());
-				quantity++;
+				incrementQuantity();
+				lblCartQuantity = new JLabel(Integer.toString(quantity));
 				System.out.println("Product quantity is now on: " + quantity);
 			}
 		});
@@ -105,18 +109,19 @@ public class CartItem extends JPanel {
 			}
 			@Override public void mouseClicked(MouseEvent e) {
 				System.out.println("Decrement product quantity on product: " + product[1].toString());
-				quantity--;
+				decrementQuantity();
+				lblCartQuantity = new JLabel(Integer.toString(quantity));
 				System.out.println("Product quantity is now on: " + quantity);
 			}
 		});
 		lblCartRemove.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				lblCartLess.setIcon(gallery.getImage("remove-hovered.png", 24, 24));
+				lblCartRemove.setIcon(gallery.getImage("remove-hovered.png", 24, 24));
 			}
 			@Override public void mouseExited(MouseEvent e) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-				lblCartLess.setIcon(gallery.getImage("remove.png", 24, 24));
+				lblCartRemove.setIcon(gallery.getImage("remove.png", 24, 24));
 			}
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO: Do this after coding the cart list
@@ -124,4 +129,7 @@ public class CartItem extends JPanel {
 			}
 		});
 	}
+	
+	public void incrementQuantity() { quantity++; }
+	public void decrementQuantity() { quantity--; }
 }
