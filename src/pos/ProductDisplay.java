@@ -120,7 +120,6 @@ public class ProductDisplay extends RoundedPanel {
 					setBackgroundColor(Gallery.LIGHT_BLUE);
 				}
 				
-				
 				labelHovered(new JLabel[] {lblName, lblPrice, lblUOM});
 			}
 			
