@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 public class CartItem extends JPanel {
 	
 	// [0]product_id, [1]name, [2]image, [3]uom, [4]selling_price and [5] quantity
+	private int index;
 	private Object[] product;
 	private int quantity = 0;
 	
@@ -29,17 +30,18 @@ public class CartItem extends JPanel {
 	private int oneLineColumnLimit = 15;
 	private int twoLineColumnLimit = 30;
 	
-	private Gallery gallery;
+	private POS pos;
 	
 	private JLabel lblCartItem, lblCartAdd, lblCartQuantity, lblCartLess, lblCartRemove;
 	
 	
 	public CartItem(int indexOrder, Object[] product, int quantity, Gallery gallery, POS pos) {
+		this.index = indexOrder;
 		this.product = product;
-		this.gallery = gallery;
 		this.quantity = quantity;
+		this.pos = pos;
 		
-		setBounds(0, indexOrder * height, width, height);
+		setBounds(0, this.index * height, width, height);
 		setBackground(Gallery.WHITE);
 		setLayout(null);
 
@@ -93,11 +95,10 @@ public class CartItem extends JPanel {
 				lblCartAdd.setIcon(gallery.getImage("add.png", 24, 24));
 			}
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println("Increment product quantity on product: " + product[1].toString());
-				System.out.println("Product quantity is now on: " + quantity);
-				System.out.println(lblCartQuantity.getText());
+				adjustQuantity(1);
 			}
 		});
+		
 		lblCartLess.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -108,10 +109,10 @@ public class CartItem extends JPanel {
 				lblCartLess.setIcon(gallery.getImage("minus.png", 24, 24));
 			}
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println("Decrement product quantity on product: " + product[1].toString());
-				System.out.println("Product quantity is now on: " + quantity);
+				adjustQuantity(-1);
 			}
 		});
+		
 		lblCartRemove.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -122,9 +123,24 @@ public class CartItem extends JPanel {
 				lblCartRemove.setIcon(gallery.getImage("remove.png", 24, 24));
 			}
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO: Do this after coding the cart list
-				System.out.println("Remove product: " + product[1].toString());
+				pos.removeToCart(index);
 			}
 		});
+	}
+	
+	public void adjustQuantity(int adjustment) {
+		quantity += adjustment;
+		if (quantity == 0) {
+			pos.removeToCart(index);
+		} else {
+			lblCartQuantity.setText(Integer.toString(quantity));
+		}
+	}
+	
+	public void rearrangeOrder(int newIndex) {
+		System.out.println("index before" + this.index);
+		this.index = newIndex;
+		setBounds(0, this.index * height, width, height);
+		System.out.println("index after" + this.index);
 	}
 }

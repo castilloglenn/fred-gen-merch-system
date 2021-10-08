@@ -48,6 +48,9 @@ public class POS extends JFrame {
 	private final String POS_TITLE = "POS";
 	private final String TRANSACTION_TITLE = "Transactions";
 	private final String REPORTS_TITLE = "Reports";
+
+	private String defaultSearchMessage = "Search for products...";
+	private String defaultQuantityMessage = "How many?";
 	
 	private int defaultHeight = 600; // 600
 	private int defaultWidth = 990; // 1000
@@ -57,20 +60,17 @@ public class POS extends JFrame {
 	private boolean breakpointTrigger = false;
 	private Timer timer;
 	
+	// Customized query table variables
 	private Object[][] queryResult;
-	
 	private ProductDisplay[] productUIs;
-	private ArrayList<CartItem> cartList = new ArrayList<>();
-	
-	private int cartListIndex = 0;
 	private int maxPerColumn = 3;
 	private int maxPerPage = 6;
 	private int selectedIndex = -1;
 	private int currentPage = 1;
 	private int totalPage = 1;
 
-	private String defaultSearchMessage = "Search for products...";
-	private String defaultQuantityMessage = "How many?";
+	// Customized cart list variables
+	private ArrayList<CartItem> cartList = new ArrayList<>();
 	
 	private Database database; 
 	private Gallery gallery;
@@ -94,6 +94,7 @@ public class POS extends JFrame {
 	private JTextField tfSearch, tfQuantity;
 	
 	private SpringLayout sl_mainPanel, sl_posPanel;
+	
 	private CardLayout cardLayout, queryCardLayout;
 	
 	
@@ -696,13 +697,43 @@ public class POS extends JFrame {
 			gallery.showMessage(errorMessages.toArray(new String[0]));
 		} else {
 			System.out.println("Add to cart, Selected Index: " + selectedIndex);
-			cartList.add(new CartItem(cartListIndex, queryResult[selectedIndex + (maxPerPage * (currentPage - 1))], quantity, gallery, this));
-			cartList.forEach((cartItem) -> cartListPanel.add(cartItem));
-			cartListIndex++;
+			cartListPanel.removeAll();
 			
-			repaint();
-			revalidate();
+			cartList.add(
+				new CartItem(
+					cartList.size(), 
+					queryResult[selectedIndex + (maxPerPage * (currentPage - 1))], 
+					quantity, gallery, this)
+			);
+			System.out.println("Cart list size: " + cartList.size());
+			
+			tfQuantity.setText("");
+			tfSearch.requestFocus(true);
+			
+			displayCart();
+			System.out.println("JPanel size: " + cartListPanel.getComponents().length);
+			
 		}
+	}
+	
+	public void removeToCart(int cartIndex) {
+		cartList.remove(cartIndex);
+		
+		for (int adjustmentIndex = cartIndex; 
+				adjustmentIndex < cartList.size(); 
+				adjustmentIndex++) {
+			cartList.get(adjustmentIndex).rearrangeOrder(adjustmentIndex);
+		}
+		
+		displayCart();
+	}
+	
+	public void displayCart() {
+		// TODO: Complete this
+		cartListPanel.removeAll();
+		cartList.forEach((cartItem -> cartListPanel.add(cartItem)));
+		repaint();
+		revalidate();
 	}
 	
 	private void scrollTable(MouseWheelEvent e) {
