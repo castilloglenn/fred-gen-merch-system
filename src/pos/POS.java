@@ -17,6 +17,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -31,6 +32,7 @@ import javax.swing.Timer;
 import utils.Database;
 import utils.Gallery;
 import utils.RoundedPanel;
+import utils.Utility;
 import utils.VerticalLabelUI;
 import javax.swing.Icon;
 
@@ -43,6 +45,10 @@ import javax.swing.Icon;
 @SuppressWarnings("serial")
 public class POS extends JFrame {
 	
+	private final String POS_TITLE = "POS";
+	private final String TRANSACTION_TITLE = "Transactions";
+	private final String REPORTS_TITLE = "Reports";
+	
 	private int defaultHeight = 600; // 600
 	private int defaultWidth = 990; // 1000
 	private int minHeight = 600;
@@ -54,8 +60,9 @@ public class POS extends JFrame {
 	private Object[][] queryResult;
 	
 	private ProductDisplay[] productUIs;
-	private CartItem[] cartList;
+	private ArrayList<CartItem> cartList = new ArrayList<>();
 	
+	private int cartListIndex = 0;
 	private int maxPerColumn = 3;
 	private int maxPerPage = 6;
 	private int selectedIndex = -1;
@@ -81,14 +88,14 @@ public class POS extends JFrame {
 		lblTransactionNo, lblDateTime, lblCheckoutButton,
 		lblCancelButton, lblSearchIcon, lblAddToCart,
 		lblQuantityIcon, lblDownButton, lblUpButton,
-		lblNotFoundImage, lblPageIndicator, lblLeftButton;
+		lblNotFoundImage, lblPageIndicator, lblLeftButton,
+		lblCartLabel, lblRightButton, lblCartIndicator;
+	
 	private JTextField tfSearch, tfQuantity;
 	
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	private CardLayout cardLayout, queryCardLayout;
-	private JLabel lblCartLabel;
-	private JLabel lblRightButton;
-	private JLabel lblCartIndicator;
+	
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -106,6 +113,7 @@ public class POS extends JFrame {
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false); 
 		
+		setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setMinimumSize(new Dimension(minWidth, minHeight));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -421,6 +429,7 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				cardLayout.show(displayPanel, "pos");
+				setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 			}
 		});
 		lblTransactionNav.addMouseListener(new MouseAdapter() {
@@ -429,6 +438,7 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				cardLayout.show(displayPanel, "transaction");
+				setTitle(TRANSACTION_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 			}
 		});
 		lblReportNav.addMouseListener(new MouseAdapter() {
@@ -437,6 +447,7 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				cardLayout.show(displayPanel, "report");
+				setTitle(REPORTS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 			}
 		});
 		lblCheckoutButton.addMouseListener(new MouseAdapter() {
@@ -462,13 +473,7 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblAddToCart); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO: Add to cart list the product selected
-				// Only if the selected Index is not -1
-				System.out.println("Add to cart, Selected Index: " + selectedIndex);
-				cartListPanel.add(new CartItem(0, queryResult[selectedIndex + (maxPerPage * (currentPage - 1))], 5, gallery));
-				
-				repaint();
-				revalidate();
+				addToCart();
 			}
 		});
 		lblDownButton.addMouseListener(new MouseAdapter() {
@@ -571,6 +576,12 @@ public class POS extends JFrame {
 				gallery.textFieldFocusLost(tfQuantity, defaultQuantityMessage);
 			}
 		});
+		tfQuantity.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				gallery.textFieldFocusGained(tfQuantity, defaultQuantityMessage);
+			}
+		});
 		tableContainerPanel.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) { scrollTable(e); }
 		});
@@ -659,6 +670,39 @@ public class POS extends JFrame {
 		repaint();
 		revalidate();
 		queryCardLayout.show(cardLayoutPanel, "result");
+	}
+	
+	private void addToCart() {
+		// TODO: Add to cart list the product selected
+		int quantity = 0;
+		ArrayList<String> errorMessages = new ArrayList<>();
+
+		if (selectedIndex == -1) { errorMessages.add("- Please select a product."); }
+		if (tfQuantity.getText().equals(defaultQuantityMessage) || 
+				tfQuantity.getText().equals("")) {
+			errorMessages.add("- Please input the quantity of the product.");
+		} else {
+			try {
+				quantity = Integer.parseInt(tfQuantity.getText());
+				if (quantity < 1 || quantity > 999) {
+					errorMessages.add("- Please input the quantity between 1 and 999.");
+				}
+			} catch (NumberFormatException nfe) {
+				errorMessages.add("- Only integers are allowed as product quantity.");
+			}
+		}
+		
+		if (errorMessages.size() > 0) {
+			gallery.showMessage(errorMessages.toArray(new String[0]));
+		} else {
+			System.out.println("Add to cart, Selected Index: " + selectedIndex);
+			cartList.add(new CartItem(cartListIndex, queryResult[selectedIndex + (maxPerPage * (currentPage - 1))], quantity, gallery, this));
+			cartList.forEach((cartItem) -> cartListPanel.add(cartItem));
+			cartListIndex++;
+			
+			repaint();
+			revalidate();
+		}
 	}
 	
 	private void scrollTable(MouseWheelEvent e) {

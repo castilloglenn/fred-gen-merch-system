@@ -11,6 +11,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  */
 public class Utility {
+	
+	/**
+	 * System default values
+	 */
+	public static final String APP_TITLE = "Fred's General Merchandise Store";
+	public static final String TITLE_SEPARATOR = " | ";
+	
 
 	private File file;
 	private JFileChooser chooser;

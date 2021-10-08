@@ -11,11 +11,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.CompoundBorder;
@@ -90,6 +92,54 @@ public class Gallery {
 			e.printStackTrace();
 		}
 	}
+	
+	public void showMessage(String... message) {
+		RoundedPanel panel = new RoundedPanel(Gallery.WHITE);
+		
+		JLabel label = new JLabel(getImage("error.png", 120, 160));
+		String formattedMessage = "";
+		
+		for (String m : message) 
+			formattedMessage += constraintMessage(m);
+		
+		label.setText("<html><p style='color: rgb(216, 74, 49)'>Robot says:</p> " + formattedMessage + "</html>");
+		label.setFont(getFont(15f));
+		label.setHorizontalTextPosition(JLabel.CENTER);
+		label.setVerticalTextPosition(JLabel.TOP);
+		label.setBorder(new EmptyBorder(20, 20, 20, 20));
+		
+		panel.add(label);
+		
+		JOptionPane.showConfirmDialog(null, panel, Utility.APP_TITLE, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+	}
+	
+	public String constraintMessage(String message) {
+        int limit = 25;
+        int messageSize = message.length();
+
+        if (messageSize <= limit) return message;
+
+        String[] words = message.split(" ");
+        String limitedPhrase = "";
+        int index = 0;
+
+        for (int wordIndex = 0; wordIndex < words.length; wordIndex++) {
+            limitedPhrase += words[wordIndex] + " ";
+            if (limitedPhrase.length() > limit) {
+                index = wordIndex;
+                break;
+            }
+        }
+
+        return limitedPhrase + "<br>" 
+            + constraintMessage(
+                String.join(" ", 
+                Arrays.copyOfRange(
+                	words, 
+                	index + 1, 
+                	words.length)
+                ));
+    }
 	
 	public Font getFont(float size) {
 		font = font.deriveFont(size);

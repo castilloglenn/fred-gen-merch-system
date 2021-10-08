@@ -34,7 +34,7 @@ public class CartItem extends JPanel {
 	private JLabel lblCartItem, lblCartAdd, lblCartQuantity, lblCartLess, lblCartRemove;
 	
 	
-	public CartItem(int indexOrder, Object[] product, int quantity, Gallery gallery) {
+	public CartItem(int indexOrder, Object[] product, int quantity, Gallery gallery, POS pos) {
 		this.product = product;
 		this.gallery = gallery;
 		this.quantity = quantity;
@@ -67,9 +67,10 @@ public class CartItem extends JPanel {
 		lblCartAdd.setBounds(151, 5, 24, 24);
 		add(lblCartAdd);
 		
-		lblCartQuantity = new JLabel(Integer.toString(quantity));
+		lblCartQuantity = new JLabel(Integer.toString(this.quantity));
+		lblCartQuantity.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCartQuantity.setFont(gallery.getFont(14f));
-		lblCartAdd.setBounds(176, 5, 24 ,24);
+		lblCartQuantity.setBounds(176, 5, 24 ,24);
 		add(lblCartQuantity);
 		
 		lblCartLess = new JLabel(gallery.getImage("minus.png", squareImageSize, squareImageSize));
@@ -93,9 +94,8 @@ public class CartItem extends JPanel {
 			}
 			@Override public void mouseClicked(MouseEvent e) {
 				System.out.println("Increment product quantity on product: " + product[1].toString());
-				incrementQuantity();
-				lblCartQuantity = new JLabel(Integer.toString(quantity));
 				System.out.println("Product quantity is now on: " + quantity);
+				System.out.println(lblCartQuantity.getText());
 			}
 		});
 		lblCartLess.addMouseListener(new MouseAdapter() {
@@ -109,8 +109,6 @@ public class CartItem extends JPanel {
 			}
 			@Override public void mouseClicked(MouseEvent e) {
 				System.out.println("Decrement product quantity on product: " + product[1].toString());
-				decrementQuantity();
-				lblCartQuantity = new JLabel(Integer.toString(quantity));
 				System.out.println("Product quantity is now on: " + quantity);
 			}
 		});
@@ -129,7 +127,4 @@ public class CartItem extends JPanel {
 			}
 		});
 	}
-	
-	public void incrementQuantity() { quantity++; }
-	public void decrementQuantity() { quantity--; }
 }
