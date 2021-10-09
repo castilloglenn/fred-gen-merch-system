@@ -114,10 +114,10 @@ public class ProductAdd extends JFrame {
 		txtProductID.setEnabled(false);
 		txtProductID.setEditable(false);
 		txtProductID.setFont(gallery.getFont(15f));
+		sl_formPanel.putConstraint(SpringLayout.EAST, txtProductID, -160, SpringLayout.EAST, formPanel);
 		sl_formPanel.putConstraint(SpringLayout.WEST, txtProductID, 30, SpringLayout.EAST, lblProductID);
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtProductID, -5, SpringLayout.NORTH, lblProductID);
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtProductID, 5, SpringLayout.SOUTH, lblProductID);
-		sl_formPanel.putConstraint(SpringLayout.EAST, txtProductID, -180, SpringLayout.EAST, formPanel);
 		formPanel.add(txtProductID);
 		txtProductID.setColumns(10);
 		
@@ -131,10 +131,10 @@ public class ProductAdd extends JFrame {
 		
 		txtName = new JTextField();
 		txtName.setFont(gallery.getFont(15f));
+		sl_formPanel.putConstraint(SpringLayout.EAST, txtName, 75, SpringLayout.EAST, txtProductID);
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtName, 3, SpringLayout.SOUTH, lblName);
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtName, 0, SpringLayout.NORTH, lblName);
 		sl_formPanel.putConstraint(SpringLayout.WEST, txtName, 0, SpringLayout.WEST, txtProductID);
-		sl_formPanel.putConstraint(SpringLayout.EAST, txtName, 150, SpringLayout.EAST, txtProductID);
 		formPanel.add(txtName);
 		txtName.setColumns(10);
 		
@@ -164,8 +164,8 @@ public class ProductAdd extends JFrame {
 		formPanel.add(lblUOM);
 		
 		lblUOM1 = new JLabel("Measurement");
+		sl_formPanel.putConstraint(SpringLayout.SOUTH, lblUOM1, -200, SpringLayout.SOUTH, formPanel);
 		lblUOM1.setFont(gallery.getFont(14f));
-		sl_formPanel.putConstraint(SpringLayout.SOUTH, lblUOM1, -190, SpringLayout.SOUTH, formPanel);
 		sl_formPanel.putConstraint(SpringLayout.NORTH, lblUOM1, 0, SpringLayout.SOUTH, lblUOM);
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblUOM1, 0, SpringLayout.WEST, lblProductID);
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblUOM1, 0, SpringLayout.EAST, lblProductID);
@@ -181,9 +181,9 @@ public class ProductAdd extends JFrame {
 		txtUOM.setColumns(10);
 		
 		lblPriceBought = new JLabel("Price Bought");
+		sl_formPanel.putConstraint(SpringLayout.SOUTH, lblPriceBought, -160, SpringLayout.SOUTH, formPanel);
 		lblPriceBought.setFont(gallery.getFont(14f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, lblPriceBought, 20, SpringLayout.SOUTH, lblUOM1);
-		sl_formPanel.putConstraint(SpringLayout.SOUTH, lblPriceBought, -150, SpringLayout.SOUTH, formPanel);
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblPriceBought, 0, SpringLayout.WEST, lblProductID);
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblPriceBought, 0, SpringLayout.EAST, lblProductID);
 		formPanel.add(lblPriceBought);
@@ -198,10 +198,10 @@ public class ProductAdd extends JFrame {
 		txtPriceBought.setColumns(10);
 		
 		lblSellingPrice = new JLabel("Selling Price");
+		sl_formPanel.putConstraint(SpringLayout.SOUTH, lblSellingPrice, -120, SpringLayout.SOUTH, formPanel);
 		lblSellingPrice.setFont(gallery.getFont(14f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, lblSellingPrice, 20, SpringLayout.SOUTH, lblPriceBought);
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblSellingPrice, 0, SpringLayout.WEST, lblProductID);
-		sl_formPanel.putConstraint(SpringLayout.SOUTH, lblSellingPrice, -110, SpringLayout.SOUTH, formPanel);
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblSellingPrice, 0, SpringLayout.EAST, lblProductID);
 		formPanel.add(lblSellingPrice);
 		
