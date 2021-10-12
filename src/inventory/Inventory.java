@@ -53,17 +53,23 @@ public class Inventory extends JFrame {
 	private Utility utility;
 	
 	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
-	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, panel;
+	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, panel, supplierTablePanel,productImagePanel;
+	
 	private JLabel btnDashboard, btnSupplier, btnProduct, lblSupplierList, lblProductList, lblSearchIcon,btnNew, btnManage;
-	private JLabel btnDelete, lblProductSearchIcon, btnProductManage, btnProductRemove;
+	private JLabel btnDelete, lblProductSearchIcon, btnProductManage, btnProductRemove, btnProductNew;
+	
 	private JTextField txtSupplierSearch, txtProductSearch;
-	private JScrollPane tableScrollPane;
+	
+	private JTable supplierTable,productTable;
+	private JScrollPane productScrollPane,supplierScrollPane;
 	
 	private CardLayout cardLayout;
 	private VerticalLabelUI verticalUI;
 
 	private String supplierSearchMessage = "Search for Supplier...";
 	private String productSearchMessage = "Search for Products...";
+	
+
 	
 	
 	public static void main(String[] args) {
@@ -241,13 +247,15 @@ public class Inventory extends JFrame {
 		btnDelete.setHorizontalAlignment(SwingConstants.CENTER);
 		buttonPanel.add(btnDelete);
 		
-		tableScrollPane = new JScrollPane();
-		sl_supplierPanel.putConstraint(SpringLayout.NORTH, tableScrollPane, 10, SpringLayout.SOUTH, supplierSearchPanel);
-		sl_supplierPanel.putConstraint(SpringLayout.WEST, tableScrollPane, 10, SpringLayout.WEST, supplierPanel);
-		sl_supplierPanel.putConstraint(SpringLayout.SOUTH, tableScrollPane, -10, SpringLayout.NORTH, buttonPanel);
-		sl_supplierPanel.putConstraint(SpringLayout.EAST, tableScrollPane, -10, SpringLayout.EAST, supplierPanel);
-		supplierPanel.add(tableScrollPane);
-		
+		supplierTablePanel = new RoundedPanel(Gallery.WHITE);
+		sl_supplierPanel.putConstraint(SpringLayout.NORTH, supplierTablePanel, 15, SpringLayout.SOUTH, supplierSearchPanel);
+		sl_supplierPanel.putConstraint(SpringLayout.WEST, supplierTablePanel, 15, SpringLayout.WEST, supplierPanel);
+		sl_supplierPanel.putConstraint(SpringLayout.SOUTH, supplierTablePanel, -15, SpringLayout.NORTH, buttonPanel);
+		sl_supplierPanel.putConstraint(SpringLayout.EAST, supplierTablePanel, -15, SpringLayout.EAST, supplierPanel);
+		supplierPanel.add(supplierTablePanel);
+		SpringLayout sl_supplierTablePanel = new SpringLayout();
+		supplierTablePanel.setLayout(sl_supplierTablePanel);
+						
 		productPanel = new RoundedPanel(Gallery.GRAY);
 		productPanel.setBackground(Gallery.GRAY);
 		displayPanel.add(productPanel, "product");
@@ -288,7 +296,7 @@ public class Inventory extends JFrame {
 		productSearchPanel.add(txtProductSearch);
 		txtProductSearch.setColumns(10);
 		
-		JPanel productImagePanel = new RoundedPanel(gallery.WHITE);
+		productImagePanel = new RoundedPanel(gallery.WHITE);
 		sl_productPanel.putConstraint(SpringLayout.NORTH, productImagePanel, 15, SpringLayout.SOUTH, productSearchPanel);
 		sl_productPanel.putConstraint(SpringLayout.WEST, productImagePanel, -325, SpringLayout.EAST, productPanel);
 		sl_productPanel.putConstraint(SpringLayout.SOUTH, productImagePanel, 315, SpringLayout.SOUTH, productSearchPanel);
@@ -305,7 +313,7 @@ public class Inventory extends JFrame {
 		SpringLayout sl_productButtonPanel = new SpringLayout();
 		productButtonPanel.setLayout(sl_productButtonPanel);
 		
-		JLabel btnProductNew = new JLabel("New");
+		btnProductNew = new JLabel("New");
 		sl_productButtonPanel.putConstraint(SpringLayout.EAST, btnProductNew, -210, SpringLayout.EAST, productButtonPanel);
 		btnProductNew.setName("primary");
 		gallery.styleLabelToButton(btnProductNew, 14f, 15, 10);
@@ -340,7 +348,36 @@ public class Inventory extends JFrame {
 		sl_productPanel.putConstraint(SpringLayout.WEST, panel, 0, SpringLayout.WEST, productSearchPanel);
 		sl_productPanel.putConstraint(SpringLayout.SOUTH, panel, -15, SpringLayout.SOUTH, productPanel);
 		sl_productPanel.putConstraint(SpringLayout.EAST, panel, -15, SpringLayout.WEST, productImagePanel);
+		productImagePanel.setLayout(new SpringLayout());
 		productPanel.add(panel);
+		SpringLayout sl_panel = new SpringLayout();
+		panel.setLayout(sl_panel);
+		
+		productScrollPane = new JScrollPane();
+		productScrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+		productScrollPane.getViewport().setBackground(Gallery.WHITE);
+		sl_panel.putConstraint(SpringLayout.NORTH, productScrollPane, 10, SpringLayout.NORTH, panel);
+		sl_panel.putConstraint(SpringLayout.WEST, productScrollPane, 10, SpringLayout.WEST, panel);
+		sl_panel.putConstraint(SpringLayout.SOUTH, productScrollPane, -10, SpringLayout.SOUTH, panel);
+		sl_panel.putConstraint(SpringLayout.EAST, productScrollPane, -10, SpringLayout.EAST, panel);
+		panel.add(productScrollPane);
+		
+		supplierScrollPane = new JScrollPane();
+		supplierScrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+		supplierScrollPane.getViewport().setBackground(Gallery.WHITE);
+		sl_supplierTablePanel.putConstraint(SpringLayout.NORTH, supplierScrollPane, 10, SpringLayout.NORTH, supplierTablePanel);
+		sl_supplierTablePanel.putConstraint(SpringLayout.WEST, supplierScrollPane, 10, SpringLayout.WEST, supplierTablePanel);
+		sl_supplierTablePanel.putConstraint(SpringLayout.SOUTH, supplierScrollPane, -10, SpringLayout.SOUTH, supplierTablePanel);
+		sl_supplierTablePanel.putConstraint(SpringLayout.EAST, supplierScrollPane, -10, SpringLayout.EAST, supplierTablePanel);
+		supplierTablePanel.add(supplierScrollPane);
+		
+		//JTable
+		
+		supplierTable = new JTable();
+		supplierScrollPane.setViewportView(supplierTable);
+		
+		productTable = new JTable();
+		productScrollPane.setViewportView(productTable);
 		
 		// NOTE: Please put all mouse listeners here at the end
 		btnDashboard.addMouseListener(new MouseAdapter() {
