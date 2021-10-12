@@ -63,14 +63,17 @@ public class POS extends JFrame {
 	// Customized query table variables
 	private Object[][] queryResult;
 	private ProductDisplay[] productUIs;
-	private int maxPerColumn = 3;
-	private int maxPerPage = 6;
-	private int selectedIndex = -1;
-	private int currentPage = 1;
-	private int totalPage = 1;
+	private int tableMaxPerColumn = 3;
+	private int tableMaxPerPage = 6;
+	private int tableSelectedIndex = -1;
+	private int tableCurrentPage = 1;
+	private int tableTotalPage = 1;
 
 	// Customized cart list variables
 	private ArrayList<CartItem> cartList = new ArrayList<>();
+	private int cartMaxPerPage = 11;
+	private int cartCurrentPage = 1;
+	private int cartTotalPage = 1;
 	
 	private Database database; 
 	private Gallery gallery;
@@ -277,7 +280,7 @@ public class POS extends JFrame {
 		cartPanel.add(lblCartIndicator);
 		
 		cartListPanel = new JPanel();
-		sl_cartPanel.putConstraint(SpringLayout.NORTH, cartListPanel, 15, SpringLayout.SOUTH, lblCartLabel);
+		sl_cartPanel.putConstraint(SpringLayout.NORTH, cartListPanel, 5, SpringLayout.SOUTH, lblCartLabel);
 		sl_cartPanel.putConstraint(SpringLayout.SOUTH, cartListPanel, -15, SpringLayout.NORTH, lblLeftButton);
 		cartListPanel.setBackground(Gallery.WHITE);
 		sl_cartPanel.putConstraint(SpringLayout.WEST, cartListPanel, 15, SpringLayout.WEST, cartPanel);
@@ -421,7 +424,7 @@ public class POS extends JFrame {
 				breakpointTrigger = getWidth() <= minWidth;
 				lblDateTime.setText(gallery.getTime(breakpointTrigger));
 				
-				resetPage();
+				resetAllPages();
 			}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
@@ -489,7 +492,7 @@ public class POS extends JFrame {
 			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				nextPage();
+				tableNextPage();
 			}
 		});
 		lblUpButton.addMouseListener(new MouseAdapter() {
@@ -506,7 +509,7 @@ public class POS extends JFrame {
 			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				previousPage();
+				tablePreviousPage();
 			}
 		});
 		tfSearch.addFocusListener(new FocusAdapter() {
@@ -523,43 +526,50 @@ public class POS extends JFrame {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				int code = e.getKeyCode();
-				
-				// Catching all arrow-key codes to contain it in a single condition
-				if (code >= 37 && code <= 40) {
+
+				// Catching all non-character key codes to contain it in a single condition
+				if ((code >= 37 && code <= 40) || (code == 33 || code == 34)) {
 					// If the selected index is initially empty or just recently unselected a product..
-					if (selectedIndex == -1) {
+					if (tableSelectedIndex == -1) {
 						selectProduct(0);
 					} else {
-						int previousIndex = selectedIndex;
+						int previousIndex = tableSelectedIndex;
+						
+						if (code == KeyEvent.VK_PAGE_DOWN) {
+							tableNextPage();
+						} else if (code == KeyEvent.VK_PAGE_UP) {
+							tablePreviousPage();
+						}
 						
 //						System.out.println("===========================\nColumns: "
 //							+ maxPerColumn + "\nRow: " + maxPerRow 
 //							+ "\nProduct UI size: " + productUIs.length
 //							+ "\nSelected Index: " + selectedIndex);
+						
 						if (code == KeyEvent.VK_LEFT) {
-							if (selectedIndex - 1 >= 0
-									&& selectedIndex % maxPerColumn != 0) {
-								selectedIndex--;
+							if (tableSelectedIndex - 1 >= 0
+									&& tableSelectedIndex % tableMaxPerColumn != 0) {
+								tableSelectedIndex--;
 							}
 						} else if (code == KeyEvent.VK_UP) {
-							if (selectedIndex - maxPerColumn >= 0) {
-								selectedIndex -= maxPerColumn;
+							if (tableSelectedIndex - tableMaxPerColumn >= 0) {
+								tableSelectedIndex -= tableMaxPerColumn;
 							}
 						} else if (code == KeyEvent.VK_RIGHT) {
-							if (selectedIndex + 1 <= productUIs.length - 1
-									&& (selectedIndex + 1) % maxPerColumn != 0) {
-								selectedIndex++;
+							if (tableSelectedIndex + 1 <= productUIs.length - 1
+									&& (tableSelectedIndex + 1) % tableMaxPerColumn != 0) {
+								tableSelectedIndex++;
 							}
 						} else if (code == KeyEvent.VK_DOWN) {
-							if (selectedIndex + maxPerColumn <= productUIs.length - 1) {
-								selectedIndex += maxPerColumn;
+							if (tableSelectedIndex + tableMaxPerColumn <= productUIs.length - 1) {
+								tableSelectedIndex += tableMaxPerColumn;
 							} else {
-								selectedIndex = productUIs.length - 1;
+								tableSelectedIndex = productUIs.length - 1;
 							}
 						}
 
-						if (previousIndex != selectedIndex) {
-							selectProduct(selectedIndex);
+						if (previousIndex != tableSelectedIndex) {
+							selectProduct(tableSelectedIndex);
 						}
 					}
 				} else {
@@ -583,8 +593,49 @@ public class POS extends JFrame {
 				gallery.textFieldFocusGained(tfQuantity, defaultQuantityMessage);
 			}
 		});
+
+		tfQuantity.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				int code = e.getKeyCode();
+				
+				if (code == KeyEvent.VK_ENTER) {
+					addToCart();
+				}
+			}
+		});
 		tableContainerPanel.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) { scrollTable(e); }
+		});
+		lblLeftButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				gallery.buttonHovered(lblLeftButton);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				gallery.buttonNormalized(lblLeftButton);
+			}
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				cartPreviousPage();
+			}
+		});
+		lblRightButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				gallery.buttonHovered(lblRightButton);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				gallery.buttonNormalized(lblRightButton);
+			}
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				cartNextPage();
+			}
 		});
 		
 		timer = new Timer(1000, new ActionListener() {
@@ -600,15 +651,15 @@ public class POS extends JFrame {
 	}
 	
 	public void setSelectedIndex(int selectedIndex) {
-		this.selectedIndex = selectedIndex;
+		this.tableSelectedIndex = selectedIndex;
 		
 		for (ProductDisplay productDisplay : productUIs) {
-			if (productDisplay.getSelected() && productDisplay.getIndex() != this.selectedIndex) {
+			if (productDisplay.getSelected() && productDisplay.getIndex() != this.tableSelectedIndex) {
 				productDisplay.unselect();
 			}
 		}
 
-		System.out.println("Current index " + this.selectedIndex + ", " + 
+		System.out.println("Current index " + this.tableSelectedIndex + ", " + 
 			((selectedIndex != -1) ? productUIs[selectedIndex].getName() : "None"));
 	}
 	
@@ -621,7 +672,7 @@ public class POS extends JFrame {
 		
 		// Empty query result
 		if (queryResult.length == 0) {
-			selectedIndex = -1;
+			tableSelectedIndex = -1;
 			lblNotFoundImage.setText(
 				String.format("<html><p>No results found with the<br>keyword \"%s\"</p></html>", 
 					(keyword.length() > 7) 
@@ -637,11 +688,11 @@ public class POS extends JFrame {
 		} else {
 			ProductDisplay firstProduct = new ProductDisplay(queryResultPanel.getSize(), 
 					0, queryResult[0], gallery, this);
-			maxPerPage = firstProduct.getMaxPerPage();
-			maxPerColumn = firstProduct.getMaxColumn();
+			tableMaxPerPage = firstProduct.getMaxPerPage();
+			tableMaxPerColumn = firstProduct.getMaxColumn();
 			
-			totalPage = (queryResult.length / maxPerPage) + 
-				((queryResult.length % maxPerPage > 0) ? 1 : 0);
+			tableTotalPage = (queryResult.length / tableMaxPerPage) + 
+				((queryResult.length % tableMaxPerPage > 0) ? 1 : 0);
 			
 			displayResults();
 			selectProduct(0);
@@ -651,34 +702,56 @@ public class POS extends JFrame {
 	}
 	
 	private void displayResults() {
-		// First, we will clean the panel of its child components
 		queryResultPanel.removeAll();
 		Dimension panelSize = queryResultPanel.getSize();
 
 		productUIs = new ProductDisplay[Math.min(
-		    maxPerPage - ((maxPerPage * currentPage) - queryResult.length), 
-		    maxPerPage)];
+		    tableMaxPerPage - ((tableMaxPerPage * tableCurrentPage) - queryResult.length), 
+		    tableMaxPerPage)];
 
-		lblPageIndicator.setText(String.format("%s/%s", currentPage, totalPage));
-		for (int queryIndex = (currentPage - 1) * maxPerPage; 
-				 queryIndex < (currentPage * maxPerPage) - (maxPerPage - productUIs.length); 
+		lblPageIndicator.setText(String.format("%s/%s", tableCurrentPage, tableTotalPage));
+		for (int queryIndex = (tableCurrentPage - 1) * tableMaxPerPage; 
+				 queryIndex < (tableCurrentPage * tableMaxPerPage) - (tableMaxPerPage - productUIs.length); 
 				 queryIndex++) {
-			productUIs[queryIndex % maxPerPage] = new ProductDisplay(
+			productUIs[queryIndex % tableMaxPerPage] = new ProductDisplay(
 				panelSize, queryIndex, queryResult[queryIndex], gallery, this);
-			queryResultPanel.add(productUIs[queryIndex % maxPerPage]);
+			queryResultPanel.add(productUIs[queryIndex % tableMaxPerPage]);
 		}
 
 		repaint();
 		revalidate();
+		
 		queryCardLayout.show(cardLayoutPanel, "result");
 	}
 	
+	public void displayCart() {
+		cartListPanel.removeAll();
+		
+		int beforeCartTotalPage = cartTotalPage;
+		cartTotalPage = (cartList.size() - 1) / cartMaxPerPage + 1;
+		
+		if (beforeCartTotalPage != cartTotalPage) {
+			cartCurrentPage = cartTotalPage;
+		}
+		
+		lblCartIndicator.setText(String.format("%s/%s", cartCurrentPage, cartTotalPage));
+		try {
+			for (int cartIndex = 0; cartIndex < cartMaxPerPage; cartIndex++) {
+				CartItem item = cartList.get(cartIndex + (cartMaxPerPage * (cartCurrentPage - 1)));
+				item.rearrangeOrder(cartIndex);
+				cartListPanel.add(item);
+			}
+		} catch (IndexOutOfBoundsException arrayException) {}
+		
+		repaint();
+		revalidate();
+	}
+	
 	private void addToCart() {
-		// TODO: Add to cart list the product selected
 		int quantity = 0;
 		ArrayList<String> errorMessages = new ArrayList<>();
 
-		if (selectedIndex == -1) { errorMessages.add("- Please select a product."); }
+		if (tableSelectedIndex == -1) { errorMessages.add("- Please select a product."); }
 		if (tfQuantity.getText().equals(defaultQuantityMessage) || 
 				tfQuantity.getText().equals("")) {
 			errorMessages.add("- Please input the quantity of the product.");
@@ -696,23 +769,18 @@ public class POS extends JFrame {
 		if (errorMessages.size() > 0) {
 			gallery.showMessage(errorMessages.toArray(new String[0]));
 		} else {
-			System.out.println("Add to cart, Selected Index: " + selectedIndex);
 			cartListPanel.removeAll();
 			
 			cartList.add(
-				new CartItem(
-					cartList.size(), 
-					queryResult[selectedIndex + (maxPerPage * (currentPage - 1))], 
+				new CartItem(cartList.size(), 
+					queryResult[tableSelectedIndex + (tableMaxPerPage * (tableCurrentPage - 1))], 
 					quantity, gallery, this)
 			);
-			System.out.println("Cart list size: " + cartList.size());
+			
+			displayCart();
 			
 			tfQuantity.setText("");
 			tfSearch.requestFocus(true);
-			
-			displayCart();
-			System.out.println("JPanel size: " + cartListPanel.getComponents().length);
-			
 		}
 	}
 	
@@ -728,50 +796,63 @@ public class POS extends JFrame {
 		displayCart();
 	}
 	
-	public void displayCart() {
-		// TODO: Complete this
-		cartListPanel.removeAll();
-		cartList.forEach((cartItem -> cartListPanel.add(cartItem)));
-		repaint();
-		revalidate();
-	}
-	
 	private void scrollTable(MouseWheelEvent e) {
 		int rotation = e.getWheelRotation();
 		if (rotation == 1) {
 			// Mouse is rotated downward
-			nextPage();
+			tableNextPage();
 		} else {
 			// Mouse is rotated upward
-			previousPage();
+			tablePreviousPage();
 		}
 	}
 	
-	private void nextPage() {
-		if (currentPage < totalPage) { 
-			currentPage++;
+	private void tableNextPage() {
+		if (tableCurrentPage < tableTotalPage) { 
+			tableCurrentPage++;
 			displayResults();
 			selectProduct(0);
 		}
 	}
 	
-	private void previousPage() {
-		if (currentPage > 1) { 
-			currentPage--; 
+	private void tablePreviousPage() {
+		if (tableCurrentPage > 1) { 
+			tableCurrentPage--; 
 			displayResults();
 			selectProduct(0);
 		}
 	}
 	
-	private void resetPage() {
-		currentPage = 1;
+	private void cartNextPage() {
+		if (cartCurrentPage < cartTotalPage) { 
+			cartCurrentPage++;
+			displayCart();
+		}
+	}
+	
+	private void cartPreviousPage() {
+		if (cartCurrentPage > 1) { 
+			cartCurrentPage--;
+			displayCart();
+		}
+	}
+	
+	private void resetAllPages() {
+		cartMaxPerPage = cartListPanel.getSize().height / CartItem.staticHeight;
+		
+		cartCurrentPage = 1;
+		tableCurrentPage = 1;
+		
 		searchQuery();
+		displayCart();
 	}
 	
 	private void selectProduct(int index) {
 		MouseEvent me = new MouseEvent(productUIs[index], 0, 0, 0, 100, 100, 1, false);
 		productUIs[index].getMouseListeners()[0].mouseClicked(me);
 	}
+	
+	public int getCartMaxPerPage() { return cartMaxPerPage; }
 }
 
 

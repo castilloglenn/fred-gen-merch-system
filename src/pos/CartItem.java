@@ -12,6 +12,7 @@ import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+@SuppressWarnings("serial")
 public class CartItem extends JPanel {
 	
 	// [0]product_id, [1]name, [2]image, [3]uom, [4]selling_price and [5] quantity
@@ -20,7 +21,10 @@ public class CartItem extends JPanel {
 	private int quantity = 0;
 	
 	private int width = 250;
+	
+	// both height values must be the same
 	private int height = 34;
+	public static int staticHeight = 34;
 	
 	private int squareImageSize = 24;
 	private int textWidth = 150;
@@ -29,6 +33,7 @@ public class CartItem extends JPanel {
 	private int twoLineTextMargin = 1;
 	private int oneLineColumnLimit = 15;
 	private int twoLineColumnLimit = 30;
+	
 	
 	private POS pos;
 	
@@ -138,9 +143,7 @@ public class CartItem extends JPanel {
 	}
 	
 	public void rearrangeOrder(int newIndex) {
-		System.out.println("index before" + this.index);
 		this.index = newIndex;
 		setBounds(0, this.index * height, width, height);
-		System.out.println("index after" + this.index);
 	}
 }
