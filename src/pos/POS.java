@@ -80,7 +80,8 @@ public class POS extends JFrame {
 	private VerticalLabelUI verticalUI;
 	
 	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel,
-		queryResultPanel, cartListPanel;
+		queryResultPanel, cartListCardPanel, cartListPanel,
+		cardListEmptyPanel;
 	
 	private RoundedPanel navigationPanel, displayPanel, 
 		posPanel, transactionPanel, reportPanel,
@@ -92,13 +93,14 @@ public class POS extends JFrame {
 		lblCancelButton, lblSearchIcon, lblAddToCart,
 		lblQuantityIcon, lblDownButton, lblUpButton,
 		lblNotFoundImage, lblPageIndicator, lblLeftButton,
-		lblCartLabel, lblRightButton, lblCartIndicator;
+		lblCartLabel, lblRightButton, lblCartIndicator,
+		lblCartListEmpty;
 	
 	private JTextField tfSearch, tfQuantity;
 	
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	
-	private CardLayout cardLayout, queryCardLayout;
+	private CardLayout cardLayout, queryCardLayout, cartListCardLayout;
 	
 	
 	public static void main(String[] args) {
@@ -279,14 +281,22 @@ public class POS extends JFrame {
 		sl_cartPanel.putConstraint(SpringLayout.SOUTH, lblCartIndicator, 0, SpringLayout.SOUTH, lblLeftButton);
 		cartPanel.add(lblCartIndicator);
 		
+		cartListCardPanel = new JPanel();
+		sl_cartPanel.putConstraint(SpringLayout.NORTH, cartListCardPanel, 5, SpringLayout.SOUTH, lblCartLabel);
+		sl_cartPanel.putConstraint(SpringLayout.SOUTH, cartListCardPanel, -15, SpringLayout.NORTH, lblLeftButton);
+		cartListCardPanel.setBackground(Gallery.WHITE);
+		sl_cartPanel.putConstraint(SpringLayout.WEST, cartListCardPanel, 15, SpringLayout.WEST, cartPanel);
+		sl_cartPanel.putConstraint(SpringLayout.EAST, cartListCardPanel, -15, SpringLayout.EAST, cartPanel);
+		cartPanel.add(cartListCardPanel);
+		cartListCardLayout = new CardLayout(0, 0);
+		cartListCardPanel.setLayout(cartListCardLayout);
+		
+		cardListEmptyPanel = new JPanel();
+		cardListEmptyPanel.setBackground(Gallery.WHITE);
+		
 		cartListPanel = new JPanel();
-		sl_cartPanel.putConstraint(SpringLayout.NORTH, cartListPanel, 5, SpringLayout.SOUTH, lblCartLabel);
-		sl_cartPanel.putConstraint(SpringLayout.SOUTH, cartListPanel, -15, SpringLayout.NORTH, lblLeftButton);
 		cartListPanel.setBackground(Gallery.WHITE);
-		sl_cartPanel.putConstraint(SpringLayout.WEST, cartListPanel, 15, SpringLayout.WEST, cartPanel);
-		sl_cartPanel.putConstraint(SpringLayout.EAST, cartListPanel, -15, SpringLayout.EAST, cartPanel);
-		cartPanel.add(cartListPanel);
-		cartListPanel.setLayout(null);
+
 		posPanel.add(searchPanel);
 		SpringLayout sl_searchPanel = new SpringLayout();
 		searchPanel.setLayout(sl_searchPanel);
@@ -384,6 +394,19 @@ public class POS extends JFrame {
 		queryResultPanel = new JPanel();
 		cardLayoutPanel.add(queryResultPanel, "result");
 		cardLayoutPanel.add(queryEmptyPanel, "none");
+		cartListCardPanel.add(cardListEmptyPanel, "empty");
+		cartListCardPanel.add(cartListPanel, "cart");
+		cartListPanel.setLayout(null);
+		SpringLayout sl_cardListEmptyPanel = new SpringLayout();
+		cardListEmptyPanel.setLayout(sl_cardListEmptyPanel);
+		
+		lblCartListEmpty = new JLabel(gallery.getImage("empty-cart.png", 200, 295));
+		lblCartListEmpty.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_cardListEmptyPanel.putConstraint(SpringLayout.NORTH, lblCartListEmpty, 0, SpringLayout.NORTH, cardListEmptyPanel);
+		sl_cardListEmptyPanel.putConstraint(SpringLayout.WEST, lblCartListEmpty, 0, SpringLayout.WEST, cardListEmptyPanel);
+		sl_cardListEmptyPanel.putConstraint(SpringLayout.SOUTH, lblCartListEmpty, 0, SpringLayout.SOUTH, cardListEmptyPanel);
+		sl_cardListEmptyPanel.putConstraint(SpringLayout.EAST, lblCartListEmpty, 0, SpringLayout.EAST, cardListEmptyPanel);
+		cardListEmptyPanel.add(lblCartListEmpty);
 		queryResultPanel.setBackground(Gallery.WHITE);
 		queryResultPanel.setLayout(null);
 		
@@ -415,6 +438,10 @@ public class POS extends JFrame {
 		
 		
 		
+		// Configure initial component state
+		lblLeftButton.setVisible(false);
+		lblRightButton.setVisible(false);
+		lblCartIndicator.setVisible(false);
 		
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -659,8 +686,8 @@ public class POS extends JFrame {
 			}
 		}
 
-		System.out.println("Current index " + this.tableSelectedIndex + ", " + 
-			((selectedIndex != -1) ? productUIs[selectedIndex].getName() : "None"));
+//		System.out.println("Current index " + this.tableSelectedIndex + ", " + 
+//			((selectedIndex != -1) ? productUIs[selectedIndex].getName() : "None"));
 	}
 	
 	private void searchQuery() {
@@ -726,6 +753,19 @@ public class POS extends JFrame {
 	
 	public void displayCart() {
 		cartListPanel.removeAll();
+		if (cartList.isEmpty()) {
+			cartListCardLayout.show(cartListCardPanel, "empty");
+			
+			lblLeftButton.setVisible(false);
+			lblRightButton.setVisible(false);
+			lblCartIndicator.setVisible(false);
+		} else {
+			cartListCardLayout.show(cartListCardPanel, "cart");
+
+			lblLeftButton.setVisible(true);
+			lblRightButton.setVisible(true);
+			lblCartIndicator.setVisible(true);
+		}
 		
 		int beforeCartTotalPage = cartTotalPage;
 		cartTotalPage = (cartList.size() - 1) / cartMaxPerPage + 1;
