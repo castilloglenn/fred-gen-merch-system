@@ -17,7 +17,6 @@ public class CartItem extends JPanel {
 	
 	// [0]product_id, [1]name, [2]image, [3]uom, [4]selling_price and [5] quantity
 	private int index;
-	private Object[] product;
 	private int quantity = 0;
 	
 	private int width = 250;
@@ -41,12 +40,12 @@ public class CartItem extends JPanel {
 	
 	
 	public CartItem(int indexOrder, Object[] product, int quantity, Gallery gallery, POS pos) {
-		this.index = indexOrder;
-		this.product = product;
+		index = indexOrder;
+		
 		this.quantity = quantity;
 		this.pos = pos;
 		
-		setBounds(0, this.index * height, width, height);
+		setBounds(0, index * height, width, height);
 		setBackground(Gallery.WHITE);
 		setLayout(null);
 
@@ -143,7 +142,7 @@ public class CartItem extends JPanel {
 	}
 	
 	public void rearrangeOrder(int newIndex) {
-		this.index = newIndex;
-		setBounds(0, this.index * height, width, height);
+		index = newIndex;
+		setBounds(0, index * height, width, height);
 	}
 }
