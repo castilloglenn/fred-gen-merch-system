@@ -639,12 +639,28 @@ public class POS extends JFrame {
 		timer.start();
 		
 		setLocationRelativeTo(null);
+		/**
+		 *  ========================= End of constructor ====================================
+		 */
 	}
 	
+	/**
+	 * Used for global shortcut keys from this specified window only.
+	 * <br> To make the usage more efficient and faster.
+	 * 
+	 * @param code keyCode from the KeyEvent
+	 */
 	private void systemKeyMappingShortcuts(int code) {
 		if (code == KeyEvent.VK_F1) {
 			// TODO Checkout
 			
+		} else if (code == KeyEvent.VK_F2) { // Not included
+			/**
+			 * TEST ONLY FOR DEBUGGING
+			 */
+			System.out.println("\n\nCart count: " + cartList.size());
+			cartList.forEach((cartItem) -> System.out.println(cartItem));
+			System.out.println("========================================");
 		} else if (code == KeyEvent.VK_F4) {
 			clearCart();
 		} else if (code == KeyEvent.VK_F5) {
@@ -653,6 +669,11 @@ public class POS extends JFrame {
 		}
 	}
 
+	/**
+	 * Used for search shortcut keys from this specified table only.
+	 * 
+	 * @param code code keyCode from the KeyEvent
+	 */
 	private void tableKeyMappingShortcuts(int code) {
 		int previousIndex = tableSelectedIndex;
 		

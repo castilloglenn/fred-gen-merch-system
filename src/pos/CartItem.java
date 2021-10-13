@@ -15,9 +15,11 @@ import java.awt.event.MouseEvent;
 @SuppressWarnings("serial")
 public class CartItem extends JPanel {
 	
-	// [0]product_id, [1]name, [2]image, [3]uom, [4]selling_price and [5] quantity
+	
 	private int index;
 	private int quantity = 0;
+	
+	private Object[] product;
 	
 	private int width = 250;
 	
@@ -38,10 +40,19 @@ public class CartItem extends JPanel {
 	
 	private JLabel lblCartItem, lblCartAdd, lblCartQuantity, lblCartLess, lblCartRemove;
 	
-	
+	/**
+	 * 
+	 * @param indexOrder the order in which the cart item will appear relative to the maximum available items in the panel
+	 * @param product the product details contained in an object list.  <br> [0]product_id, [1]name, [2]image, [3]uom, [4]selling_price
+	 * @param quantity number of registered products
+	 * @param gallery used for styling components
+	 * @param pos used to communicate to its parent source 
+	 * 
+	 */
 	public CartItem(int indexOrder, Object[] product, int quantity, Gallery gallery, POS pos) {
 		index = indexOrder;
 		
+		this.product = product;
 		this.quantity = quantity;
 		this.pos = pos;
 		
@@ -132,6 +143,10 @@ public class CartItem extends JPanel {
 		});
 	}
 	
+	/**
+	 * 
+	 * @param adjustment amount to be changed from its quantity.
+	 */
 	public void adjustQuantity(int adjustment) {
 		quantity += adjustment;
 		if (quantity == 0) {
@@ -141,8 +156,39 @@ public class CartItem extends JPanel {
 		}
 	}
 	
+	/**
+	 * for proper ordering after a cart item is removed from the main panel
+	 * 
+	 * @param newIndex adjustment value, this will replace the current index value
+	 */
 	public void rearrangeOrder(int newIndex) {
 		index = newIndex;
 		setBounds(0, index * height, width, height);
+	}
+	
+	/**
+	 * Size 7 object list that will get from the cart item.
+	 * 
+	 * @return object list with the following content order:
+	 * <br> 0: Product ID
+	 * <br> 1: Name
+	 * <br> 2: Image (ImageIcon)
+	 * <br> 3: Quantity
+	 * <br> 4: Unit of measurement
+	 * <br> 5: Selling price
+	 * <br> 6: Total price
+	 * 
+	 * @see javax.swing.ImageIcon
+	 */
+	public Object[] getTransactionDetail() {
+		return new Object[] {product[0], product[1], product[2], quantity, product[3], product[4],
+				quantity * (double) product[4]};
+	}
+	
+	@Override 
+	public String toString() {
+		return String.format("\nID: %s\nName: %s\nImage Class: %s\nQuantity: %d %s\nPrice: %s\nTotal: %s",
+				product[0].toString(), product[1].toString(), product[2].toString(), quantity, 
+				product[3].toString(), product[4].toString(), quantity * (double) product[4]);
 	}
 }
