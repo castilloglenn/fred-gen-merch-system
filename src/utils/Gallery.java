@@ -44,7 +44,7 @@ public class Gallery {
 	public static Color LIGHT_GRAY = new Color(218, 218, 210); // 2 down the palette
 	public static Color DARK_GRAY = new Color(145, 145, 120); // 10 down the palette
 	public static Color BLACK = new Color(5, 25, 35);
-	public static Color RED = new Color(216, 74, 49);
+	public static Color RED = new Color(216, 74, 49); // line 108 uses this color the robot says one, change it if changed
 	public static Color DARK_RED = new Color(188, 59, 36); // 2 down the palette
 	public static Color WHITE = new Color(255, 255, 255);
 	
@@ -68,7 +68,8 @@ public class Gallery {
 	public static Color DANGER_BUTTON_BACKGROUND_HOVER = Gallery.DARK_RED;
 	
 	private String regularFont = "OpenSans-SemiBold";
-	private String monospacedFont = "Inconsolata-SemiBold";
+	private String monospacedFont = "Inconsolata-ExtraBold";
+	
 	private SimpleDateFormat sdf;
 	private Date date;
 	
@@ -117,7 +118,7 @@ public class Gallery {
 	}
 	
 	public String constraintMessage(String message) {
-        int limit = 35;
+        int limit = 30;
         int messageSize = message.length();
 
         if (messageSize <= limit) return message;

@@ -83,7 +83,7 @@ public class POS extends JFrame {
 	
 	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel,
 		queryResultPanel, cartListCardPanel, cartListPanel,
-		cardListEmptyPanel, paymentCardPanel;
+		cardListEmptyPanel;
 	
 	private RoundedPanel navigationPanel, displayPanel, 
 		posPanel, transactionPanel, reportPanel,
@@ -96,13 +96,14 @@ public class POS extends JFrame {
 		lblQuantityIcon, lblDownButton, lblUpButton,
 		lblNotFoundImage, lblPageIndicator, lblLeftButton,
 		lblCartLabel, lblRightButton, lblCartIndicator,
-		lblCartListEmpty;
+		lblCartListEmpty, lblCartShortcutHelp;
 	
 	private JTextField tfSearch, tfQuantity;
 	
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	
 	private CardLayout cardLayout, queryCardLayout, cartListCardLayout;
+	private JLabel lblPaymentStatistics;
 	
 	
 	public static void main(String[] args) {
@@ -217,7 +218,7 @@ public class POS extends JFrame {
 		posPanel.add(paymentPanel);
 		
 		checkoutPanel = new RoundedPanel(Color.WHITE);
-		sl_posPanel.putConstraint(SpringLayout.EAST, checkoutPanel, 220, SpringLayout.WEST, posPanel);
+		sl_posPanel.putConstraint(SpringLayout.EAST, checkoutPanel, 200, SpringLayout.WEST, posPanel);
 		sl_posPanel.putConstraint(SpringLayout.WEST, paymentPanel, 15, SpringLayout.EAST, checkoutPanel);
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, checkoutPanel, 0, SpringLayout.SOUTH, cartPanel);
 		sl_posPanel.putConstraint(SpringLayout.NORTH, checkoutPanel, 0, SpringLayout.NORTH, paymentPanel);
@@ -237,13 +238,6 @@ public class POS extends JFrame {
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, lblCheckoutButton, -487, SpringLayout.NORTH, paymentPanel);
 		SpringLayout sl_paymentPanel = new SpringLayout();
 		paymentPanel.setLayout(sl_paymentPanel);
-		
-		paymentCardPanel = new JPanel();
-		sl_paymentPanel.putConstraint(SpringLayout.NORTH, paymentCardPanel, 15, SpringLayout.NORTH, paymentPanel);
-		sl_paymentPanel.putConstraint(SpringLayout.WEST, paymentCardPanel, 15, SpringLayout.WEST, paymentPanel);
-		sl_paymentPanel.putConstraint(SpringLayout.SOUTH, paymentCardPanel, -15, SpringLayout.SOUTH, paymentPanel);
-		sl_paymentPanel.putConstraint(SpringLayout.EAST, paymentCardPanel, -15, SpringLayout.EAST, paymentPanel);
-		paymentPanel.add(paymentCardPanel);
 		checkoutPanel.add(lblCheckoutButton);
 		 
 		lblCancelButton = new JLabel("CANCEL (F4)");
@@ -254,6 +248,15 @@ public class POS extends JFrame {
 		sl_checkoutPanel.putConstraint(SpringLayout.SOUTH, lblCancelButton, -15, SpringLayout.SOUTH, checkoutPanel);
 		sl_checkoutPanel.putConstraint(SpringLayout.EAST, lblCancelButton, 0, SpringLayout.EAST, lblCheckoutButton);
 		checkoutPanel.add(lblCancelButton);
+		
+		lblPaymentStatistics = new JLabel(getPaymentStatistics());
+		sl_paymentPanel.putConstraint(SpringLayout.NORTH, lblPaymentStatistics, 15, SpringLayout.NORTH, paymentPanel);
+		sl_paymentPanel.putConstraint(SpringLayout.WEST, lblPaymentStatistics, 15, SpringLayout.WEST, paymentPanel);
+		sl_paymentPanel.putConstraint(SpringLayout.SOUTH, lblPaymentStatistics, -15, SpringLayout.SOUTH, paymentPanel);
+		sl_paymentPanel.putConstraint(SpringLayout.EAST, lblPaymentStatistics, -15, SpringLayout.EAST, paymentPanel);
+		lblPaymentStatistics.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPaymentStatistics.setFont(gallery.getMonospacedFont(16f));
+		paymentPanel.add(lblPaymentStatistics);
 		
 		searchPanel = new RoundedPanel(Color.WHITE);
 		sl_posPanel.putConstraint(SpringLayout.WEST, checkoutPanel, 0, SpringLayout.WEST, searchPanel);
@@ -407,6 +410,8 @@ public class POS extends JFrame {
 		cartListPanel.setLayout(null);
 		SpringLayout sl_cardListEmptyPanel = new SpringLayout();
 		cardListEmptyPanel.setLayout(sl_cardListEmptyPanel);
+		queryResultPanel.setBackground(Gallery.WHITE);
+		queryResultPanel.setLayout(null);
 		
 		lblCartListEmpty = new JLabel(gallery.getImage("empty-cart.png", 200, 295));
 		lblCartListEmpty.setHorizontalAlignment(SwingConstants.CENTER);
@@ -415,8 +420,6 @@ public class POS extends JFrame {
 		sl_cardListEmptyPanel.putConstraint(SpringLayout.SOUTH, lblCartListEmpty, 0, SpringLayout.SOUTH, cardListEmptyPanel);
 		sl_cardListEmptyPanel.putConstraint(SpringLayout.EAST, lblCartListEmpty, 0, SpringLayout.EAST, cardListEmptyPanel);
 		cardListEmptyPanel.add(lblCartListEmpty);
-		queryResultPanel.setBackground(Gallery.WHITE);
-		queryResultPanel.setLayout(null);
 		
 		lblPageIndicator = new JLabel();
 		sl_tableContainerPanel.putConstraint(SpringLayout.WEST, lblPageIndicator, -45, SpringLayout.EAST, tableContainerPanel);
@@ -453,6 +456,7 @@ public class POS extends JFrame {
 		lblRightButton.setVisible(false);
 		lblCartIndicator.setVisible(false);
 		
+		// Component behaviors, listeners
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -463,6 +467,7 @@ public class POS extends JFrame {
 				
 				resetAllPages();
 				tfSearch.requestFocus();
+				getPaymentStatistics();
 			}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
@@ -864,9 +869,9 @@ public class POS extends JFrame {
 		// If conditions to handle all kinds of possible errors
 		if (tableSelectedIndex == -1) { 
 			// Adding of error message, format:
-			// "- <error_message>"
 			errorMessages.add("- Please select a product."); 
 		}
+		
 		if (tfQuantity.getText().equals(defaultQuantityMessage) || 
 				tfQuantity.getText().equals("")) {
 			errorMessages.add("- Please input the quantity of the product.");
@@ -874,7 +879,7 @@ public class POS extends JFrame {
 			try {
 				quantity = Integer.parseInt(tfQuantity.getText());
 				if (quantity < 1 || quantity > 999) {
-					errorMessages.add("- Please input the quantity between 1 and 999.");
+					errorMessages.add("- Please input quantity ranging from 1 to 999.");
 				}
 			} catch (NumberFormatException nfe) {
 				errorMessages.add("- Only integers are allowed as product quantity.");
@@ -987,6 +992,16 @@ public class POS extends JFrame {
 	}
 	
 	public int getCartMaxPerPage() { return cartMaxPerPage; }
+	
+	public String getPaymentStatistics() {
+		/**
+		 * module 1: 334
+		 */
+		int widthSize = paymentPanel.getSize().width;
+		System.out.println("paymentPanel width is " + widthSize);
+
+		return "<html><pre>Cashier:               Castillo<br>Items: 999,999   Count: 999,999<br>Total Price:      P9,999,999.00</html>";
+	}
 }
 
 
