@@ -24,17 +24,18 @@ import javax.swing.border.LineBorder;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class SupplierAdd extends JFrame {
 	
 	private Utility utility;
 	private Gallery gallery;
 	
-	private JPanel contentPane, p, formsPanel, buttonPanel, newSupplierPanel;
-	private JLabel btnAdd, lblSupplierID, lblName, lblContactNumber, lblAddress, lblNewSupplier,btnCancel;
-	private JTextField txtName, txtSupplierID, txtContactNumber;
-	private JTextArea textArea;
-	
+	private JPanel contentPane, p, buttonPanel, newSupplierPanel;
+	private JLabel btnAdd, lblNewSupplier,btnCancel,lblName,lblContactNumber,lblSupplierID,lblAddress;
+	private JTextField txtSupplierID,txtName,txtContactNumber,txtAddress;
+
 	/**
 	 * Launch the application.
 	 */
@@ -78,67 +79,12 @@ public class SupplierAdd extends JFrame {
 		sl_contentPane.putConstraint(SpringLayout.EAST, p, 5, SpringLayout.EAST, contentPane);
 		contentPane.add(p);
 		SpringLayout sl_p = new SpringLayout();
-		p.setLayout(sl_p);
-		
-		formsPanel = new RoundedPanel(Gallery.WHITE);
-		sl_p.putConstraint(SpringLayout.NORTH, formsPanel, 68, SpringLayout.NORTH, p);
-		sl_p.putConstraint(SpringLayout.SOUTH, formsPanel, -128, SpringLayout.SOUTH, p);;
-		sl_p.putConstraint(SpringLayout.WEST, formsPanel, 10, SpringLayout.WEST, p);
-		sl_p.putConstraint(SpringLayout.EAST, formsPanel, -10, SpringLayout.EAST, p);
-		formsPanel.setBackground(gallery.WHITE);
-		p.add(formsPanel);
+		p.setLayout(sl_p);;
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
-		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, 6, SpringLayout.SOUTH, formsPanel);
-		formsPanel.setLayout(null);
-		
-		lblSupplierID = new JLabel("Supplier ID");
-		lblSupplierID.setFont(gallery.getFont(15f));
-		lblSupplierID.setBounds(10, 11, 80, 25);
-		formsPanel.add(lblSupplierID);
-		
-		lblName = new JLabel("Name");
-		lblName.setFont(gallery.getFont(15f));
-		lblName.setBounds(10, 54, 80, 25);
-		formsPanel.add(lblName);
-		
-		txtName = new JTextField();
-		txtName.setFont(gallery.getFont(15f));
-		txtName.setColumns(10);
-		txtName.setBounds(160, 49, 276, 27);
-		formsPanel.add(txtName);
-		
-		txtSupplierID = new JTextField();
-		txtSupplierID.setFont(gallery.getFont(15f));
-		txtSupplierID.setEditable(false);
-		txtSupplierID.setColumns(10);
-		txtSupplierID.setBounds(163, 10, 151, 27);
-		formsPanel.add(txtSupplierID);
-		
-		lblContactNumber = new JLabel("Contact Number");
-		lblContactNumber.setFont(gallery.getFont(15f));
-		lblContactNumber.setBounds(10, 88, 133, 25);
-		formsPanel.add(lblContactNumber);
-		
-		txtContactNumber = new JTextField();
-		txtContactNumber.setBorder(new LineBorder(new Color(171, 173, 179)));
-		txtContactNumber.setFont(gallery.getFont(15f));
-		txtContactNumber.setColumns(10);
-		txtContactNumber.setBounds(160, 91, 276, 27);
-		formsPanel.add(txtContactNumber);
-		
-		lblAddress = new JLabel("Address");
-		lblAddress.setFont(gallery.getFont(15f));
-		lblAddress.setBounds(10, 129, 126, 25);
-		formsPanel.add(lblAddress);
-		
-		textArea = new JTextArea();
-		textArea.setBounds(153, 140, 5, 22);
-		formsPanel.add(textArea);
-		txtContactNumber.setFont(gallery.getFont(15f));
-		
-		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, -193, SpringLayout.EAST, p);
+		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, 299, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -11, SpringLayout.SOUTH, p);
+		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, -193, SpringLayout.EAST, p);
 		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, -10, SpringLayout.EAST, p);
 		p.add(buttonPanel);
 		SpringLayout sl_buttonPanel = new SpringLayout();
@@ -180,6 +126,80 @@ public class SupplierAdd extends JFrame {
 		sl_newSupplierPanel.putConstraint(SpringLayout.WEST, lblNewSupplier, 30, SpringLayout.WEST, newSupplierPanel);
 		newSupplierPanel.add(lblNewSupplier);
 		
+		JPanel formsPanel = new RoundedPanel(gallery.WHITE);
+		sl_p.putConstraint(SpringLayout.NORTH, formsPanel, 10, SpringLayout.SOUTH, newSupplierPanel);
+		sl_p.putConstraint(SpringLayout.WEST, formsPanel, 10, SpringLayout.WEST, p);
+		sl_p.putConstraint(SpringLayout.SOUTH, formsPanel, -10, SpringLayout.NORTH, buttonPanel);
+		sl_p.putConstraint(SpringLayout.EAST, formsPanel, -10, SpringLayout.EAST, p);
+		p.add(formsPanel);
+		SpringLayout sl_formsPanel = new SpringLayout();
+		formsPanel.setLayout(sl_formsPanel);
+		
+		lblSupplierID = new JLabel("Supplier ID");
+		lblSupplierID.setFont(gallery.getFont(14f));
+		sl_formsPanel.putConstraint(SpringLayout.WEST, lblSupplierID, 25, SpringLayout.WEST, formsPanel);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, lblSupplierID, 145, SpringLayout.WEST, formsPanel);
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, lblSupplierID, 25, SpringLayout.NORTH, formsPanel);
+		formsPanel.add(lblSupplierID);
+		
+		txtSupplierID = new JTextField();
+		txtSupplierID.setFont(gallery.getFont(15f));
+		txtSupplierID.setEditable(false);
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtSupplierID, -2, SpringLayout.NORTH, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtSupplierID, 15, SpringLayout.EAST, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtSupplierID, 2, SpringLayout.SOUTH, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtSupplierID, -30, SpringLayout.EAST, formsPanel);
+		formsPanel.add(txtSupplierID);
+		txtSupplierID.setColumns(10);
+		
+		lblName = new JLabel("Name");
+		lblName.setFont(gallery.getFont(14f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, lblName, 25, SpringLayout.SOUTH, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, lblName, 0, SpringLayout.WEST, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, lblName, 0, SpringLayout.EAST, lblSupplierID);
+		formsPanel.add(lblName);
+		
+		txtName = new JTextField();
+		txtName.setFont(gallery.getFont(15f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtName, -2, SpringLayout.NORTH, lblName);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtName, 0, SpringLayout.WEST, txtSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtName, 2, SpringLayout.SOUTH, lblName);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtName, 0, SpringLayout.EAST, txtSupplierID);
+		formsPanel.add(txtName);
+		txtName.setColumns(10);
+		
+		lblContactNumber = new JLabel("Contact Number");
+		lblContactNumber.setFont(gallery.getFont(14f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, lblContactNumber, 25, SpringLayout.SOUTH, lblName);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, lblContactNumber, 0, SpringLayout.WEST, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, lblContactNumber, 0, SpringLayout.EAST, lblSupplierID);
+		formsPanel.add(lblContactNumber);
+		
+		txtContactNumber = new JTextField();
+		txtContactNumber.setFont(gallery.getFont(15f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtContactNumber, -2, SpringLayout.NORTH, lblContactNumber);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtContactNumber, 0, SpringLayout.WEST, txtSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtContactNumber, 2, SpringLayout.SOUTH, lblContactNumber);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtContactNumber, 0, SpringLayout.EAST, txtSupplierID);
+		formsPanel.add(txtContactNumber);
+		txtContactNumber.setColumns(10);
+		
+		lblAddress = new JLabel("Address");
+		lblAddress.setFont(gallery.getFont(14f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, lblAddress, 25, SpringLayout.SOUTH, lblContactNumber);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, lblAddress, 0, SpringLayout.WEST, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, lblAddress, 0, SpringLayout.EAST, lblSupplierID);
+		formsPanel.add(lblAddress);
+		
+		txtAddress = new JTextField();
+		txtAddress.setFont(gallery.getFont(15f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtAddress, -2, SpringLayout.NORTH, lblAddress);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtAddress, 15, SpringLayout.EAST, lblAddress);
+		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtAddress, 2, SpringLayout.SOUTH, lblAddress);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtAddress, 0, SpringLayout.EAST, txtSupplierID);
+		formsPanel.add(txtAddress);
+		txtAddress.setColumns(10);
+		
 		
 		
 		//	ActionListeners
@@ -201,5 +221,35 @@ public class SupplierAdd extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {dispose();}
 		});
+		
+		txtContactNumber.addKeyListener(new KeyAdapter(){
+			@Override
+			public void keyPressed(KeyEvent evt) {	
+				String phoneNumber = txtContactNumber.getText();
+				constraintPhoneNumber(phoneNumber, evt);
+			}
+		});
+	}
+	
+	//User Defined Methods
+	private void constraintPhoneNumber(String phoneNumber, KeyEvent evt){
+		int length = phoneNumber.length();
+		
+			if(evt.getKeyChar()>='0' && evt.getKeyChar()<='9') {
+			if(length<11) {
+				txtContactNumber.setEditable(true);
+			}
+			else {
+				txtContactNumber.setEditable(false);
+			}
+		}
+		else {
+			if(evt.getExtendedKeyCode()==KeyEvent.VK_BACK_SPACE || evt.getExtendedKeyCode()==KeyEvent.VK_DELETE) {
+				txtContactNumber.setEditable(true);						
+			}
+			else {
+				txtContactNumber.setEditable(false);
+			}
+		}
 	}
 }

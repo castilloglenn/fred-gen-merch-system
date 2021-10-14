@@ -14,23 +14,28 @@ import javax.swing.SpringLayout;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
+import java.awt.event.KeyAdapter;
 
 public class SupplierUpdate extends JFrame {
 
 	private JPanel contentPane, p, formsPanel, buttonPanel, manageSupplierPanel;
-	private JLabel lblName, lblManageSupplier, lblSupplierID, lblContactNumber, lblAddress, btnConfirm, btnCancel;
-	private JComboBox comboSupplierID;
-	private JTextField txtName, txtContactNumber;
-	private JTextArea txtAddress;
-	
+	private JLabel lblManageSupplier, btnConfirm, btnCancel;
 	private Utility utility;
 	private Gallery gallery;
+	private JLabel lblSupplierID;
+	private JTextField txtName;
+	private JLabel lblContactNumber;
+	private JTextField txtContactNumber;
+	private JLabel lblAddress;
+	private JTextField txtAddress;
 	
 	
 	
@@ -90,59 +95,81 @@ public class SupplierUpdate extends JFrame {
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, 6, SpringLayout.SOUTH, formsPanel);
-		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, -193, SpringLayout.EAST, p);
-		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -11, SpringLayout.SOUTH, p);
-		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, -10, SpringLayout.EAST, p);
-		formsPanel.setLayout(null);
-		p.add(buttonPanel);
-		SpringLayout sl_buttonPanel = new SpringLayout();
-		buttonPanel.setLayout(sl_buttonPanel);
+		SpringLayout sl_formsPanel = new SpringLayout();
+		formsPanel.setLayout(sl_formsPanel);
 		
 		lblSupplierID = new JLabel("Supplier ID");
-		lblSupplierID.setFont(gallery.getFont(15f));
-		lblSupplierID.setBounds(10, 11, 80, 25);
+		lblSupplierID.setFont(gallery.getFont(14f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, lblSupplierID, 25, SpringLayout.NORTH, formsPanel);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, lblSupplierID, 25, SpringLayout.WEST, formsPanel);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, lblSupplierID, 145, SpringLayout.WEST, formsPanel);
 		formsPanel.add(lblSupplierID);
 		
-		comboSupplierID = new JComboBox();
+		JComboBox comboSupplierID = new JComboBox();
 		comboSupplierID.setFont(gallery.getFont(15f));
-		comboSupplierID.setBounds(141, 11, 146, 25);
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, comboSupplierID, -2, SpringLayout.NORTH, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, comboSupplierID, 15, SpringLayout.EAST, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.SOUTH, comboSupplierID, 2, SpringLayout.SOUTH, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, comboSupplierID, -30, SpringLayout.EAST, formsPanel);
 		formsPanel.add(comboSupplierID);
 		
-		lblName = new JLabel("Name");
-		lblName.setFont(gallery.getFont(15f));
-		lblName.setBounds(10, 47, 80, 25);
+		JLabel lblName = new JLabel("Name");
+		lblName.setFont(gallery.getFont(14f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, lblName, 25, SpringLayout.SOUTH, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, lblName, 0, SpringLayout.WEST, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, lblName, 0, SpringLayout.EAST, lblSupplierID);
 		formsPanel.add(lblName);
 		
-		lblContactNumber = new JLabel("Contact Number");
-		lblContactNumber.setFont(gallery.getFont(15f));
-		lblContactNumber.setBounds(10, 85, 131, 25);
-		formsPanel.add(lblContactNumber);
-		
-		lblAddress = new JLabel("Address");
-		lblAddress.setFont(gallery.getFont(15f));
-		lblAddress.setBounds(10, 121, 80, 25);
-		formsPanel.add(lblAddress);
-		
 		txtName = new JTextField();
-		txtName.setEnabled(false);
 		txtName.setFont(gallery.getFont(15f));
-		txtName.setBounds(141, 47, 305, 25);
+		txtName.setEnabled(false);
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtName, -2, SpringLayout.NORTH, lblName);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtName, 0, SpringLayout.WEST, comboSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtName, 2, SpringLayout.SOUTH, lblName);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtName, 0, SpringLayout.EAST, comboSupplierID);
 		formsPanel.add(txtName);
 		txtName.setColumns(10);
 		
-		txtContactNumber = new JTextField();
-		txtContactNumber.setEnabled(false);
-		txtContactNumber.setFont(gallery.getFont(15f));
-		txtContactNumber.setColumns(10);
-		txtContactNumber.setBounds(141, 85, 305, 25);
-		formsPanel.add(txtContactNumber);
+		lblContactNumber = new JLabel("Contact Number");
+		lblContactNumber.setFont(gallery.getFont(14f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, lblContactNumber, 25, SpringLayout.SOUTH, lblName);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, lblContactNumber, 0, SpringLayout.WEST, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, lblContactNumber, 0, SpringLayout.EAST, lblSupplierID);
+		formsPanel.add(lblContactNumber);
 		
-		txtAddress = new JTextArea();
-		txtAddress.setEnabled(false);
+		txtContactNumber = new JTextField();
+		txtContactNumber.setFont(gallery.getFont(15f));
+		txtContactNumber.setEnabled(false);
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtContactNumber, -2, SpringLayout.NORTH, lblContactNumber);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtContactNumber, 0, SpringLayout.WEST, comboSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtContactNumber, 2, SpringLayout.SOUTH, lblContactNumber);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtContactNumber, 0, SpringLayout.EAST, comboSupplierID);
+		formsPanel.add(txtContactNumber);
+		txtContactNumber.setColumns(10);
+		
+		lblAddress = new JLabel("Address");
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, lblAddress, 25, SpringLayout.SOUTH, lblContactNumber);
+		lblAddress.setFont(gallery.getFont(14f));
+		sl_formsPanel.putConstraint(SpringLayout.WEST, lblAddress, 0, SpringLayout.WEST, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, lblAddress, 0, SpringLayout.EAST, lblSupplierID);
+		formsPanel.add(lblAddress);
+		
+		txtAddress = new JTextField();
 		txtAddress.setFont(gallery.getFont(15f));
-		txtAddress.setBorder(new LineBorder(new Color(0, 0, 0)));
-		txtAddress.setBounds(141, 119, 305, 70);
+		txtAddress.setEnabled(false);
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtAddress, -2, SpringLayout.NORTH, lblAddress);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtAddress, 0, SpringLayout.WEST, comboSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtAddress, 2, SpringLayout.SOUTH, lblAddress);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtAddress, 0, SpringLayout.EAST, comboSupplierID);
 		formsPanel.add(txtAddress);
+		txtAddress.setColumns(10);
+		
+		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, -193, SpringLayout.EAST, p);
+		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -11, SpringLayout.SOUTH, p);
+		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, -10, SpringLayout.EAST, p);
+		p.add(buttonPanel);
+		SpringLayout sl_buttonPanel = new SpringLayout();
+		buttonPanel.setLayout(sl_buttonPanel);
 				
 		btnConfirm = new JLabel("Confirm");
 		btnConfirm.setName("primary");
@@ -199,5 +226,35 @@ public class SupplierUpdate extends JFrame {
 			public void mouseClicked(MouseEvent e) { dispose();}
 		});
 		
+		txtContactNumber.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				String phoneNumber = txtContactNumber.getText();
+				constraintPhoneNumber(phoneNumber, e);
+			}
+		});
+		
+	}
+	
+	//User Defined Methods
+	private void constraintPhoneNumber(String phoneNumber, KeyEvent evt){
+		int length = phoneNumber.length();
+		
+			if(evt.getKeyChar()>='0' && evt.getKeyChar()<='9') {
+			if(length<11) {
+				txtContactNumber.setEditable(true);
+			}
+			else {
+				txtContactNumber.setEditable(false);
+			}
+		}
+		else {
+			if(evt.getExtendedKeyCode()==KeyEvent.VK_BACK_SPACE || evt.getExtendedKeyCode()==KeyEvent.VK_DELETE) {
+				txtContactNumber.setEditable(true);						
+			}
+			else {
+				txtContactNumber.setEditable(false);
+			}
+		}
 	}
 }
