@@ -18,10 +18,15 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -54,7 +59,7 @@ public class POS extends JFrame {
 	private int minHeight = 600;
 	private int minWidth = 990;
 	
-	private boolean breakpointTrigger = false;
+	private boolean minWidthTrigger = false;
 	private Timer timer;
 	
 	// Customized query table variables
@@ -78,7 +83,7 @@ public class POS extends JFrame {
 	
 	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel,
 		queryResultPanel, cartListCardPanel, cartListPanel,
-		cardListEmptyPanel;
+		cardListEmptyPanel, paymentCardPanel;
 	
 	private RoundedPanel navigationPanel, displayPanel, 
 		posPanel, transactionPanel, reportPanel,
@@ -199,7 +204,7 @@ public class POS extends JFrame {
 		sl_posPanel.putConstraint(SpringLayout.EAST, cartPanel, -20, SpringLayout.EAST, posPanel);
 		posPanel.add(cartPanel);
 		
-		lblDateTime = new JLabel(gallery.getTime(breakpointTrigger));
+		lblDateTime = new JLabel(gallery.getTime(minWidthTrigger));
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, lblDateTime, -3, SpringLayout.SOUTH, lblTransactionNo);
 		sl_posPanel.putConstraint(SpringLayout.EAST, lblDateTime, -20, SpringLayout.WEST, cartPanel);
 		lblDateTime.setFont(gallery.getFont(15f));
@@ -230,7 +235,15 @@ public class POS extends JFrame {
 		sl_posPanel.putConstraint(SpringLayout.NORTH, lblCheckoutButton, 10, SpringLayout.NORTH, checkoutPanel);
 		sl_posPanel.putConstraint(SpringLayout.WEST, lblCheckoutButton, 10, SpringLayout.WEST, checkoutPanel);
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, lblCheckoutButton, -487, SpringLayout.NORTH, paymentPanel);
-		paymentPanel.setLayout(new SpringLayout());
+		SpringLayout sl_paymentPanel = new SpringLayout();
+		paymentPanel.setLayout(sl_paymentPanel);
+		
+		paymentCardPanel = new JPanel();
+		sl_paymentPanel.putConstraint(SpringLayout.NORTH, paymentCardPanel, 15, SpringLayout.NORTH, paymentPanel);
+		sl_paymentPanel.putConstraint(SpringLayout.WEST, paymentCardPanel, 15, SpringLayout.WEST, paymentPanel);
+		sl_paymentPanel.putConstraint(SpringLayout.SOUTH, paymentCardPanel, -15, SpringLayout.SOUTH, paymentPanel);
+		sl_paymentPanel.putConstraint(SpringLayout.EAST, paymentCardPanel, -15, SpringLayout.EAST, paymentPanel);
+		paymentPanel.add(paymentCardPanel);
 		checkoutPanel.add(lblCheckoutButton);
 		 
 		lblCancelButton = new JLabel("CANCEL (F4)");
@@ -445,8 +458,8 @@ public class POS extends JFrame {
 			public void componentResized(ComponentEvent e) {
 				super.componentResized(e);
 				
-				breakpointTrigger = getWidth() <= minWidth;
-				lblDateTime.setText(gallery.getTime(breakpointTrigger));
+				minWidthTrigger = getWidth() <= minWidth;
+				lblDateTime.setText(gallery.getTime(minWidthTrigger));
 				
 				resetAllPages();
 				tfSearch.requestFocus();
@@ -457,8 +470,10 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblDashboardNav); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				cardLayout.show(displayPanel, "pos");
 				setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+				
+				cardLayout.show(displayPanel, "pos");
+				tfSearch.requestFocus();
 			}
 		});
 		lblTransactionNav.addMouseListener(new MouseAdapter() {
@@ -466,8 +481,8 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblTransactionNav); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				cardLayout.show(displayPanel, "transaction");
 				setTitle(TRANSACTION_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+				cardLayout.show(displayPanel, "transaction");
 			}
 		});
 		lblReportNav.addMouseListener(new MouseAdapter() {
@@ -475,8 +490,8 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblReportNav); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				cardLayout.show(displayPanel, "report");
 				setTitle(REPORTS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+				cardLayout.show(displayPanel, "report");
 			}
 		});
 		lblCheckoutButton.addMouseListener(new MouseAdapter() {
@@ -485,6 +500,7 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO: Add function for the checkout button
+				
 			}
 		});
 		lblCancelButton.addMouseListener(new MouseAdapter() {
@@ -633,7 +649,7 @@ public class POS extends JFrame {
 		timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				lblDateTime.setText(gallery.getTime(breakpointTrigger));
+				lblDateTime.setText(gallery.getTime(minWidthTrigger));
 			}
 		});
 		timer.start();
@@ -643,6 +659,7 @@ public class POS extends JFrame {
 		 *  ========================= End of constructor ====================================
 		 */
 	}
+	
 	
 	/**
 	 * Used for global shortcut keys from this specified window only.
@@ -754,6 +771,7 @@ public class POS extends JFrame {
 			
 			displayResults();
 			selectProduct(0);
+			
 			lblUpButton.setVisible(true);
 			lblDownButton.setVisible(true);
 		}
@@ -839,10 +857,16 @@ public class POS extends JFrame {
 	}
 	
 	private void addToCart() {
+		// Constructor for error handling to be displayed into the custom error message display
 		int quantity = 0;
-		ArrayList<String> errorMessages = new ArrayList<>();
+		ArrayList<String> errorMessages = new ArrayList<>(); // REQUIRED
 
-		if (tableSelectedIndex == -1) { errorMessages.add("- Please select a product."); }
+		// If conditions to handle all kinds of possible errors
+		if (tableSelectedIndex == -1) { 
+			// Adding of error message, format:
+			// "- <error_message>"
+			errorMessages.add("- Please select a product."); 
+		}
 		if (tfQuantity.getText().equals(defaultQuantityMessage) || 
 				tfQuantity.getText().equals("")) {
 			errorMessages.add("- Please input the quantity of the product.");
@@ -857,9 +881,10 @@ public class POS extends JFrame {
 			}
 		}
 		
-		if (errorMessages.size() > 0) {
-			gallery.showMessage(errorMessages.toArray(new String[0]));
-		} else {
+		// Condition statement to check if there are one or more errors.
+		if (errorMessages.size() > 0) { // REQUIRED
+			gallery.showMessage(errorMessages.toArray(new String[0])); // REQUIRED
+		} else { // REQUIRED the code under this will be the only correct path
 			cartListPanel.removeAll();
 			
 			cartList.add(

@@ -60,14 +60,6 @@ public class ProductDisplay extends RoundedPanel {
 		maxPerPage = maxColumn * maxRow;
 		
 		/*
-		 * This comment displays a basic statistics overview about the sizes and position
-		 */
-//		System.out.println(String.format("(%d, %d), margin: %d\nParent Panel: (%d, %d)\nMax Col: %d\nMax Row: %d", 
-//			defaultWidth, defaultHeight, margin,
-//			parentPanel.width, parentPanel.height,
-//			maxColumn, maxRow));
-		
-		/*
 		 * The process calculates the absolute coordinates of 
 		 * the panel relative to its parentPanel
 		 */

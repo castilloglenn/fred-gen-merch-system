@@ -67,28 +67,34 @@ public class Gallery {
 	public static Color DANGER_BUTTON_FOREGROUND_HOVER = Gallery.WHITE;
 	public static Color DANGER_BUTTON_BACKGROUND_HOVER = Gallery.DARK_RED;
 	
-	private String fontName = "OpenSans-SemiBold";
+	private String regularFont = "OpenSans-SemiBold";
+	private String monospacedFont = "Inconsolata-SemiBold";
 	private SimpleDateFormat sdf;
 	private Date date;
 	
 	public Font font;
+	public Font mfont;
 	
 	public Gallery() {
-		setupCustomFont();
+		setupCustomFonts();
 	}
 	
-	public void setupCustomFont() {
+	public void setupCustomFonts() {
 		try {
-			InputStream inputStream = new BufferedInputStream(new FileInputStream("assets/fonts/" + fontName + ".ttf"));
+			InputStream inputStream = new BufferedInputStream(new FileInputStream("assets/fonts/" + regularFont + ".ttf"));
 			font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 			GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			genv.registerFont(font);
-			font = font.deriveFont(12f);
+//			font = font.deriveFont(12f);
+			
+			InputStream inputStream2 = new BufferedInputStream(new FileInputStream("assets/fonts/" + monospacedFont + ".ttf"));
+			mfont = Font.createFont(Font.TRUETYPE_FONT, inputStream2);
+			GraphicsEnvironment genv2 = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			genv2.registerFont(mfont);
+//			mfont = mfont.deriveFont(12f);
 		} catch (FontFormatException e) {
-			// insert error JLabel here
 			e.printStackTrace();
 		} catch (IOException e) {
-			// insert error JLabel here
 			e.printStackTrace();
 		}
 	}
@@ -142,8 +148,11 @@ public class Gallery {
     }
 	
 	public Font getFont(float size) {
-		font = font.deriveFont(size);
-		return font;
+		return font.deriveFont(size);
+	}
+	
+	public Font getMonospacedFont(float size) {
+		return mfont.deriveFont(size);
 	}
 	
 	public ImageIcon getImage(String name, int width, int height) {
