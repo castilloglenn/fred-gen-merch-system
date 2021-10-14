@@ -85,18 +85,15 @@ public class Gallery {
 			font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 			GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			genv.registerFont(font);
-//			font = font.deriveFont(12f);
+//			font = font.deriveFont(12f);  // if some error occur on fonts uncomment this
 			
 			InputStream inputStream2 = new BufferedInputStream(new FileInputStream("assets/fonts/" + monospacedFont + ".ttf"));
 			mfont = Font.createFont(Font.TRUETYPE_FONT, inputStream2);
 			GraphicsEnvironment genv2 = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			genv2.registerFont(mfont);
-//			mfont = mfont.deriveFont(12f);
-		} catch (FontFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//			mfont = mfont.deriveFont(12f);  // if some error occur on fonts uncomment this
+		} catch (FontFormatException e) { e.printStackTrace();
+		} catch (IOException e) { e.printStackTrace(); }
 	}
 	
 	public void showMessage(String... message) {
@@ -106,7 +103,7 @@ public class Gallery {
 		String formattedMessage = "";
 		
 		for (String m : message) 
-			formattedMessage += constraintMessage(m);
+			formattedMessage += "<p>" + constraintMessage(m) + "</p>";
 		
 		label.setText("<html><p style='color: rgb(216, 74, 49)'>Robot says:</p> " + formattedMessage + "</html>");
 		label.setFont(getFont(15f));
@@ -120,7 +117,7 @@ public class Gallery {
 	}
 	
 	public String constraintMessage(String message) {
-        int limit = 25;
+        int limit = 35;
         int messageSize = message.length();
 
         if (messageSize <= limit) return message;
@@ -136,7 +133,7 @@ public class Gallery {
                 break;
             }
         }
-
+        
         return limitedPhrase + "<br>" 
             + constraintMessage(
                 String.join(" ", 
