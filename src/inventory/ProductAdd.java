@@ -18,6 +18,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -31,7 +33,7 @@ public class ProductAdd extends JFrame {
 	private JPanel contentPane, p, newProductPanel, iconSelectionPanel, buttonPanel, formPanel,iconPanel;
 	private JLabel lblNewProduct, btnConfirm, btnCancel,lblProductID,lblStocks,lblUOM,lblPriceBought,lblName,lblSellingPrice,lblSupplier;
 	private JTextField txtProductID,txtName,txtStocks,txtUOM,txtPriceBought,txtSellingPrice;
-	private JComboBox productCombo;
+	private JComboBox comboSupplier;
 
 	/**
 	 * Launch the application.
@@ -214,16 +216,16 @@ public class ProductAdd extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblSupplier, 0, SpringLayout.EAST, lblProductID);
 		formPanel.add(lblSupplier);
 		
-		productCombo = new JComboBox();
-		sl_formPanel.putConstraint(SpringLayout.NORTH, productCombo, -2, SpringLayout.NORTH, lblSupplier);
-		sl_formPanel.putConstraint(SpringLayout.WEST, productCombo, 0, SpringLayout.WEST, txtProductID);
-		sl_formPanel.putConstraint(SpringLayout.SOUTH, productCombo, 2, SpringLayout.SOUTH, lblSupplier);
-		sl_formPanel.putConstraint(SpringLayout.EAST, productCombo, 0, SpringLayout.EAST, txtProductID);
+		comboSupplier = new JComboBox();
+		sl_formPanel.putConstraint(SpringLayout.NORTH, comboSupplier, -2, SpringLayout.NORTH, lblSupplier);
+		sl_formPanel.putConstraint(SpringLayout.WEST, comboSupplier, 0, SpringLayout.WEST, txtProductID);
+		sl_formPanel.putConstraint(SpringLayout.SOUTH, comboSupplier, 2, SpringLayout.SOUTH, lblSupplier);
+		sl_formPanel.putConstraint(SpringLayout.EAST, comboSupplier, 0, SpringLayout.EAST, txtProductID);
 		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, -100, SpringLayout.SOUTH, p);;
 		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -10, SpringLayout.SOUTH, p);
 		SpringLayout sl_iconSelectionPanel = new SpringLayout();
 		iconSelectionPanel.setLayout(sl_iconSelectionPanel);
-		formPanel.add(productCombo);
+		formPanel.add(comboSupplier);
 		
 		iconPanel = new JPanel();
 		sl_iconSelectionPanel.putConstraint(SpringLayout.SOUTH, iconPanel, -20, SpringLayout.SOUTH, iconSelectionPanel);
@@ -272,7 +274,7 @@ public class ProductAdd extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnConfirm);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//backend here
+				 missingFields();
 			}
 		});
 		
@@ -287,5 +289,23 @@ public class ProductAdd extends JFrame {
 			}
 		});
 		
+	}
+	private void missingFields() {
+		ArrayList<String> errorMessages = new ArrayList<>();
+		
+		String supplier = String.valueOf(comboSupplier.getSelectedItem());
+		String name = txtName.getText();
+		String stocks = txtStocks.getText();
+		String unitofMeasurement = txtUOM.getText();
+		String priceBought = txtPriceBought.getText();
+		String sellPrice = txtSellingPrice.getText();
+		
+		if(supplier.equals("") || name.equals("") || stocks.equals("") || unitofMeasurement.equals("") || priceBought.equals("") || sellPrice.equals("")) {
+			errorMessages.add(" - Please fill out the missing fields!");
+			}
+		
+		if (errorMessages.size() > 0) { 
+			gallery.showMessage(errorMessages.toArray(new String[0]));
+		}
 	}
 }

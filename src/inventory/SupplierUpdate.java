@@ -18,6 +18,8 @@ import javax.swing.SwingConstants;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -214,7 +216,9 @@ public class SupplierUpdate extends JFrame {
 			@Override
 			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnConfirm);}
 			@Override
-			public void mouseClicked(MouseEvent e) { System.out.println("confirmed");	}
+			public void mouseClicked(MouseEvent e) { 
+				missingFields();
+			}
 		});
 		
 		btnCancel.addMouseListener(new MouseAdapter() {
@@ -255,6 +259,22 @@ public class SupplierUpdate extends JFrame {
 			else {
 				txtContactNumber.setEditable(false);
 			}
+		}
+	}
+	private void missingFields() {
+		ArrayList<String> errorMessages = new ArrayList<>();
+		
+		String name = txtName.getText();
+		String contactNum = txtContactNumber.getText();
+		String address = txtAddress.getText();
+		
+		if(name.equals("") || contactNum.equals("") || address.equals("")) {
+			errorMessages.add(" - Please fill out the missing fields!");
+			errorMessages.add(" - Please grind more social credit!");
+		}
+		
+		if (errorMessages.size() > 0) { 
+			gallery.showMessage(errorMessages.toArray(new String[0]));
 		}
 	}
 }

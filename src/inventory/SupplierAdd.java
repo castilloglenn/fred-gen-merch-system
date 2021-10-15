@@ -20,6 +20,8 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
 import javax.swing.border.LineBorder;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -210,7 +212,9 @@ public class SupplierAdd extends JFrame {
 			@Override
 			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnAdd);}
 			@Override
-			public void mouseClicked(MouseEvent e) { System.out.println("Added");}
+			public void mouseClicked(MouseEvent e) {
+				 missingFields();
+			}
 		});
 		
 		btnCancel.addMouseListener(new MouseAdapter() {
@@ -252,4 +256,20 @@ public class SupplierAdd extends JFrame {
 			}
 		}
 	}
+	private void missingFields() {
+		ArrayList<String> errorMessages = new ArrayList<>();
+		
+		String name = txtName.getText();
+		String contactNum = txtContactNumber.getText();
+		String address = txtAddress.getText();
+		
+		if(name.equals("") || contactNum.equals("") || address.equals("")) {
+			errorMessages.add(" - Please fill out the missing fields!");
+			}
+		
+		if (errorMessages.size() > 0) { 
+			gallery.showMessage(errorMessages.toArray(new String[0]));
+		}
+	}
+
 }
