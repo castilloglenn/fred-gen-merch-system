@@ -18,15 +18,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -54,10 +49,10 @@ public class POS extends JFrame {
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
 	
-	private int defaultHeight = 600; // 600
+	private int defaultHeight = 710; // 600
 	private int defaultWidth = 990; // 1000
-	private int minHeight = 600;
-	private int minWidth = 990;
+	private int minHeight = 710; // 710
+	private int minWidth = 990; // 990
 	
 	private boolean minWidthTrigger = false;
 	private Timer timer;
@@ -66,7 +61,7 @@ public class POS extends JFrame {
 	private Object[][] queryResult;
 	private ProductDisplay[] productUIs;
 	private int tableMaxPerColumn = 3;
-	private int tableMaxPerPage = 6;
+	private int tableMaxPerPage = 9;
 	private int tableSelectedIndex = -1;
 	private int tableCurrentPage = 1;
 	private int tableTotalPage = 1;
@@ -76,6 +71,13 @@ public class POS extends JFrame {
 	private int cartMaxPerPage = 11;
 	private int cartCurrentPage = 1;
 	private int cartTotalPage = 1;
+	
+	// Dynamic cart payment details
+	private int totalCartQuantity = 0;
+	private double totalCartPrice = 0.0;
+	
+	// User details
+	private String cashierName = "Castillo"; // TEST ONLY, REMOVE THIS AFTER MAKING THE USER SYSTEM
 	
 	private Database database; 
 	private Gallery gallery;
@@ -96,14 +98,14 @@ public class POS extends JFrame {
 		lblQuantityIcon, lblDownButton, lblUpButton,
 		lblNotFoundImage, lblPageIndicator, lblLeftButton,
 		lblCartLabel, lblRightButton, lblCartIndicator,
-		lblCartListEmpty, lblCartShortcutHelp;
+		lblCartListEmpty, lblPaymentCashier, lblPaymentCartSize,
+		lblPaymentCartQuantity, lblPaymentCartTotalPrice;
 	
 	private JTextField tfSearch, tfQuantity;
 	
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	
 	private CardLayout cardLayout, queryCardLayout, cartListCardLayout;
-	private JLabel lblPaymentStatistics;
 	
 	
 	public static void main(String[] args) {
@@ -213,13 +215,13 @@ public class POS extends JFrame {
 		
 		paymentPanel = new RoundedPanel(Color.WHITE);
 		sl_posPanel.putConstraint(SpringLayout.NORTH, paymentPanel, -120, SpringLayout.SOUTH, cartPanel);
+		sl_posPanel.putConstraint(SpringLayout.WEST, paymentPanel, -365, SpringLayout.WEST, cartPanel);
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, paymentPanel, 0, SpringLayout.SOUTH, cartPanel);
 		sl_posPanel.putConstraint(SpringLayout.EAST, paymentPanel, -15, SpringLayout.WEST, cartPanel);
 		posPanel.add(paymentPanel);
 		
 		checkoutPanel = new RoundedPanel(Color.WHITE);
 		sl_posPanel.putConstraint(SpringLayout.EAST, checkoutPanel, 200, SpringLayout.WEST, posPanel);
-		sl_posPanel.putConstraint(SpringLayout.WEST, paymentPanel, 15, SpringLayout.EAST, checkoutPanel);
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, checkoutPanel, 0, SpringLayout.SOUTH, cartPanel);
 		sl_posPanel.putConstraint(SpringLayout.NORTH, checkoutPanel, 0, SpringLayout.NORTH, paymentPanel);
 		posPanel.add(checkoutPanel);
@@ -238,6 +240,30 @@ public class POS extends JFrame {
 		sl_posPanel.putConstraint(SpringLayout.SOUTH, lblCheckoutButton, -487, SpringLayout.NORTH, paymentPanel);
 		SpringLayout sl_paymentPanel = new SpringLayout();
 		paymentPanel.setLayout(sl_paymentPanel);
+		
+		lblPaymentCashier = new JLabel();
+		sl_paymentPanel.putConstraint(SpringLayout.NORTH, lblPaymentCashier, 12, SpringLayout.NORTH, paymentPanel);
+		sl_paymentPanel.putConstraint(SpringLayout.WEST, lblPaymentCashier, 30, SpringLayout.WEST, paymentPanel);
+		lblPaymentCashier.setFont(gallery.getFont(15f));
+		paymentPanel.add(lblPaymentCashier);
+		
+		lblPaymentCartSize = new JLabel();
+		sl_paymentPanel.putConstraint(SpringLayout.NORTH, lblPaymentCartSize, 3, SpringLayout.SOUTH, lblPaymentCashier);
+		lblPaymentCartSize.setFont(gallery.getFont(15f));
+		sl_paymentPanel.putConstraint(SpringLayout.WEST, lblPaymentCartSize, 0, SpringLayout.WEST, lblPaymentCashier);
+		paymentPanel.add(lblPaymentCartSize);
+		
+		lblPaymentCartQuantity = new JLabel();
+		lblPaymentCartQuantity.setFont(gallery.getFont(15f));
+		sl_paymentPanel.putConstraint(SpringLayout.NORTH, lblPaymentCartQuantity, 3, SpringLayout.SOUTH, lblPaymentCartSize);
+		sl_paymentPanel.putConstraint(SpringLayout.WEST, lblPaymentCartQuantity, 0, SpringLayout.WEST, lblPaymentCashier);
+		paymentPanel.add(lblPaymentCartQuantity);
+		
+		lblPaymentCartTotalPrice = new JLabel();
+		sl_paymentPanel.putConstraint(SpringLayout.NORTH, lblPaymentCartTotalPrice, 3, SpringLayout.SOUTH, lblPaymentCartQuantity);
+		lblPaymentCartTotalPrice.setFont(gallery.getFont(15f));
+		sl_paymentPanel.putConstraint(SpringLayout.WEST, lblPaymentCartTotalPrice, 0, SpringLayout.WEST, lblPaymentCashier);
+		paymentPanel.add(lblPaymentCartTotalPrice);
 		checkoutPanel.add(lblCheckoutButton);
 		 
 		lblCancelButton = new JLabel("CANCEL (F4)");
@@ -248,15 +274,6 @@ public class POS extends JFrame {
 		sl_checkoutPanel.putConstraint(SpringLayout.SOUTH, lblCancelButton, -15, SpringLayout.SOUTH, checkoutPanel);
 		sl_checkoutPanel.putConstraint(SpringLayout.EAST, lblCancelButton, 0, SpringLayout.EAST, lblCheckoutButton);
 		checkoutPanel.add(lblCancelButton);
-		
-		lblPaymentStatistics = new JLabel(getPaymentStatistics());
-		sl_paymentPanel.putConstraint(SpringLayout.NORTH, lblPaymentStatistics, 15, SpringLayout.NORTH, paymentPanel);
-		sl_paymentPanel.putConstraint(SpringLayout.WEST, lblPaymentStatistics, 15, SpringLayout.WEST, paymentPanel);
-		sl_paymentPanel.putConstraint(SpringLayout.SOUTH, lblPaymentStatistics, -15, SpringLayout.SOUTH, paymentPanel);
-		sl_paymentPanel.putConstraint(SpringLayout.EAST, lblPaymentStatistics, -15, SpringLayout.EAST, paymentPanel);
-		lblPaymentStatistics.setHorizontalAlignment(SwingConstants.CENTER);
-		lblPaymentStatistics.setFont(gallery.getMonospacedFont(16f));
-		paymentPanel.add(lblPaymentStatistics);
 		
 		searchPanel = new RoundedPanel(Color.WHITE);
 		sl_posPanel.putConstraint(SpringLayout.WEST, checkoutPanel, 0, SpringLayout.WEST, searchPanel);
@@ -452,6 +469,7 @@ public class POS extends JFrame {
 		
 		
 		// Configure initial component state
+		updatePaymentStatistics();
 		lblLeftButton.setVisible(false);
 		lblRightButton.setVisible(false);
 		lblCartIndicator.setVisible(false);
@@ -467,7 +485,6 @@ public class POS extends JFrame {
 				
 				resetAllPages();
 				tfSearch.requestFocus();
-				getPaymentStatistics();
 			}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
@@ -680,6 +697,7 @@ public class POS extends JFrame {
 			/**
 			 * TEST ONLY FOR DEBUGGING
 			 */
+			System.out.println("Window size: " + getSize());
 			System.out.println("\n\nCart count: " + cartList.size());
 			cartList.forEach((cartItem) -> System.out.println(cartItem));
 			System.out.println("========================================");
@@ -859,6 +877,8 @@ public class POS extends JFrame {
 		
 		repaint();
 		revalidate();
+		
+		updatePaymentStatistics();
 	}
 	
 	private void addToCart() {
@@ -991,17 +1011,24 @@ public class POS extends JFrame {
 		productUIs[index].getMouseListeners()[0].mouseClicked(me);
 	}
 	
-	public int getCartMaxPerPage() { return cartMaxPerPage; }
+	public int getCartMaxPerPage() {
+		return cartMaxPerPage;
+	}
 	
-	public String getPaymentStatistics() {
-		/**
-		 * module 1: 334
-		 */
-		int widthSize = paymentPanel.getSize().width;
-		System.out.println("paymentPanel width is " + widthSize);
-
-		return "<html><pre>Cashier:               Castillo<br>Items: 999,999   Count: 999,999<br>Total Price:      P9,999,999.00</html>";
+	public void updatePaymentStatistics() {
+		totalCartQuantity = 0;
+		totalCartPrice = 0.0;
+		
+		for (int cartIndex = 0; cartIndex < cartList.size(); cartIndex++) {
+			Object[] cartItemDetails = cartList.get(cartIndex).getTransactionDetail();
+			totalCartQuantity += (int) cartItemDetails[3];
+			totalCartPrice += (double) cartItemDetails[6];
+		}
+		
+		lblPaymentCashier.setText(String.format("Cashier:  %s", cashierName));
+		lblPaymentCartSize.setText(String.format("Cart items:  %,d  product(s)", cartList.size()));
+		lblPaymentCartQuantity.setText(String.format("Cart size:  %,d  piece(s)", totalCartQuantity));
+		lblPaymentCartTotalPrice.setText(String.format("Total price:  P%,.2f", totalCartPrice));
 	}
 }
-
 

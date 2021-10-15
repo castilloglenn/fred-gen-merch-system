@@ -148,11 +148,14 @@ public class CartItem extends JPanel {
 	 * @param adjustment amount to be changed from its quantity.
 	 */
 	public void adjustQuantity(int adjustment) {
-		quantity += adjustment;
+		if (quantity + adjustment <= 999)
+			quantity += adjustment;
+		
 		if (quantity == 0) {
 			pos.removeToCart(index);
 		} else {
 			lblCartQuantity.setText(Integer.toString(quantity));
+			pos.updatePaymentStatistics();
 		}
 	}
 	
@@ -181,8 +184,8 @@ public class CartItem extends JPanel {
 	 * @see javax.swing.ImageIcon
 	 */
 	public Object[] getTransactionDetail() {
-		return new Object[] {product[0], product[1], product[2], quantity, product[3], product[4],
-				quantity * (double) product[4]};
+		return new Object[] {product[0], product[1], product[2], quantity, 
+				product[3], product[4], quantity * (double) product[4]};
 	}
 	
 	@Override 

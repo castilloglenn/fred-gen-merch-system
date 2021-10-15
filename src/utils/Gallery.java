@@ -68,7 +68,7 @@ public class Gallery {
 	public static Color DANGER_BUTTON_BACKGROUND_HOVER = Gallery.DARK_RED;
 	
 	private String regularFont = "OpenSans-SemiBold";
-	private String monospacedFont = "Inconsolata-ExtraBold";
+	private String monospacedFont = "Inconsolata-SemiBold";
 	
 	private SimpleDateFormat sdf;
 	private Date date;
