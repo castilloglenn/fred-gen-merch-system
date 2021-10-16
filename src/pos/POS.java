@@ -921,8 +921,9 @@ public class POS extends JFrame {
 			displayCart();
 			
 			tfQuantity.setText("");
-			tfSearch.requestFocus(true);
 		}
+		tfSearch.requestFocus(true);
+		tfSearch.selectAll();
 	}
 	
 	public void removeToCart(int cartIndex) {
@@ -1026,8 +1027,10 @@ public class POS extends JFrame {
 		}
 		
 		lblPaymentCashier.setText(String.format("Cashier:  %s", cashierName));
-		lblPaymentCartSize.setText(String.format("Cart items:  %,d  product(s)", cartList.size()));
-		lblPaymentCartQuantity.setText(String.format("Cart size:  %,d  piece(s)", totalCartQuantity));
+		lblPaymentCartSize.setText(String.format("Cart items:  %,d  product%s", cartList.size(),
+				(cartList.size() == 1) ? "" : "s"));
+		lblPaymentCartQuantity.setText(String.format("Cart contents:  %,d  piece%s", totalCartQuantity,
+				(totalCartQuantity == 1) ? "" : "s"));
 		lblPaymentCartTotalPrice.setText(String.format("Total price:  P%,.2f", totalCartPrice));
 	}
 }
