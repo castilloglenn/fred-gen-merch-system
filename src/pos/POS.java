@@ -912,11 +912,23 @@ public class POS extends JFrame {
 		} else { // REQUIRED the code under this will be the only correct path
 			cartListPanel.removeAll();
 			
-			cartList.add(
-				new CartItem(cartList.size(), 
-					queryResult[tableSelectedIndex + (tableMaxPerPage * (tableCurrentPage - 1))], 
-					quantity, gallery, this)
-			);
+			long selectedID = (long) queryResult[tableSelectedIndex][0];
+			
+			boolean cartItemExisting = false;
+			for (CartItem cartItem : cartList) {
+				if ((long) cartItem.getTransactionDetail()[0] == selectedID) {
+					cartItem.adjustQuantity(quantity);
+					cartItemExisting = true;
+				}
+			} 
+			
+			if (!cartItemExisting) {
+				cartList.add(
+					new CartItem(cartList.size(), 
+						queryResult[tableSelectedIndex + (tableMaxPerPage * (tableCurrentPage - 1))], 
+						quantity, gallery, this)
+				);
+			}
 			
 			displayCart();
 			
