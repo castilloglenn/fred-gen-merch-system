@@ -40,7 +40,6 @@ import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import net.miginfocom.swing.MigLayout;
 
 /**
  * To be done by: Sebastian Garcia
