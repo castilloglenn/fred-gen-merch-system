@@ -106,20 +106,10 @@ public class POS extends JFrame {
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	
 	private CardLayout cardLayout, queryCardLayout, cartListCardLayout;
-	
-	
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				POS frame = new POS();
-				frame.setVisible(true);
-			}
-		});
-	}
 
-	public POS() {
-		database = new Database();
-		gallery = new Gallery();
+	public POS(Database database, Gallery gallery) {
+		this.database = database;
+		this.gallery = gallery;
 		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false); 
