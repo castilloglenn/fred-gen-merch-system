@@ -123,7 +123,8 @@ public class POS extends JFrame {
 		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false); 
-		
+
+		setIconImage(gallery.getSystemIcon());
 		setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setMinimumSize(new Dimension(minWidth, minHeight));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -69,6 +69,7 @@ public class Gallery {
 	
 	private String regularFont = "OpenSans-SemiBold";
 	private String monospacedFont = "Inconsolata-SemiBold";
+	private String systemIcon = "system-icon.png";
 	
 	private SimpleDateFormat sdf;
 	private Date date;
@@ -154,7 +155,7 @@ public class Gallery {
 	}
 	
 	public ImageIcon getImage(String name, int width, int height) {
-		ImageIcon image = new ImageIcon("assets/images/" + name);
+		ImageIcon image = new ImageIcon(Gallery.class.getResource("../images/" + name));
 		Image img = image.getImage();
 		Image scaledIcon = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		ImageIcon finalImage = new ImageIcon(scaledIcon);
@@ -165,6 +166,10 @@ public class Gallery {
 		Image image = oldImage.getImage();
 		Image newimg = image.getScaledInstance(newWidth, newHeight,  java.awt.Image.SCALE_SMOOTH);
 		return new ImageIcon(newimg);
+	}
+	
+	public Image getSystemIcon() {
+		return getImage(systemIcon, 48, 48).getImage();
 	}
 	
 	public String getTime(boolean shorten) {
