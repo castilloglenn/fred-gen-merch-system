@@ -22,9 +22,10 @@ import java.awt.event.MouseEvent;
 /**
  *  @author Allen Glenn E. Castillo
  */
+@SuppressWarnings("serial")
 public class Main extends JFrame {
 	
-	private final String TITLE = "Login";
+	private final String TITLE = "Welcome!";
 	
 	private Gallery gallery;
 	private Database database;
@@ -35,11 +36,10 @@ public class Main extends JFrame {
 	
 	// Window Components
 	private RoundedPanel adminPanel, loginPanel, shadowPanel, titlePanel;
-	private JLabel lblTitle, lblUsername, lblPassword, lblAdminButton,
+	private JLabel lblLeftDesign, lblRightDesign, lblTitle, lblUsername, lblPassword, lblAdminButton,
 				lblForgotPasswordButton, lblLoginButton;
 	private JTextField tfUsername;
 	private JPasswordField tfPassword;
-	private JLabel lblRightDesign;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -65,7 +65,7 @@ public class Main extends JFrame {
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
 		
-		JLabel lblLeftDesign = new JLabel(gallery.getImage("left-design.png", 132, 363));
+		lblLeftDesign = new JLabel(gallery.getImage("left-design.png", 132, 363));
 		springLayout.putConstraint(SpringLayout.NORTH, lblLeftDesign, 0, SpringLayout.NORTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, lblLeftDesign, 0, SpringLayout.WEST, getContentPane());
 		getContentPane().add(lblLeftDesign);
@@ -85,7 +85,7 @@ public class Main extends JFrame {
 		titlePanel.setLayout(sl_titlePanel);
 		
 		lblTitle = new JLabel("<html><p style='text-align: center;'>" + Utility.APP_TITLE + 
-				"<br><small>Please login your credentials</p></html>");
+				"<br><small>Please login your credentials</small></p></html>");
 		sl_titlePanel.putConstraint(SpringLayout.NORTH, lblTitle, 15, SpringLayout.NORTH, titlePanel);
 		sl_titlePanel.putConstraint(SpringLayout.WEST, lblTitle, 15, SpringLayout.WEST, titlePanel);
 		sl_titlePanel.putConstraint(SpringLayout.SOUTH, lblTitle, -15, SpringLayout.SOUTH, titlePanel);
