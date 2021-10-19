@@ -2,6 +2,7 @@ package pos;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -532,7 +533,8 @@ public class POS extends JFrame {
 		});
 		lblDownButton.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) {
-				gallery.buttonHovered(lblDownButton);
+				lblDownButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				lblDownButton.setBackground(Gallery.WHITE);
 				lblDownButton.setIcon(gallery.getImage("arrow-down-hovered.png", 22, 22));
 			}
 			
@@ -548,7 +550,8 @@ public class POS extends JFrame {
 		lblUpButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				gallery.buttonHovered(lblUpButton);
+				lblUpButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				lblUpButton.setBackground(Gallery.WHITE);
 				lblUpButton.setIcon(gallery.getImage("arrow-up-hovered.png", 22, 22));
 			}
 

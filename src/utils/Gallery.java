@@ -58,9 +58,9 @@ public class Gallery {
 	public static Color PRIMARY_BUTTON_BACKGROUND_HOVER = Gallery.DARK_BLUE;
 
 	public static Color SECONDARY_BUTTON_FOREGROUND = Gallery.WHITE;
-	public static Color SECONDARY_BUTTON_BACKGROUND = BOOTSTRAP_SECONDARY;
-	public static Color SECONDARY_BUTTON_FOREGROUND_HOVER = BOOTSTRAP_SECONDARY;
-	public static Color SECONDARY_BUTTON_BACKGROUND_HOVER = Gallery.WHITE;
+	public static Color SECONDARY_BUTTON_BACKGROUND = Color.DARK_GRAY;
+	public static Color SECONDARY_BUTTON_FOREGROUND_HOVER = Gallery.WHITE;
+	public static Color SECONDARY_BUTTON_BACKGROUND_HOVER = new Color(48, 48, 48);
 
 	public static Color DANGER_BUTTON_FOREGROUND = Gallery.WHITE;
 	public static Color DANGER_BUTTON_BACKGROUND = Gallery.RED;
