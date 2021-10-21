@@ -121,7 +121,6 @@ public class POS extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		Dimension selfDisplay = Toolkit.getDefaultToolkit().getScreenSize();
-		
 		if (defaultWidth >= selfDisplay.getWidth() || defaultHeight >= selfDisplay.getHeight()) {
 			setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH );
 		} else {

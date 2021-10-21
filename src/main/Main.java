@@ -13,6 +13,9 @@ import javax.swing.SpringLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+
+import inventory.Inventory;
+
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import java.awt.event.MouseAdapter;
@@ -32,7 +35,9 @@ public class Main extends JFrame {
 	private Utility utility;
 	
 	// System Modules
+	private Admin admin;
 	private POS pos;
+	private Inventory inventory;
 	
 	// Window Components
 	private RoundedPanel adminPanel, loginPanel, shadowPanel, titlePanel;
@@ -179,7 +184,7 @@ public class Main extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblForgotPasswordButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				
+				// TODO forgot password UI
 			}
 		});
 		lblLoginButton.addMouseListener(new MouseAdapter() {
@@ -187,7 +192,7 @@ public class Main extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblLoginButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				
+				// TODO login redirect to portal
 			}
 		});
 		lblAdminButton.addMouseListener(new MouseAdapter() {
@@ -195,13 +200,16 @@ public class Main extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblAdminButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				
+				// TODO admin password UI
 			}
 		});
 		
 		
-		setVisible(true);
+//		setVisible(true);
 //		pos = new POS(database, gallery);
 //		pos.setVisible(true);
+		
+		admin = new Admin(database, gallery);
+		admin.setVisible(true);
 	}
 }
