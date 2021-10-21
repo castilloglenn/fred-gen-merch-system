@@ -1,6 +1,7 @@
 package inventory;
 
 import java.awt.BorderLayout;
+
 import java.awt.EventQueue;
 
 import javax.swing.ImageIcon;
@@ -40,6 +41,7 @@ import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import javax.swing.JTabbedPane;
 
 /**
  * To be done by: Sebastian Garcia
@@ -51,11 +53,11 @@ public class Inventory extends JFrame {
 	private Gallery gallery;
 	private Utility utility;
 	
-	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
+	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel,reportPanel;
 	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, panel, supplierTablePanel,productImagePanel;
 	
 	private JLabel btnDashboard, btnSupplier, btnProduct, lblSupplierList, lblProductList, lblSearchIcon,btnNew, btnManage;
-	private JLabel btnDelete, lblProductSearchIcon, btnProductManage, btnProductRemove, btnProductNew;
+	private JLabel btnDelete, lblProductSearchIcon, btnProductManage, btnProductRemove, btnProductNew,btnReturn;
 	
 	private JTextField txtSupplierSearch, txtProductSearch;
 	
@@ -67,6 +69,9 @@ public class Inventory extends JFrame {
 
 	private String supplierSearchMessage = "Search for Supplier...";
 	private String productSearchMessage = "Search for Products...";
+	private JLabel lblInventoryReport;
+	private JPanel panel_2;
+	private JPanel panel_3;
 	
 
 	
@@ -119,7 +124,7 @@ public class Inventory extends JFrame {
 		navigationalPanel = new RoundedPanel(Gallery.BLUE);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationalPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, navigationalPanel, -15, SpringLayout.WEST, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationalPanel, 390, SpringLayout.NORTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationalPanel, 490, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, navigationalPanel, 75, SpringLayout.WEST, mainPanel);;	
 		navigationalPanel.setBackground(Gallery.BLUE);
 		mainPanel.add(navigationalPanel);
@@ -160,6 +165,15 @@ public class Inventory extends JFrame {
 		gallery.styleLabelToButton(btnProduct, 15f, "product.png", 15, 10, 10);
 		btnProduct.setUI(verticalUI);
 		navigationalPanel.add(btnProduct);
+		
+		btnReturn = new JLabel("Reports");
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnReturn, 10, SpringLayout.SOUTH, btnProduct);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnReturn, 25, SpringLayout.WEST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnReturn, -10, SpringLayout.EAST, navigationalPanel);
+		btnReturn.setName("primary");
+		gallery.styleLabelToButton(btnReturn, 15f, "report.png", 15, 10, 10);
+		btnReturn.setUI(verticalUI);
+		navigationalPanel.add(btnReturn);
 		mainPanel.add(displayPanel);
 		displayPanel.setLayout(cardLayout);
 		
@@ -168,10 +182,39 @@ public class Inventory extends JFrame {
 		displayPanel.add(dashboardPanel, "dashboard");
 		
 		supplierPanel = new RoundedPanel(Gallery.GRAY);
-		supplierPanel.setBackground(Gallery.GRAY);
 		displayPanel.add(supplierPanel, "supplier");
 		SpringLayout sl_supplierPanel = new SpringLayout();
 		supplierPanel.setLayout(sl_supplierPanel);
+		
+		reportPanel = new RoundedPanel(Gallery.GRAY);
+		displayPanel.add(reportPanel, "report");
+		SpringLayout sl_reportPanel = new SpringLayout();
+		reportPanel.setLayout(sl_reportPanel);
+		
+		lblInventoryReport = new JLabel("Inventory Reports");
+		sl_reportPanel.putConstraint(SpringLayout.EAST, lblInventoryReport, 200, SpringLayout.WEST, reportPanel);
+		lblInventoryReport.setFont(gallery.getFont(20f));
+		sl_reportPanel.putConstraint(SpringLayout.NORTH, lblInventoryReport, 10, SpringLayout.NORTH, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.WEST, lblInventoryReport, 15, SpringLayout.WEST, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.SOUTH, lblInventoryReport, 45, SpringLayout.NORTH, reportPanel);
+		reportPanel.add(lblInventoryReport);
+		
+		JTabbedPane inventoryTabPane = new JTabbedPane(JTabbedPane.TOP);
+		sl_reportPanel.putConstraint(SpringLayout.NORTH, inventoryTabPane, 15, SpringLayout.SOUTH, lblInventoryReport);
+		sl_reportPanel.putConstraint(SpringLayout.WEST, inventoryTabPane, 0, SpringLayout.WEST, lblInventoryReport);
+		sl_reportPanel.putConstraint(SpringLayout.SOUTH, inventoryTabPane, -15, SpringLayout.SOUTH, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.EAST, inventoryTabPane, -15, SpringLayout.EAST, reportPanel);
+		reportPanel.add(inventoryTabPane);
+		
+		JPanel returnsPanel = new JPanel();
+		returnsPanel.setBackground(Color.WHITE);
+		inventoryTabPane.addTab("Customer Returns", null, returnsPanel, null);
+			
+		panel_2 = new JPanel();
+		inventoryTabPane.addTab("New tab", null, panel_2, null);
+		
+		panel_3 = new JPanel();
+		inventoryTabPane.addTab("New tab", null, panel_3, null);
 		
 		lblSupplierList = new JLabel("Supplier List");
 		sl_supplierPanel.putConstraint(SpringLayout.NORTH, lblSupplierList, 15, SpringLayout.NORTH, supplierPanel);
@@ -208,7 +251,7 @@ public class Inventory extends JFrame {
 		txtSupplierSearch.setColumns(10);
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
-		sl_supplierPanel.putConstraint(SpringLayout.WEST, buttonPanel, -365, SpringLayout.EAST, supplierPanel);
+		sl_supplierPanel.putConstraint(SpringLayout.WEST, buttonPanel, -325, SpringLayout.EAST, supplierPanel);
 		sl_supplierPanel.putConstraint(SpringLayout.SOUTH, buttonPanel, -15, SpringLayout.SOUTH, supplierPanel);
 		sl_supplierPanel.putConstraint(SpringLayout.EAST, buttonPanel, -15, SpringLayout.EAST, supplierPanel);
 		sl_supplierPanel.putConstraint(SpringLayout.NORTH, buttonPanel, -100, SpringLayout.SOUTH, supplierPanel);
@@ -217,29 +260,29 @@ public class Inventory extends JFrame {
 		buttonPanel.setLayout(sl_buttonPanel);
 		
 		btnNew = new JLabel("New");
+		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnNew, 10, SpringLayout.WEST, buttonPanel);
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnNew, -210, SpringLayout.EAST, buttonPanel);
 		btnNew.setName("primary");
-		gallery.styleLabelToButton(btnNew, 15f, 15, 10);
+		gallery.styleLabelToButton(btnNew, 14f, 15, 10);
 		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnNew, 25, SpringLayout.NORTH, buttonPanel);
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnNew, -25, SpringLayout.SOUTH, buttonPanel);
 		btnNew.setHorizontalAlignment(SwingConstants.CENTER);
-		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnNew, 15, SpringLayout.WEST, buttonPanel);
-		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnNew, 115, SpringLayout.WEST, buttonPanel);
 		buttonPanel.add(btnNew);
 		
 		btnManage = new JLabel("Manage");
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnManage, 100, SpringLayout.EAST, btnNew);
 		btnManage.setName("primary");
-		gallery.styleLabelToButton(btnManage, 15f, 15, 10);
+		gallery.styleLabelToButton(btnManage, 14f, 15, 10);
 		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnManage, 0, SpringLayout.NORTH, btnNew);
 		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnManage, 10, SpringLayout.EAST, btnNew);
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnManage, 0, SpringLayout.SOUTH, btnNew);
-		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnManage, 110, SpringLayout.EAST, btnNew);
 		btnManage.setHorizontalAlignment(SwingConstants.CENTER);
 		buttonPanel.add(btnManage);
 		
 		btnDelete = new JLabel("Remove");
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnDelete, 200, SpringLayout.EAST, btnNew);
 		btnDelete.setName("danger");
-		gallery.styleLabelToButton(btnDelete, 15f, 15, 10);
-		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnDelete, 220, SpringLayout.EAST, btnNew);
+		gallery.styleLabelToButton(btnDelete, 14f, 15, 10);
 		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnDelete, 0, SpringLayout.NORTH, btnNew);
 		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnDelete, 10, SpringLayout.EAST, btnManage);
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnDelete, 0, SpringLayout.SOUTH, btnNew);
@@ -378,6 +421,8 @@ public class Inventory extends JFrame {
 		productTable = new JTable();
 		productScrollPane.setViewportView(productTable);
 		
+		
+		
 		// NOTE: Please put all mouse listeners here at the end
 		btnDashboard.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnDashboard);;}
@@ -402,6 +447,15 @@ public class Inventory extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) { cardLayout.show(displayPanel, "product");}
+		});
+		
+		btnReturn.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {cardLayout.show(displayPanel, "report");}
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnReturn);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnReturn);}
 		});
 		
 		txtSupplierSearch.addFocusListener(new FocusAdapter() {
@@ -486,6 +540,8 @@ public class Inventory extends JFrame {
 				//backend here
 			}
 		});
+		
+		
 	}
 }
 
