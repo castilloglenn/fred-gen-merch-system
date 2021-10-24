@@ -4,7 +4,14 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
 
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JFrame;
 
 import utils.Database;
@@ -13,6 +20,11 @@ import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
 import javax.swing.SpringLayout;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
+
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.CardLayout;
@@ -21,6 +33,7 @@ import java.awt.CardLayout;
 public class Admin extends JFrame {
 	
 	private final String TITLE = "Administrator Mode";
+	private final String logTitle = "System Logs";
 	
 	private int defaultHeight = 710; // 600
 	private int defaultWidth = 990; // 1000
@@ -29,20 +42,23 @@ public class Admin extends JFrame {
 
 	private Database database; 
 	private Gallery gallery;
+	private Utility utility;
 	private VerticalLabelUI verticalUI;
 	
+	private JDatePickerImpl datePicker;
 	private RoundedPanel navigationPanel, displayPanel;
-	private JLabel lblLogsButton, lblUsersButton;
+	private JLabel lblLogsButton, lblUsersButton, lblLogTitle, lblSearchButton;
 	
 	private JPanel cardPanel;
 	private CardLayout cardLayout;
 	private JPanel systemLogPanel;
 	private JPanel userPanel;
-	
+	private JLabel lblDate;
 
-	public Admin(Database database, Gallery gallery) {
+	public Admin(Database database, Gallery gallery, Utility utility) {
 		this.database = database;
 		this.gallery = gallery;
+		this.utility = utility;
 		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false); 
@@ -66,7 +82,7 @@ public class Admin extends JFrame {
 		springLayout.putConstraint(SpringLayout.NORTH, navigationPanel, -55, SpringLayout.SOUTH, getContentPane());
 		springLayout.putConstraint(SpringLayout.WEST, navigationPanel, 15, SpringLayout.WEST, getContentPane());
 		springLayout.putConstraint(SpringLayout.SOUTH, navigationPanel, 15, SpringLayout.SOUTH, getContentPane());
-		springLayout.putConstraint(SpringLayout.EAST, navigationPanel, 275, SpringLayout.WEST, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, navigationPanel, 215, SpringLayout.WEST, getContentPane());
 		getContentPane().add(navigationPanel);
 		
 		displayPanel = new RoundedPanel(Gallery.WHITE);
@@ -76,7 +92,7 @@ public class Admin extends JFrame {
 		SpringLayout sl_navigationPanel = new SpringLayout();
 		navigationPanel.setLayout(sl_navigationPanel);
 		
-		lblLogsButton = new JLabel("SYSTEM LOGS");
+		lblLogsButton = new JLabel("LOGS");
 		lblLogsButton.setName("primary");
 		gallery.styleLabelToButton(lblLogsButton, 15f, "logs.png", 15, 10, 5);
 		sl_navigationPanel.putConstraint(SpringLayout.NORTH, lblLogsButton, 15, SpringLayout.NORTH, navigationPanel);
@@ -106,8 +122,37 @@ public class Admin extends JFrame {
 		cardPanel.setLayout(cardLayout);
 		
 		systemLogPanel = new JPanel();
-		systemLogPanel.setBackground(Gallery.RED);
+		systemLogPanel.setBackground(Gallery.WHITE);
 		cardPanel.add(systemLogPanel, "system_log");
+		SpringLayout sl_systemLogPanel = new SpringLayout();
+		systemLogPanel.setLayout(sl_systemLogPanel);
+		
+		lblLogTitle = new JLabel(logTitle);
+		lblLogTitle.setFont(gallery.getFont(30f));
+		sl_systemLogPanel.putConstraint(SpringLayout.NORTH, lblLogTitle, 0, SpringLayout.NORTH, systemLogPanel);
+		sl_systemLogPanel.putConstraint(SpringLayout.WEST, lblLogTitle, 0, SpringLayout.WEST, systemLogPanel);
+		systemLogPanel.add(lblLogTitle);
+		
+		lblDate = new JLabel("Select date: ");
+		lblDate.setFont(gallery.getFont(15f));
+		sl_systemLogPanel.putConstraint(SpringLayout.NORTH, lblDate, 15, SpringLayout.SOUTH, lblLogTitle);
+		sl_systemLogPanel.putConstraint(SpringLayout.WEST, lblDate, 0, SpringLayout.WEST, lblLogTitle);
+		systemLogPanel.add(lblDate);
+		
+		datePicker = utility.getDateChooser();
+		sl_systemLogPanel.putConstraint(SpringLayout.NORTH, datePicker, -4, SpringLayout.NORTH, lblDate);
+		sl_systemLogPanel.putConstraint(SpringLayout.WEST, datePicker, 10, SpringLayout.EAST, lblDate);
+		systemLogPanel.add(datePicker);
+		
+		lblSearchButton = new JLabel("Search");
+		lblSearchButton.setName("primary");
+		gallery.styleLabelToButton(lblSearchButton, 15f, 10, 4);
+		sl_systemLogPanel.putConstraint(SpringLayout.NORTH, lblSearchButton, -5, SpringLayout.NORTH, lblDate);
+		sl_systemLogPanel.putConstraint(SpringLayout.WEST, lblSearchButton, 225, SpringLayout.EAST, lblDate);
+		systemLogPanel.add(lblSearchButton);
+		
+		
+		
 		
 		userPanel = new JPanel();
 		userPanel.setBackground(Gallery.BLUE);
@@ -133,6 +178,14 @@ public class Admin extends JFrame {
 			@Override public void mouseClicked(MouseEvent e) {
 
 				cardLayout.show(cardPanel, "user");
+			}
+		});
+		lblSearchButton.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblSearchButton); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblSearchButton); }
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				// TODO Search
 			}
 		});
 	}

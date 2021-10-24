@@ -209,7 +209,7 @@ public class Main extends JFrame {
 //		pos = new POS(database, gallery);
 //		pos.setVisible(true);
 		
-		admin = new Admin(database, gallery);
+		admin = new Admin(database, gallery, utility);
 		admin.setVisible(true);
 	}
 }
