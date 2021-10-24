@@ -47,13 +47,13 @@ public class Admin extends JFrame {
 	
 	private JDatePickerImpl datePicker;
 	private RoundedPanel navigationPanel, displayPanel;
-	private JLabel lblLogsButton, lblUsersButton, lblLogTitle, lblSearchButton;
+	private JLabel lblLogsButton, lblUsersButton, lblLogTitle, lblSearchButton,
+				lblDate;
 	
-	private JPanel cardPanel;
-	private CardLayout cardLayout;
-	private JPanel systemLogPanel;
-	private JPanel userPanel;
-	private JLabel lblDate;
+	private JPanel cardPanel, systemLogPanel, userPanel, logCardPanel;
+	private CardLayout cardLayout, logCartLayout;
+	private JPanel logListPanel;
+	private JPanel logEmptyPanel;
 
 	public Admin(Database database, Gallery gallery, Utility utility) {
 		this.database = database;
@@ -150,6 +150,23 @@ public class Admin extends JFrame {
 		sl_systemLogPanel.putConstraint(SpringLayout.NORTH, lblSearchButton, -5, SpringLayout.NORTH, lblDate);
 		sl_systemLogPanel.putConstraint(SpringLayout.WEST, lblSearchButton, 225, SpringLayout.EAST, lblDate);
 		systemLogPanel.add(lblSearchButton);
+		
+		logCardPanel = new JPanel();
+		logCartLayout = new CardLayout(0, 0);
+		logCardPanel.setBackground(Gallery.WHITE);
+		sl_systemLogPanel.putConstraint(SpringLayout.NORTH, logCardPanel, 15, SpringLayout.SOUTH, lblDate);
+		sl_systemLogPanel.putConstraint(SpringLayout.WEST, logCardPanel, 0, SpringLayout.WEST, lblLogTitle);
+		sl_systemLogPanel.putConstraint(SpringLayout.SOUTH, logCardPanel, 0, SpringLayout.SOUTH, systemLogPanel);
+		sl_systemLogPanel.putConstraint(SpringLayout.EAST, logCardPanel, 0, SpringLayout.EAST, systemLogPanel);
+		systemLogPanel.add(logCardPanel);
+		logCardPanel.setLayout(logCartLayout);
+		
+		logListPanel = new JPanel();
+		logCardPanel.add(logListPanel, "name_25864691607600");
+		
+		logEmptyPanel = new JPanel();
+		logCardPanel.add(logEmptyPanel, "name_25906678664200");
+		
 		
 		
 		
