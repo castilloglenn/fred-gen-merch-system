@@ -690,10 +690,17 @@ public class POS extends JFrame {
 			/**
 			 * TEST ONLY FOR DEBUGGING
 			 */
-			System.out.println("Window size: " + getSize());
-			System.out.println("\n\nCart count: " + cartList.size());
-			cartList.forEach((cartItem) -> System.out.println(cartItem));
-			System.out.println("========================================");
+//			System.out.println("Window size: " + getSize());
+//			System.out.println("\n\nCart count: " + cartList.size());
+//			cartList.forEach((cartItem) -> System.out.println(cartItem));
+//			System.out.println("========================================");
+			
+			Utility testUtil = new Utility();
+			String message = testUtil.showImageChooser();
+			
+			database.registerProduct(1L, "food", "Banana", message, 500, "nyoging", 6.95, 42.0);
+			
+			
 		} else if (code == KeyEvent.VK_F4) {
 			clearCart();
 		} else if (code == KeyEvent.VK_F5) {
@@ -1027,8 +1034,8 @@ public class POS extends JFrame {
 		
 		for (int cartIndex = 0; cartIndex < cartList.size(); cartIndex++) {
 			Object[] cartItemDetails = cartList.get(cartIndex).getTransactionDetail();
-			totalCartQuantity += (int) cartItemDetails[3];
-			totalCartPrice += (double) cartItemDetails[6];
+			totalCartQuantity += (int) cartItemDetails[4];
+			totalCartPrice += (double) cartItemDetails[7];
 		}
 		
 		lblPaymentCashier.setText(String.format("Cashier:  %s", cashierName));

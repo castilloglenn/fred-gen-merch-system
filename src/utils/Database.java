@@ -73,6 +73,7 @@ public class Database {
 		);
 		stmt.execute("CREATE TABLE IF NOT EXISTS product ("
 				+ "product_id BIGINT PRIMARY KEY, "
+				+ "category VARCHAR(255) NOT NULL, "
 				+ "name VARCHAR(255) NOT NULL, "
 				+ "image MEDIUMBLOB, "
 				+ "stocks DOUBLE(8, 2) NOT NULL, "
@@ -81,13 +82,25 @@ public class Database {
 				+ "selling_price DOUBLE(8, 2) NOT NULL"
 			+ ");"
 		);
+		stmt.execute("CREATE TABLE IF NOT EXISTS customer_discount ("
+				+ "customer_discount_id BIGINT PRIMARY KEY, "
+				+ "type VARCHAR(255) NOT NULL, "
+				+ "id_number VARCHAR(255) NOT NULL UNIQUE, "
+				+ "fname VARCHAR(255) NOT NULL, "
+				+ "mname VARCHAR(255), "
+				+ "lname VARCHAR(255) NOT NULL"
+			+ ");"
+		);
 		stmt.execute("CREATE TABLE IF NOT EXISTS transaction ("
 				+ "transaction_id BIGINT PRIMARY KEY, "
 				+ "user_id BIGINT NOT NULL, "
+				+ "customer_discount_id BIGINT NOT NULL, "
 				+ "date DATETIME NOT NULL, "
 				+ "total_price DOUBLE(8, 2) NOT NULL, "
 				+ "FOREIGN KEY (user_id) "
-				+ "REFERENCES user(user_id)"
+				+ "REFERENCES user(user_id), "
+				+ "FOREIGN KEY (customer_discount_id) "
+				+ "REFERENCES customer_discount(customer_discount_id)"
 			+ ");"
 		);
 		stmt.execute("CREATE TABLE IF NOT EXISTS supplies ("
@@ -95,6 +108,7 @@ public class Database {
 				+ "product_id BIGINT NOT NULL, "
 				+ "user_id BIGINT NOT NULL, "
 				+ "quantity DOUBLE(8, 2) NOT NULL, "
+				+ "total_price DOUBLE(8, 2) NOT NULL, "
 				+ "date DATETIME NOT NULL, "
 				+ "FOREIGN KEY (supplier_id) "
 				+ "REFERENCES supplier(supplier_id), "
@@ -128,24 +142,25 @@ public class Database {
 	 * 
 	 * @see utils.Utility#showImageChooser()
 	 */
-	public void registerProduct(long productID, String name, 
+	public void registerProduct(long productID, String category, String name, 
 		String path, double stock, String uom, double priceBought, double sellingPrice
 	) {
 		try {
 			ps = con.prepareStatement(
 				"INSERT INTO product VALUES ("
-				+ "?, ?, ?, ?, ?, ?, ?"
+				+ "?, ?, ?, ?, ?, ?, ?, ?"
 				+ ");"
 			);
 			ps.setLong(1, productID);
-			ps.setString(2, name);
+			ps.setString(2, category);
+			ps.setString(3, name);
 			//Inserting Blob type
 			InputStream in = new FileInputStream(path);
-			ps.setBinaryStream(3, in);
-			ps.setDouble(4, stock);
-			ps.setString(5, uom);
-			ps.setDouble(6, priceBought);
-			ps.setDouble(7, sellingPrice);
+			ps.setBinaryStream(4, in);
+			ps.setDouble(5, stock);
+			ps.setString(6, uom);
+			ps.setDouble(7, priceBought);
+			ps.setDouble(8, sellingPrice);
 			ps.executeUpdate();
 		} catch (SQLException e ) {
 			e.printStackTrace();
@@ -167,7 +182,8 @@ public class Database {
 			ps = con.prepareStatement(
 					"SELECT * " 
 					+ "FROM product " 
-					+ "WHERE product_id LIKE ? " 
+					+ "WHERE product_id LIKE ? "
+					+ "OR category LIKE ? " 
 					+ "OR name LIKE ? " 
 					+ "ORDER BY name"
 				+ ";", 
@@ -176,6 +192,7 @@ public class Database {
 			);
 			ps.setString(1, "%" + keyword + "%");
 			ps.setString(2, "%" + keyword + "%");
+			ps.setString(3, "%" + keyword + "%");
 			ResultSet rs = ps.executeQuery();
 			
 			int size = 0;
@@ -183,14 +200,15 @@ public class Database {
 		    size = rs.getRow();
 		    rs.beforeFirst();
 		    
-		    Object[][] resultProducts = new Object[size][5];
+		    Object[][] resultProducts = new Object[size][6];
 
 		    int index = 0;
             while (rs.next()){
-            	Object[] productRow = new Object[5];
+            	Object[] productRow = new Object[6];
             	
             	productRow[0] = rs.getLong("product_id");
-            	productRow[1] = rs.getString("name");
+            	productRow[1] = rs.getString("category");
+            	productRow[2] = rs.getString("name");
             	
                 byte[] img = rs.getBytes("image");
                 image = new ImageIcon(img);
@@ -201,9 +219,9 @@ public class Database {
                 );
                 newImage = new ImageIcon(myImg);
                 
-                productRow[2] = newImage;
-                productRow[3] = rs.getString("uom");
-                productRow[4] = rs.getDouble("selling_price");
+                productRow[3] = newImage;
+                productRow[4] = rs.getString("uom");
+                productRow[5] = rs.getDouble("selling_price");
                 
                 resultProducts[index] = productRow;
                 index++;
