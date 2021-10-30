@@ -142,7 +142,7 @@ public class Database {
 	 * 
 	 * @see utils.Utility#showImageChooser()
 	 */
-	public void registerProduct(long productID, String category, String name, 
+	public boolean addProduct(long productID, String category, String name, 
 		String path, double stock, String uom, double priceBought, double sellingPrice
 	) {
 		try {
@@ -154,20 +154,25 @@ public class Database {
 			ps.setLong(1, productID);
 			ps.setString(2, category);
 			ps.setString(3, name);
+			
 			//Inserting Blob type
 			InputStream in = new FileInputStream(path);
 			ps.setBinaryStream(4, in);
+			
 			ps.setDouble(5, stock);
 			ps.setString(6, uom);
 			ps.setDouble(7, priceBought);
 			ps.setDouble(8, sellingPrice);
+			
 			ps.executeUpdate();
-		} catch (SQLException e ) {
+			return true;
+		} catch (SQLException e) {
+			// TODO This message goes to the logger
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+		return false;
 	}
 	
 	/**
