@@ -131,7 +131,6 @@ public class Database {
 	}
 	
 	/**
-	 * 
 	 * @param productID The ID must be generated from the Utility class method generateProductID()
 	 * @param name The product's general name, may/may not include the brand and company name
 	 * @param path The path must come from the Utility's image chooser method namely showImageChooser()
@@ -237,5 +236,44 @@ public class Database {
             ex.printStackTrace();
     		return null;
         }
+	}
+	
+	public boolean setProduct(long productID, String category, String name, 
+		String path, double stock, String uom, double priceBought, double sellingPrice
+	) {
+		try {
+			ps = con.prepareStatement(
+				"UPDATE product "
+				+ "SET category = ?,"
+					+ "name = ?, "
+					+ "image = ?, "
+					+ "stocks = ?, "
+					+ "uom = ?, "
+					+ "price_bought = ?, " 
+					+ "selling_price = ? "
+				+ "WHERE product_id = ?;"
+			);
+			ps.setString(1, category);
+			ps.setString(2, name);
+			
+			//Inserting Blob type
+			InputStream in = new FileInputStream(path);
+			ps.setBinaryStream(3, in);
+			
+			ps.setDouble(4, stock);
+			ps.setString(5, uom);
+			ps.setDouble(6, priceBought);
+			ps.setDouble(7, sellingPrice);
+			ps.setLong(8, productID);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			// TODO This message goes to the logger
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
