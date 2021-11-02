@@ -14,17 +14,14 @@ class DatabaseTest {
 
 	@Test
 	void test1() {
-		assertEquals(
-			database.setProduct(
-				1, 
-				"test_name", 
-				"banana", 
-				"C:\\Users\\Administrator\\git\\fred-gen-merch-system\\assets\\images\\products\\foods\\fruit.png", 
-				150.5, 
-				"pieces", 
-				65.0, 
-				1234.52)
-			, true);
+//		assertEquals(
+//			database.setProduct(
+//				1, "test_name", "banana", 
+//				"C:\\Users\\Administrator\\git\\fred-gen-merch-system\\assets\\images\\products\\foods\\fruit.png", 
+//				150.5, "pieces", 65.0, 1234.52)
+//			, true);
+		
+//		assertEquals(database.deleteEntry("product", "product_id", 3L), true);
 	}
 
 }

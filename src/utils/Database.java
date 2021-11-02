@@ -131,7 +131,77 @@ public class Database {
 	}
 	
 	/**
+	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
+	 * @param product_id The ID must be generated from the Utility class method generateProductID()
+	 * @param quantity the amount of products bought by the customer
+	 * 
+	 * @return returns true if the process is successful
+	 */
+	public boolean addContains(long transactionID, long product_id, double quantity) {
+		try {
+			ps = con.prepareStatement(
+				"INSERT INTO contains VALUES ("
+				+ "?, ?, ?"
+				+ ");"
+			);
+			ps.setLong(1, transactionID);
+			ps.setLong(2, product_id);
+			ps.setDouble(3, quantity);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * Fetches all products contained inside a transaction
+	 * 
+	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
+	 * @return 2D Object array containing the results, null if no results found
+	 */
+	public Object[][] getContains(long transactionID) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM contains " 
+					+ "WHERE transaction_id = ?;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			ps.setLong(1, transactionID);
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] resultProducts = new Object[size][3];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] productRow = new Object[3];
+            	
+            	productRow[0] = rs.getLong("transaction_id");
+            	productRow[1] = rs.getLong("product_id");
+            	productRow[2] = rs.getDouble("quantity");
+                
+                resultProducts[index] = productRow;
+                index++;
+            }
+            return resultProducts;
+        }catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	/**
 	 * @param productID The ID must be generated from the Utility class method generateProductID()
+	 * @param category the category in which the product belongs to
 	 * @param name The product's general name, may/may not include the brand and company name
 	 * @param path The path must come from the Utility's image chooser method namely showImageChooser()
 	 * @param stock The quantity of the initial stocks, default can be zero
@@ -166,7 +236,6 @@ public class Database {
 			ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
-			// TODO This message goes to the logger
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -238,6 +307,18 @@ public class Database {
         }
 	}
 	
+	/**
+	 * @param productID The ID must be generated from the Utility class method generateProductID()
+	 * @param category the category in which the product belongs to
+	 * @param name The product's general name, may/may not include the brand and company name
+	 * @param path The path must come from the Utility's image chooser method namely showImageChooser()
+	 * @param stock The quantity of the initial stocks, default can be zero
+	 * @param uom The quantity description on how it will be sold or packaged, examples will be on kilograms or pieces
+	 * @param priceBought The buying price, this will be used in making statistics on the inventory
+	 * @param sellingPrice The selling price, this is also important for monitoring profit margin upon stocks
+	 * 
+	 * @see utils.Utility#showImageChooser()
+	 */
 	public boolean setProduct(long productID, String category, String name, 
 		String path, double stock, String uom, double priceBought, double sellingPrice
 	) {
@@ -269,9 +350,31 @@ public class Database {
 			ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
-			// TODO This message goes to the logger
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * This adaptive method fits in all table, just specify the parameters required to delete an entry
+	 * <br> anywhere in the database.
+	 * 
+	 * @param table the table of the data
+	 * @param idColumnName this is the primary key of the table specified
+	 * @param id long-type data that is the id targeted to be deleted
+	 * 
+	 * @return true if the process is successful
+	 */
+	public boolean deleteEntry(String table, String idColumnName, long id) {
+		try {
+			ps = con.prepareStatement(
+				"DELETE FROM " + table + " WHERE " + idColumnName + " = ?;");
+			ps.setLong(1, id);
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;

@@ -698,7 +698,7 @@ public class POS extends JFrame {
 			Utility testUtil = new Utility();
 			String message = testUtil.showImageChooser();
 			
-			if (!database.addProduct(1L, "food", "Banana", message, 500, "nyoging", 6.95, 42.0)) {
+			if (!database.addProduct(3L, "others", "idk", message, 225, "piece", 622.95, 4112.0)) {
 				// TODO Show errror message
 				System.out.println("Please bro");
 			}
