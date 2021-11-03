@@ -179,6 +179,34 @@ public class Database {
 	}
 	
 	/**
+	 * @param supplierID The ID must be generated from the Utility class method generateSupplierID()
+	 * @param name Name of supplier/business
+	 * @param contactNo Shows contact number of an active supplier
+	 * @param address Physical location of the supplier
+	 * 
+	 * @return returns true if the process is successful
+	 */
+	public boolean addSupplier(long supplierID, String name, String contactNo, String address) {
+		try {
+			ps = con.prepareStatement(
+				"INSERT INTO supplier VALUES ("
+				+ "?, ?, ?, ?"
+				+ ");"
+			);
+			ps.setLong(1, supplierID);
+			ps.setString(2, name);
+			ps.setString(3, contactNo);
+			ps.setString(4, address);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
 	 * @param productID The ID must be generated from the Utility class method generateProductID()
 	 * @param category the category in which the product belongs to
 	 * @param name The product's general name, may/may not include the brand and company name
@@ -188,6 +216,7 @@ public class Database {
 	 * @param priceBought The buying price, this will be used in making statistics on the inventory
 	 * @param sellingPrice The selling price, this is also important for monitoring profit margin upon stocks
 	 * 
+	 * @return returns true if the process is successful
 	 * @see utils.Utility#showImageChooser()
 	 */
 	public boolean addProduct(long productID, String category, String name, 
@@ -251,7 +280,7 @@ public class Database {
 	/**
 	 * Fetches all users contained inside a transaction
 	 * 
-	 * @param keyword
+	 * @param keyword key-sensitive search term use to get users from the database
 	 * @return 2D Object array containing the results, null if no results found
 	 */
 	public Object[][] getUsersByKeyword(String keyword) {
@@ -290,7 +319,51 @@ public class Database {
                 index++;
             }
             return result;
-        }catch(Exception ex){
+        } catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	/**
+	 * Fetches suppliers based on a keyword of any of its details
+	 * 
+	 * @param keyword key-sensitive search term use to get suppliers from the database
+	 * @return 2D Object array containing the results, null if no results found
+	 */
+	public Object[][] getSuppliersByKeyword(String keyword) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM supplier " 
+					+ "WHERE supplier_id LIKE ?;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			ps.setString(1, "%" + keyword + "%");
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] result = new Object[size][4];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] row = new Object[4];
+
+            	row[0] = rs.getLong("supplier_id");
+            	row[1] = rs.getString("name");
+            	row[2] = rs.getString("contact_no");
+            	row[3] = rs.getString("address");
+                
+    			result[index] = row;
+                index++;
+            }
+            return result;
+        } catch(Exception ex){
             ex.printStackTrace();
     		return null;
         }
@@ -354,7 +427,7 @@ public class Database {
             }
             
             return resultProducts;
-        }catch(Exception ex){
+        } catch(Exception ex){
             ex.printStackTrace();
     		return null;
         }
@@ -366,7 +439,7 @@ public class Database {
 	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
 	 * @return 2D Object array containing the results, null if no results found
 	 */
-	public Object[][] getContains(long transactionID) {
+	public Object[][] getContainsByID(long transactionID) {
 		try {
 			ps = con.prepareStatement(
 					"SELECT * " 
@@ -397,7 +470,7 @@ public class Database {
                 index++;
             }
             return result;
-        }catch(Exception ex){
+        } catch(Exception ex){
             ex.printStackTrace();
     		return null;
         }
@@ -424,7 +497,7 @@ public class Database {
 		try {
 			ps = con.prepareStatement(
 				"UPDATE user "
-				+ "SET user_id = ?,"
+				+ "SET "
 					+ "fname = ?, "
 					+ "mname = ?, "
 					+ "lname = ?, "
@@ -432,22 +505,22 @@ public class Database {
 					+ "contact = ?, " 
 					+ "username = ?, "
 					+ "password = ? "
-				+ "WHERE product_id = ?;"
+				+ "WHERE user_id = ?;"
 			);
-			ps.setLong(1, userID);
-			ps.setString(2, fname);
+			ps.setString(1, fname);
 
 			if (mname == null) {
-				ps.setNull(3,  Types.NULL);
+				ps.setNull(2,  Types.NULL);
 			} else {
-				ps.setString(3, mname);
+				ps.setString(2, mname);
 			}
 			
-			ps.setString(4, lname);
-			ps.setString(5, position);
-			ps.setString(6, contact);
-			ps.setString(7, username);
-			ps.setString(8, password);
+			ps.setString(3, lname);
+			ps.setString(4, position);
+			ps.setString(5, contact);
+			ps.setString(6, username);
+			ps.setString(7, password);
+			ps.setLong(8, userID);
 			
 			ps.executeUpdate();
 			return true;
@@ -458,6 +531,41 @@ public class Database {
 	}
 	
 	/**
+	 * Method for updating the details of a supplier.
+	 * 
+	 * @param supplierID The ID must be generated from the Utility class method generateSupplierID()
+	 * @param name Name of supplier/business
+	 * @param contactNo Shows contact number of an active supplier
+	 * @param address Physical location of the supplier
+	 * 
+	 * @return returns true if the process is successful
+	 */
+	public boolean setSupplier(long supplierID, String name, String contactNo, String address) {
+		try {
+			ps = con.prepareStatement(
+				"UPDATE user "
+				+ "SET "
+					+ "name = ?, "
+					+ "contact_no = ?, "
+					+ "address = ? "
+				+ "WHERE supplier_id = ?;"
+			);
+			ps.setString(1, name);
+			ps.setString(2, contactNo);
+			ps.setString(3, address);
+			ps.setLong(4, supplierID);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * Method for updating the details of a product.
+	 * 
 	 * @param productID The ID must be generated from the Utility class method generateProductID()
 	 * @param category the category in which the product belongs to
 	 * @param name The product's general name, may/may not include the brand and company name
