@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 
 import javax.swing.ImageIcon;
 
@@ -131,22 +132,43 @@ public class Database {
 	}
 	
 	/**
-	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
-	 * @param product_id The ID must be generated from the Utility class method generateProductID()
-	 * @param quantity the amount of products bought by the customer
+	 * Registering an employee account to the system.
 	 * 
-	 * @return returns true if the process is successful
+	 * @param userID The ID must be generated from the Utility class method generateUserID()
+	 * @param fname First name of the user
+	 * @param mname Middle name of the user 
+	 * @param lname Last name of the user
+	 * @param position Job role of the user
+	 * @param contact Contact number of the user
+	 * @param username User name of the user who will use the system
+	 * @param password Secured password for the employee (MD5)
+	 * 
+	 * @return true if the process is successful
+	 * @see utils.Utility#hashData(String)
 	 */
-	public boolean addContains(long transactionID, long product_id, double quantity) {
+	public boolean addUser(long userID, String fname, String mname, String lname, 
+		String position, String contact, String username, String password
+	) {
 		try {
 			ps = con.prepareStatement(
-				"INSERT INTO contains VALUES ("
-				+ "?, ?, ?"
+				"INSERT INTO user VALUES ("
+				+ "?, ?, ?, ?, ?, ?, ?, ?"
 				+ ");"
 			);
-			ps.setLong(1, transactionID);
-			ps.setLong(2, product_id);
-			ps.setDouble(3, quantity);
+			ps.setLong(1, userID);
+			ps.setString(2, fname);
+			
+			if (mname == null) {
+				ps.setNull(3,  Types.NULL);
+			} else {
+				ps.setString(3, mname);
+			}
+			
+			ps.setString(4, lname);
+			ps.setString(5, position);
+			ps.setString(6, contact);
+			ps.setString(7, username);
+			ps.setString(8, password);
 			
 			ps.executeUpdate();
 			return true;
@@ -154,49 +176,6 @@ public class Database {
 			e.printStackTrace();
 		}
 		return false;
-	}
-	
-	/**
-	 * Fetches all products contained inside a transaction
-	 * 
-	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
-	 * @return 2D Object array containing the results, null if no results found
-	 */
-	public Object[][] getContains(long transactionID) {
-		try {
-			ps = con.prepareStatement(
-					"SELECT * " 
-					+ "FROM contains " 
-					+ "WHERE transaction_id = ?;", 
-				ResultSet.TYPE_SCROLL_INSENSITIVE, 
-				ResultSet.CONCUR_READ_ONLY
-			);
-			ps.setLong(1, transactionID);
-			ResultSet rs = ps.executeQuery();
-			
-			int size = 0;
-		    rs.last();
-		    size = rs.getRow();
-		    rs.beforeFirst();
-		    
-		    Object[][] resultProducts = new Object[size][3];
-
-		    int index = 0;
-            while (rs.next()){
-            	Object[] productRow = new Object[3];
-            	
-            	productRow[0] = rs.getLong("transaction_id");
-            	productRow[1] = rs.getLong("product_id");
-            	productRow[2] = rs.getDouble("quantity");
-                
-                resultProducts[index] = productRow;
-                index++;
-            }
-            return resultProducts;
-        }catch(Exception ex){
-            ex.printStackTrace();
-    		return null;
-        }
 	}
 	
 	/**
@@ -241,6 +220,80 @@ public class Database {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	/**
+	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
+	 * @param product_id The ID must be generated from the Utility class method generateProductID()
+	 * @param quantity the amount of products bought by the customer
+	 * 
+	 * @return returns true if the process is successful
+	 */
+	public boolean addContains(long transactionID, long product_id, double quantity) {
+		try {
+			ps = con.prepareStatement(
+				"INSERT INTO contains VALUES ("
+				+ "?, ?, ?"
+				+ ");"
+			);
+			ps.setLong(1, transactionID);
+			ps.setLong(2, product_id);
+			ps.setDouble(3, quantity);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * Fetches all users contained inside a transaction
+	 * 
+	 * @param keyword
+	 * @return 2D Object array containing the results, null if no results found
+	 */
+	public Object[][] getUsersByKeyword(String keyword) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM user " 
+					+ "WHERE user_id LIKE ?;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			ps.setString(1, "%" + keyword + "%");
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] result = new Object[size][8];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] row = new Object[8];
+
+            	row[0] = rs.getLong("user_id");
+            	row[1] = rs.getString("fname");
+            	row[2] = rs.getString("mname");
+            	row[3] = rs.getString("lname");
+            	row[4] = rs.getString("position");
+            	row[5] = rs.getString("contact");
+            	row[6] = rs.getString("username");
+            	row[7] = rs.getString("password");
+                
+    			result[index] = row;
+                index++;
+            }
+            return result;
+        }catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
 	}
 	
 	/**
@@ -305,6 +358,103 @@ public class Database {
             ex.printStackTrace();
     		return null;
         }
+	}
+	
+	/**
+	 * Fetches all products contained inside a transaction
+	 * 
+	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
+	 * @return 2D Object array containing the results, null if no results found
+	 */
+	public Object[][] getContains(long transactionID) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM contains " 
+					+ "WHERE transaction_id = ?;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			ps.setLong(1, transactionID);
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] result = new Object[size][3];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] row = new Object[3];
+            	
+            	row[0] = rs.getLong("transaction_id");
+            	row[1] = rs.getLong("product_id");
+            	row[2] = rs.getDouble("quantity");
+                
+            	result[index] = row;
+                index++;
+            }
+            return result;
+        }catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	/**
+	 * Method for updating the details of a user.
+	 * 
+	 * @param userID The ID must be generated from the Utility class method generateUserID()
+	 * @param fname First name of the user
+	 * @param mname Middle name of the user 
+	 * @param lname Last name of the user
+	 * @param position Job role of the user
+	 * @param contact Contact number of the user
+	 * @param username User name of the user who will use the system
+	 * @param password Secured password for the employee (MD5)
+	 * 
+	 * @return true if the process is successful
+	 * @see utils.Utility#hashData(String)
+	 */
+	public boolean setUser(long userID, String fname, String mname, String lname, 
+		String position, String contact, String username, String password
+	) {
+		try {
+			ps = con.prepareStatement(
+				"UPDATE user "
+				+ "SET user_id = ?,"
+					+ "fname = ?, "
+					+ "mname = ?, "
+					+ "lname = ?, "
+					+ "position = ?, "
+					+ "contact = ?, " 
+					+ "username = ?, "
+					+ "password = ? "
+				+ "WHERE product_id = ?;"
+			);
+			ps.setLong(1, userID);
+			ps.setString(2, fname);
+
+			if (mname == null) {
+				ps.setNull(3,  Types.NULL);
+			} else {
+				ps.setString(3, mname);
+			}
+			
+			ps.setString(4, lname);
+			ps.setString(5, position);
+			ps.setString(6, contact);
+			ps.setString(7, username);
+			ps.setString(8, password);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	/**
