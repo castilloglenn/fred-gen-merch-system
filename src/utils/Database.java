@@ -252,6 +252,48 @@ public class Database {
 	}
 	
 	/**
+	 * Adding a new account for discounted customers (PWD & Senior Citizen)
+	 * 
+	 * @param customerDiscountID The ID must be generated from the Utility class method generateCustomerDiscountID()
+	 * @param type States if regular,senior or PWD
+	 * @param idNumber States if discounted (senior or PWD) the id number that is written on customer presented id.
+	 * @param fname Discounted customer first name 
+	 * @param mname Discounted customer middle name 
+	 * @param lname Discounted customer last name 
+	 * 
+	 * @return returns true if the process is successful
+	 */
+	public boolean addCustomerDiscount(long customerDiscountID, String type, 
+		String idNumber, String fname, String mname, String lname
+	) {
+		try {
+			ps = con.prepareStatement(
+				"INSERT INTO customer_discount VALUES ("
+				+ "?, ?, ?, ?, ?, ?"
+				+ ");"
+			);
+			ps.setLong(1, customerDiscountID);
+			ps.setString(2, type);
+			ps.setString(3, idNumber);
+			ps.setString(4, fname);
+
+			if (mname == null) {
+				ps.setNull(5,  Types.NULL);
+			} else {
+				ps.setString(5, mname);
+			}
+			
+			ps.setString(6, lname);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
 	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
 	 * @param product_id The ID must be generated from the Utility class method generateProductID()
 	 * @param quantity the amount of products bought by the customer
@@ -421,6 +463,66 @@ public class Database {
                 productRow[3] = newImage;
                 productRow[4] = rs.getString("uom");
                 productRow[5] = rs.getDouble("selling_price");
+                
+                resultProducts[index] = productRow;
+                index++;
+            }
+            
+            return resultProducts;
+        } catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	/**
+	 * Fetches all customer details regarding their discounts
+	 * 
+	 * @param keyword key-sensitive search term use to get customer details from the database.
+	 * @return 2-dimensional array of customer details.
+	 * 			<br> returns null if there are no results.
+	 */
+	public Object[][] getCustomerDiscountsByKeyword(String keyword) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM customer_discount " 
+					+ "WHERE customer_discount_id LIKE ? "
+					+ "OR type LIKE ? "
+					+ "OR id_number LIKE ? " 
+					+ "OR fname LIKE ? " 
+					+ "OR mname LIKE ? " 
+					+ "OR lname LIKE ? "
+					+ "ORDER BY name"
+				+ ";", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			ps.setString(1, "%" + keyword + "%");
+			ps.setString(2, "%" + keyword + "%");
+			ps.setString(3, "%" + keyword + "%");
+			ps.setString(4, "%" + keyword + "%");
+			ps.setString(5, "%" + keyword + "%");
+			ps.setString(6, "%" + keyword + "%");
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] resultProducts = new Object[size][6];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] productRow = new Object[6];
+            	
+            	productRow[0] = rs.getLong("customer_discount_id");
+            	productRow[1] = rs.getString("type");
+            	productRow[2] = rs.getString("id_number");
+                productRow[3] = rs.getString("fname");;
+                productRow[4] = rs.getString("mname");
+                productRow[5] = rs.getString("lname");
                 
                 resultProducts[index] = productRow;
                 index++;
@@ -610,6 +712,53 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * Method for updating the details of a discounter customer.
+	 * 
+	 * @param customerDiscountID The ID must be generated from the Utility class method generateCustomerDiscountID()
+	 * @param type States if regular,senior or PWD
+	 * @param idNumber States if discounted (senior or PWD) the id number that is written on customer presented id.
+	 * @param fname Discounted customer first name 
+	 * @param mname Discounted customer middle name 
+	 * @param lname Discounted customer last name 
+	 * 
+	 * @return returns true if the process is successful
+	 */
+	public boolean setCustomerDiscount(long customerDiscountID, String type, 
+		String idNumber, String fname, String mname, String lname
+	) {
+		try {
+			ps = con.prepareStatement(
+				"UPDATE customer_discount "
+				+ "SET "
+					+ "type = ?, "
+					+ "id_number = ?, "
+					+ "fname = ? "
+					+ "mname = ? "
+					+ "lname = ? "
+				+ "WHERE customer_discount_id = ?;"
+			);
+			ps.setString(1, type);
+			ps.setString(2, idNumber);
+			ps.setString(3, fname);
+			
+			if (mname == null) {
+				ps.setNull(4,  Types.NULL);
+			} else {
+				ps.setString(4, mname);
+			}
+			
+			ps.setString(5, lname);
+			ps.setLong(6, customerDiscountID);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
