@@ -131,7 +131,7 @@ public class Utility {
 	
 	public String hashData(String data) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] messageDigest = md.digest(data.getBytes());
             BigInteger bi = new BigInteger(1, messageDigest);
             String hashedText = bi.toString(16);

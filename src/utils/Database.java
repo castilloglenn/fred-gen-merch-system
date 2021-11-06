@@ -11,6 +11,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
 
@@ -29,6 +36,7 @@ public class Database {
 	private Connection con;
 	private Statement stmt;
 	private PreparedStatement ps;
+	private ResultSet initialRecordsTest;
 	
 	private ImageIcon image, newImage;
 	private Image im, myImg;
@@ -129,6 +137,17 @@ public class Database {
 				+ "REFERENCES product(product_id)"
 			+ ");"
 		);
+		
+		/* Initial records */
+		initialRecordsTest = stmt.executeQuery(
+			"SELECT COUNT(*) "
+			+ "FROM customer_discount "
+			+ "WHERE customer_discount_id=1;");
+		initialRecordsTest.next();
+		if (initialRecordsTest.getInt(1) == 0) {
+			stmt.execute("INSERT INTO customer_discount "
+					+ "VALUES (1, \"REGULAR\", \"\", \"\", \"\", \"\";");
+		}
 	}
 	
 	/**
@@ -284,6 +303,34 @@ public class Database {
 			}
 			
 			ps.setString(6, lname);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
+	 * @param userID Identification of the user who handled the transaction
+	 * @param customerDiscountID For unique identification of the discounted customer
+	 * @param totalPrice Overall total price of the transaction
+	 * 
+	 * @return returns true if the process is successful
+	 */
+	public boolean addTransaction(long transactionID, long userID, long customerDiscountID, double totalPrice) {
+		try {
+			ps = con.prepareStatement(
+				"INSERT INTO transaction VALUES ("
+				+ "?, ?, ?, NOW(), ?"
+				+ ");"
+			);
+			ps.setLong(1, transactionID);
+			ps.setLong(2, userID);
+			ps.setLong(3, customerDiscountID);
+			ps.setDouble(4, totalPrice);
 			
 			ps.executeUpdate();
 			return true;
@@ -529,6 +576,57 @@ public class Database {
             }
             
             return resultProducts;
+        } catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	/**
+	 * @param from Date start selection
+	 * @param to Date end selection
+	 * 
+	 * @return 2D Object array containing the results, null if no results found
+	 */
+	public Object[][] getTransactionsByRange(Date from, Date to) {
+		try {
+			DateFormat sqlDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM transaction " 
+					+ "WHERE date "
+					+ "BETWEEN ? "
+					+ "AND ?;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			
+			ps.setString(1, sqlDateTimeFormat.format(from));
+			ps.setString(2, sqlDateTimeFormat.format(to));
+			
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] result = new Object[size][5];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] row = new Object[5];
+            	
+            	row[0] = rs.getLong("transaction_id");
+            	row[1] = rs.getLong("user_id");
+            	row[2] = rs.getLong("customer_discount_id");
+            	row[3] = rs.getTimestamp("date");
+            	row[4] = rs.getDouble("total_price");
+                
+            	result[index] = row;
+                index++;
+            }
+            return result;
         } catch(Exception ex){
             ex.printStackTrace();
     		return null;
