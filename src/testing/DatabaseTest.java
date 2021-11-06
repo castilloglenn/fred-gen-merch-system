@@ -32,7 +32,7 @@ class DatabaseTest {
 //		assertEquals(database.addUser(2L, "Sample First", "Sample Middle", "Sample Last", 
 //				"Sample position", "09568990811", "admin", utility.hashData("password")), true);
 		
-//		assertEquals(database.addTransaction(3L, 1L, 1L, 500.0), true);
+//		assertEquals(database.addTransaction(4L, 1L, 1L, 500.0), true);
 		
 //		Calendar before = Calendar.getInstance();
 //		Calendar after = Calendar.getInstance();

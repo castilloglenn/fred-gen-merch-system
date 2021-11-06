@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -33,6 +34,7 @@ public class Database {
 	private String db_user = "root";
 	private String db_pass = "";
 	
+	private DateFormat sqlDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private Connection con;
 	private Statement stmt;
 	private PreparedStatement ps;
@@ -148,6 +150,11 @@ public class Database {
 			stmt.execute("INSERT INTO customer_discount "
 					+ "VALUES (1, \"REGULAR\", \"\", \"\", \"\", \"\";");
 		}
+		
+		Calendar today = Calendar.getInstance();
+		today.add(Calendar.YEAR, -1);
+		
+		getTransactionsByRange(today.getTime(), Calendar.getInstance().getTime());
 	}
 	
 	/**
@@ -341,6 +348,36 @@ public class Database {
 	}
 	
 	/**
+	 * @param supplierID The ID must be generated from the Utility class method generateSupplierID()
+	 * @param productID The ID must be generated from the Utility class method generateProductID()
+	 * @param userID The ID must be generated from the Utility class method generateUserID()
+	 * @param quantity Quantity of products supplied
+	 * @param totalPrice Total amount to be paid to supplier (price_bought * quantity)
+	 * 
+	 * @return returns true if the process is successful
+	 */
+	public boolean addSupplies(long supplierID, long productID, long userID, double quantity, double totalPrice) {
+		try {
+			ps = con.prepareStatement(
+				"INSERT INTO supplies VALUES ("
+				+ "?, ?, ?, ?, ?, NOW()"
+				+ ");"
+			);
+			ps.setLong(1, supplierID);
+			ps.setLong(2, productID);
+			ps.setLong(3, userID);
+			ps.setDouble(4, quantity);
+			ps.setDouble(5, totalPrice);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
 	 * @param transactionID The ID must be generated from the Utility class method generateTransactionID()
 	 * @param product_id The ID must be generated from the Utility class method generateProductID()
 	 * @param quantity the amount of products bought by the customer
@@ -472,9 +509,7 @@ public class Database {
 					+ "FROM product " 
 					+ "WHERE product_id LIKE ? "
 					+ "OR category LIKE ? " 
-					+ "OR name LIKE ? " 
-					+ "ORDER BY name"
-				+ ";", 
+					+ "OR name LIKE ?;", 
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);
@@ -539,9 +574,7 @@ public class Database {
 					+ "OR id_number LIKE ? " 
 					+ "OR fname LIKE ? " 
 					+ "OR mname LIKE ? " 
-					+ "OR lname LIKE ? "
-					+ "ORDER BY name"
-				+ ";", 
+					+ "OR lname LIKE ?;", 
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);
@@ -583,6 +616,57 @@ public class Database {
 	}
 	
 	/**
+	 * Fetches all transaction records using a keyword
+	 * 
+	 * @param keyword key-sensitive search term use to get transaction details from the database.
+	 * @return 2-dimensional array of transaction details.
+	 * 			<br> returns null if there are no results.
+	 */
+	public Object[][] getTransactionsByKeyword(String keyword) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM transaction " 
+					+ "WHERE transaction_id LIKE ? "
+					+ "OR user_id LIKE ? "
+					+ "OR customer_discount_id LIKE ?;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			ps.setString(1, "%" + keyword + "%");
+			ps.setString(2, "%" + keyword + "%");
+			ps.setString(3, "%" + keyword + "%");
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] resultProducts = new Object[size][5];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] productRow = new Object[6];
+            	
+            	productRow[0] = rs.getLong("transaction_id");
+            	productRow[1] = rs.getLong("user_id");
+            	productRow[2] = rs.getLong("customer_discount_id");
+                productRow[3] = rs.getTimestamp("date", Calendar.getInstance());
+                productRow[4] = rs.getDouble("total_price");
+                
+                resultProducts[index] = productRow;
+                index++;
+            }
+            
+            return resultProducts;
+        } catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	/**
 	 * @param from Date start selection
 	 * @param to Date end selection
 	 * 
@@ -590,7 +674,6 @@ public class Database {
 	 */
 	public Object[][] getTransactionsByRange(Date from, Date to) {
 		try {
-			DateFormat sqlDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			ps = con.prepareStatement(
 					"SELECT * " 
 					+ "FROM transaction " 
@@ -620,8 +703,111 @@ public class Database {
             	row[0] = rs.getLong("transaction_id");
             	row[1] = rs.getLong("user_id");
             	row[2] = rs.getLong("customer_discount_id");
-            	row[3] = rs.getTimestamp("date");
+            	row[3] = rs.getTimestamp("date", Calendar.getInstance());
             	row[4] = rs.getDouble("total_price");
+                
+            	result[index] = row;
+                index++;
+            }
+            return result;
+        } catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	/**
+	 * Fetches all supplied product records using a keyword
+	 * 
+	 * @param keyword key-sensitive search term use to get customer details from the database.
+	 * @return 2-dimensional array of customer details.
+	 * 			<br> returns null if there are no results.
+	 */
+	public Object[][] getSuppliesByKeyword(String keyword) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM supplies " 
+					+ "WHERE supplier_id LIKE ? "
+					+ "OR product_id LIKE ? "
+					+ "OR user_id LIKE ?;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			ps.setString(1, "%" + keyword + "%");
+			ps.setString(2, "%" + keyword + "%");
+			ps.setString(3, "%" + keyword + "%");
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] resultProducts = new Object[size][6];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] productRow = new Object[6];
+            	
+            	productRow[0] = rs.getLong("supplier_id");
+            	productRow[1] = rs.getLong("product_id");
+            	productRow[2] = rs.getLong("user_id");
+                productRow[3] = rs.getDouble("quantity");
+                productRow[4] = rs.getDouble("total_price");
+                productRow[5] = rs.getTimestamp("date", Calendar.getInstance());
+                
+                resultProducts[index] = productRow;
+                index++;
+            }
+            
+            return resultProducts;
+        } catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	/**
+	 * @param from Date start selection
+	 * @param to Date end selection
+	 * 
+	 * @return 2D Object array containing the results, null if no results found
+	 */
+	public Object[][] getSuppliesByRange(Date from, Date to) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM supplies " 
+					+ "WHERE date "
+					+ "BETWEEN ? "
+					+ "AND ?;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			
+			ps.setString(1, sqlDateTimeFormat.format(from));
+			ps.setString(2, sqlDateTimeFormat.format(to));
+			
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] result = new Object[size][6];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] row = new Object[6];
+            	
+            	row[0] = rs.getLong("supplier_id");
+            	row[1] = rs.getLong("product_id");
+            	row[2] = rs.getLong("user_id");
+            	row[3] = rs.getDouble("quantity");
+            	row[4] = rs.getDouble("total_price");
+            	row[4] = rs.getTimestamp("date", Calendar.getInstance());
                 
             	result[index] = row;
                 index++;
