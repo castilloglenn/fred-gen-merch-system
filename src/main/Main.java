@@ -2,6 +2,7 @@ package main;
 
 import java.awt.EventQueue;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
 import pos.POS;
@@ -12,6 +13,7 @@ import utils.Utility;
 import javax.swing.SpringLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import inventory.Inventory;
@@ -29,6 +31,7 @@ import java.awt.event.MouseEvent;
 public class Main extends JFrame {
 	
 	private final String TITLE = "Welcome!";
+	private final String forgotPasswordMessage = "Please let the manager put their password for verification.";
 	
 	private Gallery gallery;
 	private Database database;
@@ -183,8 +186,38 @@ public class Main extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblForgotPasswordButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblForgotPasswordButton); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mouseClicked(MouseEvent e) { 
 				// TODO forgot password UI
+				
+				// Manager password request panel setup and execution
+				JPanel panel = new JPanel();
+				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+				JLabel label = new JLabel(forgotPasswordMessage);
+				JPasswordField pass = new JPasswordField(10);
+				String[] options = new String[]{"OK", "Cancel"};
+				
+				panel.add(label);
+				panel.add(pass);
+				
+				// Manager password request dialog shows up
+				int option = JOptionPane.showOptionDialog(null, panel, Utility.APP_TITLE,
+				                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+				                         null, options, options[0]);
+				
+				// Manager password return value
+				String managerPassword = null;
+				if(option == 0) {
+				    char[] password = pass.getPassword();
+				    managerPassword = new String(password);
+				}
+				
+				// TODO continue the logic by creating the id of users and fetch only the managers
+				//	then compare the hashed value of the inputed password if it matches any of the
+				//	managers or administrators password then continue the logic here
+//				System.out.println(managerPassword);
+				
+				long sampleUserID = utility.generateUserID(11211128419L, 1);
+				System.out.println(sampleUserID);
 			}
 		});
 		lblLoginButton.addMouseListener(new MouseAdapter() {
@@ -201,13 +234,18 @@ public class Main extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO admin password UI
+				
 			}
 		});
 		
 		
-//		setVisible(true);
-		pos = new POS(database, gallery);
-		pos.setVisible(true);
+		setVisible(true);
+		
+//		pos = new POS(database, gallery);
+//		pos.setVisible(true);
+		
+//		inventory = new Inventory();
+//		inventory.setVisible(true);
 		
 //		admin = new Admin(database, gallery, utility);
 //		admin.setVisible(true);

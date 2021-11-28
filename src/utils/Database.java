@@ -151,10 +151,11 @@ public class Database {
 					+ "VALUES (1, \"REGULAR\", \"\", \"\", \"\", \"\";");
 		}
 		
-		Calendar today = Calendar.getInstance();
-		today.add(Calendar.YEAR, -1);
-		
-		getTransactionsByRange(today.getTime(), Calendar.getInstance().getTime());
+//		Is this still useful idk
+//		Calendar today = Calendar.getInstance();
+//		today.add(Calendar.YEAR, -1);
+//		
+//		getTransactionsByRange(today.getTime(), Calendar.getInstance().getTime());
 	}
 	
 	/**

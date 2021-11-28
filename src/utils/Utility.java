@@ -164,5 +164,46 @@ public class Utility {
 		return null;
 	}
 	
+	/**
+	 * USER BIGINT(20) MAX: 9223372036854775807 <p>
+	 *  example: 11211128001 ==== length(11) 	<br>
+	 *      1-1-21-11-28-001					<br>
+	 *   1 = Employee Code						<br>
+	 *   1 = Level of Access					<br>
+	 *        { 1 : Store Clerk					<br>
+	 *          2 : Manager/Owner				<br>
+	 *          3 : Administrator				<br>
+	 *         }								<br>
+	 *   21 = Year								<br>
+	 *   11 = Month								<br>
+	 *   28 = Day								<br>
+	 *   001 = auto increment first is 1, second is 2, etc.<br>
+	 */
+	public long generateUserID(long lastID, int level) {
+		StringBuilder markup = new StringBuilder("1");
+		
+		markup.append(Integer.toString(level));
+		
+		Calendar c = Calendar.getInstance();
+		markup.append(Integer.toString(c.get(Calendar.YEAR)).substring(2));
+		
+		int month = c.get(Calendar.MONTH) + 1;
+		if (month < 10) markup.append("0");
+		markup.append(Integer.toString(month));
+		
+		int day = c.get(Calendar.DAY_OF_MONTH);
+		if (day < 10) markup.append("0");
+		markup.append(Integer.toString(day));
+		
+		if (lastID == -1) {
+			markup.append("001");
+		} else {
+			String lastNum = Long.toString(lastID).substring(8);
+			int increment = Integer.parseInt(lastNum) + 1;
+			markup.append(String.format("%03d", increment));
+		}
+		
+		return Long.parseLong(markup.toString());
+	}
 }
 
