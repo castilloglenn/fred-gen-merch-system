@@ -148,7 +148,7 @@ public class Database {
 		initialRecordsTest.next();
 		if (initialRecordsTest.getInt(1) == 0) {
 			stmt.execute("INSERT INTO customer_discount "
-					+ "VALUES (1, \"REGULAR\", \"\", \"\", \"\", \"\";");
+					+ "VALUES (1, \"REGULAR\", \"\", \"\", \"\", \"\");");
 		}
 		
 //		Is this still useful idk
