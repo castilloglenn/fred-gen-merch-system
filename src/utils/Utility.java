@@ -178,6 +178,9 @@ public class Utility {
 	 *   11 = Month								<br>
 	 *   28 = Day								<br>
 	 *   001 = auto increment first is 1, second is 2, etc.<br>
+	 *   
+	 *   @param lastID last inserted database record for the table
+	 *   @param level code for users level of access 
 	 */
 	public long generateUserID(long lastID, int level) {
 		StringBuilder markup = new StringBuilder("1");
@@ -215,6 +218,8 @@ public class Utility {
 	 *   11 = Month								<br>
 	 *   29 = Day								<br>
 	 *   001 = auto increment first is 1, second is 2, etc.<br>
+	 *   
+	 *   @param lastID last inserted database record for the table
 	 */
 	public long generateSupplierID(long lastID) {
 		StringBuilder markup = new StringBuilder("2");
@@ -250,6 +255,8 @@ public class Utility {
 	 *   11 = Month								<br>
 	 *   29 = Day								<br>
 	 *   001 = auto increment first is 1, second is 2, etc.<br>
+	 *   
+	 *   @param lastID last inserted database record for the table
 	 */
 	public long generateCustomerDiscountID(long lastID) {
 		StringBuilder markup = new StringBuilder("3");
@@ -285,6 +292,8 @@ public class Utility {
 	 *   11 = Month								<br>
 	 *   29 = Day								<br>
 	 *   001 = auto increment first is 1, second is 2, etc.<br>
+	 *   
+	 *   @param lastID last inserted database record for the table
 	 */
 	public long generateProductID(long lastID) {
 		StringBuilder markup = new StringBuilder("4");
@@ -311,7 +320,8 @@ public class Utility {
 		return Long.parseLong(markup.toString());
 	}
 	
-	/** TRANSACTION ID FORMAT:
+	/** 
+	 * 	TRANSACTION ID FORMAT:
 	 *  Example: 51616644307939 ===== length(16)
      *  5-1616644307939
  	 *  5 = Transaction Code (can range from 1-4)

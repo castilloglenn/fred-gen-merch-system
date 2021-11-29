@@ -28,12 +28,20 @@ import org.jdatepicker.impl.UtilDateModel;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.CardLayout;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JPasswordField;
 
 @SuppressWarnings("serial")
 public class Admin extends JFrame {
 	
 	private final String TITLE = "Administrator Mode";
 	private final String logTitle = "System Logs";
+	private final String userTitle = "Users Management";
+	private final String[] positionsList = new String[] {"Store Clerk", "Manager"};
 	
 	private int defaultHeight = 710; // 600
 	private int defaultWidth = 990; // 1000
@@ -47,12 +55,33 @@ public class Admin extends JFrame {
 	private JDatePickerImpl datePicker;
 	private RoundedPanel navigationPanel, displayPanel;
 	private JLabel lblLogsButton, lblUsersButton, lblLogTitle, lblSearchButton,
-				lblDate;
+				lblDate, lblUsersTitle, lblUserID;
 	
-	private JPanel cardPanel, systemLogPanel, userPanel, logCardPanel;
+	private JPanel cardPanel, systemLogPanel, userPanel, 
+				   logCardPanel, usersLeftPanel, usersRightPanel;
 	private CardLayout cardLayout, logCartLayout;
 	private JPanel logListPanel;
 	private JPanel logEmptyPanel;
+	private JScrollPane scrollPane;
+	private JTable table;
+	private JLabel lblFirstName;
+	private JLabel lblMiddleName;
+	private JLabel lblLastName;
+	private JLabel lblPosition;
+	private JLabel lblContact;
+	private JLabel lblUsername;
+	private JLabel lblPassword;
+	private JTextField tfMiddleName;
+	private JTextField tfUserID;
+	private JTextField tfFirstName;
+	private JTextField tfLastName;
+	private JComboBox<String> cbPosition;
+	private JTextField tfContact;
+	private JTextField tfUsername;
+	private JPasswordField pfPassword;
+	private JLabel lblUpdateButton;
+	private JLabel lblRemoveButton;
+	private JLabel lblCreateButton;
 
 	public Admin(Database database, Gallery gallery, Utility utility) {
 		this.database = database;
@@ -158,14 +187,189 @@ public class Admin extends JFrame {
 		logCardPanel.setLayout(logCartLayout);
 		
 		logListPanel = new JPanel();
-		logCardPanel.add(logListPanel, "name_25864691607600");
+		logCardPanel.add(logListPanel, "log_result");
 		
 		logEmptyPanel = new JPanel();
-		logCardPanel.add(logEmptyPanel, "name_25906678664200");
+		logCardPanel.add(logEmptyPanel, "log_empty");
 		
 		userPanel = new JPanel();
-		userPanel.setBackground(Gallery.BLUE);
+		userPanel.setBackground(Gallery.WHITE);
 		cardPanel.add(userPanel, "user");
+		SpringLayout sl_userPanel = new SpringLayout();
+		userPanel.setLayout(sl_userPanel);
+		
+		lblUsersTitle = new JLabel(userTitle);
+		lblUsersTitle.setFont(gallery.getFont(30f));
+		sl_userPanel.putConstraint(SpringLayout.NORTH, lblUsersTitle, 0, SpringLayout.NORTH, userPanel);
+		sl_userPanel.putConstraint(SpringLayout.WEST, lblUsersTitle, 0, SpringLayout.WEST, userPanel);
+		userPanel.add(lblUsersTitle);
+		
+		usersLeftPanel = new JPanel();
+		sl_userPanel.putConstraint(SpringLayout.SOUTH, usersLeftPanel, 0, SpringLayout.SOUTH, userPanel);
+		usersLeftPanel.setBackground(Gallery.WHITE);
+		sl_userPanel.putConstraint(SpringLayout.NORTH, usersLeftPanel, 15, SpringLayout.SOUTH, lblUsersTitle);
+		sl_userPanel.putConstraint(SpringLayout.WEST, usersLeftPanel, 0, SpringLayout.WEST, lblUsersTitle);
+		sl_userPanel.putConstraint(SpringLayout.EAST, usersLeftPanel, 350, SpringLayout.WEST, userPanel);
+		userPanel.add(usersLeftPanel);
+		
+		usersRightPanel = new JPanel();
+		usersRightPanel.setBackground(Gallery.WHITE);
+		sl_userPanel.putConstraint(SpringLayout.NORTH, usersRightPanel, 0, SpringLayout.NORTH, usersLeftPanel);
+		sl_userPanel.putConstraint(SpringLayout.WEST, usersRightPanel, 0, SpringLayout.EAST, usersLeftPanel);
+		sl_userPanel.putConstraint(SpringLayout.SOUTH, usersRightPanel, 0, SpringLayout.SOUTH, usersLeftPanel);
+		SpringLayout sl_usersLeftPanel = new SpringLayout();
+		usersLeftPanel.setLayout(sl_usersLeftPanel);
+		
+		lblUserID = new JLabel("User ID: ");
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, lblUserID, 2, SpringLayout.NORTH, usersLeftPanel);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblUserID, 0, SpringLayout.WEST, usersLeftPanel);
+		lblUserID.setFont(gallery.getFont(15f));
+		usersLeftPanel.add(lblUserID);
+		
+		lblFirstName = new JLabel("First Name: ");
+		lblFirstName.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, lblFirstName, 7, SpringLayout.SOUTH, lblUserID);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblFirstName, 0, SpringLayout.WEST, lblUserID);
+		usersLeftPanel.add(lblFirstName);
+		
+		lblMiddleName = new JLabel("Middle Name: ");
+		lblMiddleName.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, lblMiddleName, 7, SpringLayout.SOUTH, lblFirstName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblMiddleName, 0, SpringLayout.WEST, lblUserID);
+		usersLeftPanel.add(lblMiddleName);
+		
+		lblLastName = new JLabel("Last Name: ");
+		lblLastName.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, lblLastName, 7, SpringLayout.SOUTH, lblMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblLastName, 0, SpringLayout.WEST, lblUserID);
+		usersLeftPanel.add(lblLastName);
+		
+		lblPosition = new JLabel("Position: ");
+		lblPosition.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, lblPosition, 7, SpringLayout.SOUTH, lblLastName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblPosition, 0, SpringLayout.WEST, lblUserID);
+		usersLeftPanel.add(lblPosition);
+		
+		lblContact = new JLabel("Contact: ");
+		lblContact.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, lblContact, 7, SpringLayout.SOUTH, lblPosition);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblContact, 0, SpringLayout.WEST, lblUserID);
+		usersLeftPanel.add(lblContact);
+		
+		lblUsername = new JLabel("Username: ");
+		lblUsername.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, lblUsername, 7, SpringLayout.SOUTH, lblContact);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblUsername, 0, SpringLayout.WEST, lblUserID);
+		usersLeftPanel.add(lblUsername);
+		
+		lblPassword = new JLabel("Password: ");
+		lblPassword.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, lblPassword, 7, SpringLayout.SOUTH, lblUsername);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblPassword, 0, SpringLayout.WEST, lblUserID);
+		usersLeftPanel.add(lblPassword);
+		
+		tfMiddleName = new JTextField();
+		tfMiddleName.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, tfMiddleName, -2, SpringLayout.NORTH, lblMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, tfMiddleName, 5, SpringLayout.EAST, lblMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, tfMiddleName, 2, SpringLayout.SOUTH, lblMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, tfMiddleName, -10, SpringLayout.EAST, usersLeftPanel);
+		usersLeftPanel.add(tfMiddleName);
+		
+		tfUserID = new JTextField();
+		tfUserID.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, tfUserID, -2, SpringLayout.NORTH, lblUserID);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, tfUserID, 0, SpringLayout.WEST, tfMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, tfUserID, 2, SpringLayout.SOUTH, lblUserID);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, tfUserID, 0, SpringLayout.EAST, tfMiddleName);
+		usersLeftPanel.add(tfUserID);
+		
+		tfFirstName = new JTextField();
+		tfFirstName.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, tfFirstName, -2, SpringLayout.NORTH, lblFirstName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, tfFirstName, 0, SpringLayout.WEST, tfMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, tfFirstName, 2, SpringLayout.SOUTH, lblFirstName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, tfFirstName, 0, SpringLayout.EAST, tfMiddleName);
+		usersLeftPanel.add(tfFirstName);
+		
+		tfLastName = new JTextField();
+		tfLastName.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, tfLastName, -2, SpringLayout.NORTH, lblLastName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, tfLastName, 0, SpringLayout.WEST, tfMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, tfLastName, 2, SpringLayout.SOUTH, lblLastName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, tfLastName, 0, SpringLayout.EAST, tfMiddleName);
+		usersLeftPanel.add(tfLastName);
+		
+		cbPosition = new JComboBox<>();
+		cbPosition.setModel(new DefaultComboBoxModel<String>(positionsList));
+		cbPosition.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, cbPosition, -2, SpringLayout.NORTH, lblPosition);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, cbPosition, 0, SpringLayout.WEST, tfMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, cbPosition, 2, SpringLayout.SOUTH, lblPosition);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, cbPosition, 0, SpringLayout.EAST, tfMiddleName);
+		usersLeftPanel.add(cbPosition);
+		
+		tfContact = new JTextField();
+		tfContact.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, tfContact, -2, SpringLayout.NORTH, lblContact);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, tfContact, 0, SpringLayout.WEST, tfMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, tfContact, 2, SpringLayout.SOUTH, lblContact);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, tfContact, 0, SpringLayout.EAST, tfMiddleName);
+		usersLeftPanel.add(tfContact);
+		
+		tfUsername = new JTextField();
+		tfUsername.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, tfUsername, -2, SpringLayout.NORTH, lblUsername);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, tfUsername, 0, SpringLayout.WEST, tfMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, tfUsername, 2, SpringLayout.SOUTH, lblUsername);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, tfUsername, 0, SpringLayout.EAST, tfMiddleName);
+		usersLeftPanel.add(tfUsername);
+		
+		pfPassword = new JPasswordField();
+		pfPassword.setFont(gallery.getFont(15f));
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, pfPassword, -2, SpringLayout.NORTH, lblPassword);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, pfPassword, 0, SpringLayout.WEST, tfMiddleName);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, pfPassword, 2, SpringLayout.SOUTH, lblPassword);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, pfPassword, 0, SpringLayout.EAST, tfMiddleName);
+		usersLeftPanel.add(pfPassword);
+		
+		lblUpdateButton = new JLabel("Update");
+		lblUpdateButton.setName("secondary");
+		gallery.styleLabelToButton(lblUpdateButton, 15f, 10, 2);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblUpdateButton, 0, SpringLayout.WEST, usersLeftPanel);
+		usersLeftPanel.add(lblUpdateButton);
+		
+		lblRemoveButton = new JLabel("Remove");
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblUpdateButton, 0, SpringLayout.EAST, lblRemoveButton);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblRemoveButton, 0, SpringLayout.WEST, usersLeftPanel);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, lblUpdateButton, -10, SpringLayout.NORTH, lblRemoveButton);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, lblRemoveButton, 0, SpringLayout.SOUTH, usersLeftPanel);
+		lblRemoveButton.setName("danger");
+		gallery.styleLabelToButton(lblRemoveButton, 15f, 10, 4);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblRemoveButton, -10, SpringLayout.EAST, usersLeftPanel);
+		usersLeftPanel.add(lblRemoveButton);
+		
+		lblCreateButton = new JLabel("Create New User");
+		lblCreateButton.setName("primary");
+		gallery.styleLabelToButton(lblCreateButton, 15f, 10, 4);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblCreateButton, 0, SpringLayout.WEST, lblUpdateButton);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, lblCreateButton, -10, SpringLayout.NORTH, lblUpdateButton);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblCreateButton, 0, SpringLayout.EAST, lblRemoveButton);
+		usersLeftPanel.add(lblCreateButton);
+		sl_userPanel.putConstraint(SpringLayout.EAST, usersRightPanel, 0, SpringLayout.EAST, userPanel);
+		userPanel.add(usersRightPanel);
+		SpringLayout sl_usersRightPanel = new SpringLayout();
+		usersRightPanel.setLayout(sl_usersRightPanel);
+		
+		scrollPane = new JScrollPane();
+		sl_usersRightPanel.putConstraint(SpringLayout.NORTH, scrollPane, 0, SpringLayout.NORTH, usersRightPanel);
+		sl_usersRightPanel.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, usersRightPanel);
+		sl_usersRightPanel.putConstraint(SpringLayout.SOUTH, scrollPane, 0, SpringLayout.SOUTH, usersRightPanel);
+		sl_usersRightPanel.putConstraint(SpringLayout.EAST, scrollPane, 0, SpringLayout.EAST, usersRightPanel);
+		usersRightPanel.add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
 		
 		getContentPane().setBackground(Gallery.BLACK);
 		setLocationRelativeTo(null);
@@ -195,6 +399,36 @@ public class Admin extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO Search
+				Date datePicked = (Date) datePicker.getModel().getValue();
+				
+				System.out.println(datePicked);
+			}
+		});
+		lblUpdateButton.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblUpdateButton); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblUpdateButton); }
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				// TODO Update the user details
+					
+			}
+		});
+		lblRemoveButton.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblRemoveButton); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblRemoveButton); }
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				// TODO Delete the user details
+				
+			}
+		});
+		lblCreateButton.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblCreateButton); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCreateButton); }
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				// TODO Create a new user
+				
 			}
 		});
 	}

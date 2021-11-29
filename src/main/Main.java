@@ -241,7 +241,7 @@ public class Main extends JFrame {
 		});
 		
 		
-		setVisible(true);
+//		setVisible(true);
 		
 //		pos = new POS(database, gallery);
 //		pos.setVisible(true);
@@ -249,7 +249,7 @@ public class Main extends JFrame {
 //		inventory = new Inventory();
 //		inventory.setVisible(true);
 		
-//		admin = new Admin(database, gallery, utility);
-//		admin.setVisible(true);
+		admin = new Admin(database, gallery, utility);
+		admin.setVisible(true);
 	}
 }
