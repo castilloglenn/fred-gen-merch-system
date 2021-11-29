@@ -200,7 +200,9 @@ public class Main extends JFrame {
 				panel.add(pass);
 				
 				// Manager password request dialog shows up
-				int option = JOptionPane.showOptionDialog(null, panel, Utility.APP_TITLE,
+				int option = 
+					JOptionPane
+						.showOptionDialog(null, panel, Utility.APP_TITLE,
 				                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
 				                         null, options, options[0]);
 				
@@ -215,9 +217,9 @@ public class Main extends JFrame {
 				//	then compare the hashed value of the inputed password if it matches any of the
 				//	managers or administrators password then continue the logic here
 //				System.out.println(managerPassword);
-				
-				long sampleUserID = utility.generateUserID(11211128419L, 1);
-				System.out.println(sampleUserID);
+
+				System.out.println(utility.generateTransactionID());
+//				System.out.println(utility.generateProductID(4211129419L));
 			}
 		});
 		lblLoginButton.addMouseListener(new MouseAdapter() {
