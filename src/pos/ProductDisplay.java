@@ -45,7 +45,7 @@ public class ProductDisplay extends RoundedPanel {
 	 * @param parentPanel The size of the current parent's panel
 	 * @param index The order of when the product will be shown and what page
 	 * @param product The information of the product being handled by the class
-	 * 		  <br> The order will be: [0]product_id, [1]name, [2]image, [3]uom and [4]selling_price
+	 * 		  <br> The order will be: [0]product_id, [1]category, [2]name, [3]image, [4]uom and [5]selling_price
 	 * @param gallery Instance must be passed in order to style the child components
 	 * 
 	 * @see utils.Database#getProductsByKeyword(String)
@@ -73,19 +73,19 @@ public class ProductDisplay extends RoundedPanel {
 		setBounds(x, y, defaultWidth, defaultHeight);
 		setLayout(null);
 		
-		lblName = new JLabel(product[1].toString());
+		lblName = new JLabel(product[2].toString());
 		lblName.setFont(gallery.getFont(13f));
 		lblName.setOpaque(false);
 		lblName.setBounds(8, 12, 134, 16);
 		add(lblName);
 		
 		lblImage = new JLabel();
-		lblImage.setIcon((ImageIcon) product[2]);
+		lblImage.setIcon((ImageIcon) product[3]);
 		lblImage.setBounds(14, 38, 48, 48);
 		add(lblImage);
 		
 		DecimalFormat formatter = new DecimalFormat("#,###.00");
-        String currency = formatter.format((((double) product[4]) * 100.0) / 100.0 );
+        String currency = formatter.format((((double) product[5]) * 100.0) / 100.0 );
         
 		lblPrice = new JLabel("P" + currency);
 		lblPrice.setVerticalAlignment(SwingConstants.BOTTOM);
@@ -94,7 +94,7 @@ public class ProductDisplay extends RoundedPanel {
 		lblPrice.setBounds(70, 32, 72, 32);
 		add(lblPrice);
 		
-		lblUOM = new JLabel("per " + product[3].toString());
+		lblUOM = new JLabel("per " + product[4].toString());
 		lblUOM.setVerticalAlignment(SwingConstants.TOP);
 		lblUOM.setFont(gallery.getFont(10f));
 		lblUOM.setBounds(70, 60, 72, 26);
@@ -212,6 +212,6 @@ public class ProductDisplay extends RoundedPanel {
 	}
 	
 	public String getName() {
-		return product[1].toString();
+		return product[2].toString();
 	}
 }

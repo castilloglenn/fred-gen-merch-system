@@ -43,7 +43,6 @@ public class Admin extends JFrame {
 	private Database database; 
 	private Gallery gallery;
 	private Utility utility;
-	private VerticalLabelUI verticalUI;
 	
 	private JDatePickerImpl datePicker;
 	private RoundedPanel navigationPanel, displayPanel;
@@ -59,9 +58,6 @@ public class Admin extends JFrame {
 		this.database = database;
 		this.gallery = gallery;
 		this.utility = utility;
-		
-		// rotated 90 degrees counter-clockwise
-		verticalUI = new VerticalLabelUI(false); 
 		
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
@@ -166,10 +162,6 @@ public class Admin extends JFrame {
 		
 		logEmptyPanel = new JPanel();
 		logCardPanel.add(logEmptyPanel, "name_25906678664200");
-		
-		
-		
-		
 		
 		userPanel = new JPanel();
 		userPanel.setBackground(Gallery.BLUE);

@@ -43,7 +43,7 @@ public class CartItem extends JPanel {
 	/**
 	 * 
 	 * @param indexOrder the order in which the cart item will appear relative to the maximum available items in the panel
-	 * @param product the product details contained in an object list.  <br> [0]product_id, [1]name, [2]image, [3]uom, [4]selling_price
+	 * @param product the product details contained in an object list.  <br> [0]product_id, [1] category, [2]name, [3]image, [4]uom, [5]selling_price
 	 * @param quantity number of registered products
 	 * @param gallery used for styling components
 	 * @param pos used to communicate to its parent source 
@@ -60,9 +60,9 @@ public class CartItem extends JPanel {
 		setBackground(Gallery.WHITE);
 		setLayout(null);
 
-		String productName = product[1].toString();
+		String productName = product[2].toString();
 		int nameLength = productName.length();
-		lblCartItem = new JLabel(gallery.resizeImage((ImageIcon) product[2], squareImageSize, squareImageSize));
+		lblCartItem = new JLabel(gallery.resizeImage((ImageIcon) product[3], squareImageSize, squareImageSize));
 		if (nameLength <= oneLineColumnLimit) {
 			lblCartItem.setText("<html>" + productName + "</html>");
 			lblCartItem.setFont(gallery.getFont(14f));
@@ -174,24 +174,25 @@ public class CartItem extends JPanel {
 	 * 
 	 * @return object list with the following content order:
 	 * <br> 0: Product ID
-	 * <br> 1: Name
-	 * <br> 2: Image (ImageIcon)
-	 * <br> 3: Quantity
-	 * <br> 4: Unit of measurement
-	 * <br> 5: Selling price
-	 * <br> 6: Total price
+	 * <br> 1: Category
+	 * <br> 2: Name
+	 * <br> 3: Image (ImageIcon)
+	 * <br> 4: Quantity
+	 * <br> 5: Unit of measurement
+	 * <br> 6: Selling price
+	 * <br> 7: Total price
 	 * 
 	 * @see javax.swing.ImageIcon
 	 */
 	public Object[] getTransactionDetail() {
-		return new Object[] {product[0], product[1], product[2], quantity, 
-				product[3], product[4], quantity * (double) product[4]};
+		return new Object[] {product[0], product[1], product[2], product[3], quantity, 
+				product[4], product[5], quantity * (double) product[5]};
 	}
 	
 	@Override 
 	public String toString() {
 		return String.format("\nID: %s\nName: %s\nImage Class: %s\nQuantity: %d %s\nPrice: %s\nTotal: %s",
-				product[0].toString(), product[1].toString(), product[2].toString(), quantity, 
-				product[3].toString(), product[4].toString(), quantity * (double) product[4]);
+				product[0].toString(), product[2].toString(), product[3].toString(), quantity, 
+				product[4].toString(), product[5].toString(), quantity * (double) product[5]);
 	}
 }
