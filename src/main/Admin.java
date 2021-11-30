@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -27,6 +28,8 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.CardLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -87,6 +90,7 @@ public class Admin extends JFrame {
 	private JLabel lblCreateButton;
 	private JScrollPane logsScrollPane;
 	private JTextArea taLogs;
+	private JLabel lblClearButton;
 
 	public Admin(Main main) {
 		this.database = Database.getInstance();
@@ -299,8 +303,9 @@ public class Admin extends JFrame {
 		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, tfMiddleName, -10, SpringLayout.EAST, usersLeftPanel);
 		usersLeftPanel.add(tfMiddleName);
 		
-		tfUserID = new JTextField();
+		tfUserID = new JTextField(Long.toString(utility.generateUserID(database.fetchLastEmployee(), 1)));
 		tfUserID.setFont(gallery.getFont(15f));
+		tfUserID.setEditable(false);
 		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, tfUserID, -2, SpringLayout.NORTH, lblUserID);
 		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, tfUserID, 0, SpringLayout.WEST, tfMiddleName);
 		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, tfUserID, 2, SpringLayout.SOUTH, lblUserID);
@@ -356,29 +361,38 @@ public class Admin extends JFrame {
 		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, pfPassword, 0, SpringLayout.EAST, tfMiddleName);
 		usersLeftPanel.add(pfPassword);
 		
-		lblUpdateButton = new JLabel("UPDATE");
+		lblUpdateButton = new JLabel("UPDATE DETAILS");
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, lblUpdateButton, 0, SpringLayout.SOUTH, usersLeftPanel);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblUpdateButton, 165, SpringLayout.WEST, usersLeftPanel);
 		lblUpdateButton.setName("secondary");
-		gallery.styleLabelToButton(lblUpdateButton, 15f, 10, 2);
+		gallery.styleLabelToButton(lblUpdateButton, 15f, 10, 3);
 		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblUpdateButton, 0, SpringLayout.WEST, usersLeftPanel);
 		usersLeftPanel.add(lblUpdateButton);
 		
-		lblRemoveButton = new JLabel("REMOVE");
-		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblUpdateButton, 0, SpringLayout.EAST, lblRemoveButton);
-		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblRemoveButton, 0, SpringLayout.WEST, usersLeftPanel);
-		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, lblUpdateButton, -10, SpringLayout.NORTH, lblRemoveButton);
+		lblRemoveButton = new JLabel("REMOVE USER");
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblRemoveButton, -175, SpringLayout.EAST, usersLeftPanel);
 		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, lblRemoveButton, 0, SpringLayout.SOUTH, usersLeftPanel);
 		lblRemoveButton.setName("danger");
 		gallery.styleLabelToButton(lblRemoveButton, 15f, 10, 4);
 		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblRemoveButton, -10, SpringLayout.EAST, usersLeftPanel);
 		usersLeftPanel.add(lblRemoveButton);
 		
-		lblCreateButton = new JLabel("CREATE");
+		lblCreateButton = new JLabel("REGISTER USER");
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblCreateButton, -175, SpringLayout.EAST, usersLeftPanel);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblCreateButton, -10, SpringLayout.EAST, usersLeftPanel);
 		lblCreateButton.setName("primary");
 		gallery.styleLabelToButton(lblCreateButton, 15f, 10, 4);
-		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblCreateButton, 0, SpringLayout.WEST, lblUpdateButton);
 		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, lblCreateButton, -10, SpringLayout.NORTH, lblUpdateButton);
-		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblCreateButton, 0, SpringLayout.EAST, lblRemoveButton);
 		usersLeftPanel.add(lblCreateButton);
+		
+		lblClearButton = new JLabel("CLEAR FORM");
+		lblClearButton.setName("primary");
+		gallery.styleLabelToButton(lblClearButton, 15f, 10, 4);
+		sl_usersLeftPanel.putConstraint(SpringLayout.NORTH, lblClearButton, 0, SpringLayout.NORTH, lblCreateButton);
+		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblClearButton, 0, SpringLayout.WEST, usersLeftPanel);
+		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, lblClearButton, 0, SpringLayout.SOUTH, lblCreateButton);
+		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblClearButton, 165, SpringLayout.WEST, usersLeftPanel);
+		usersLeftPanel.add(lblClearButton);
 		sl_userPanel.putConstraint(SpringLayout.EAST, usersRightPanel, 0, SpringLayout.EAST, userPanel);
 		userPanel.add(usersRightPanel);
 		SpringLayout sl_usersRightPanel = new SpringLayout();
@@ -451,8 +465,76 @@ public class Admin extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO Create a new user
-				
+				if (checkForm()) {
+					database.addUser(
+						Long.parseLong(
+							tfUserID.getText()), 
+							tfFirstName.getText(), 
+							tfMiddleName.getText(), 
+							tfLastName.getText(), 
+							cbPosition.getSelectedItem().toString(), 
+							tfContact.getText(), 
+							tfUsername.getText(), 
+							utility.hashData(
+								new String(
+									pfPassword.getPassword())));
+					JOptionPane.showMessageDialog(
+						null, "Successfully registered new user.", 
+						Utility.APP_TITLE, 
+						JOptionPane.INFORMATION_MESSAGE);
+					clearForm();
+				}
 			}
 		});
+		lblClearButton.addMouseListener(new MouseAdapter() {
+			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblClearButton); }
+			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblClearButton); }
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				clearForm();
+			}
+		});
+	}
+	
+	private boolean checkForm() {
+		// Constructor for error handling to be displayed into the custom error message display
+		ArrayList<String> errorMessages = new ArrayList<>(); // REQUIRED
+		String fetchedPassword = new String(pfPassword.getPassword());
+		
+		// If conditions to handle all kinds of possible errors
+		if (tfFirstName.getText().isBlank()) errorMessages.add("- First Name field cannot be empty.");
+		if (tfLastName.getText().isBlank()) errorMessages.add("- Last Name field cannot be empty.");
+		if (tfContact.getText().isBlank()) errorMessages.add("- Contact detail field cannot be empty.");
+		
+		if (tfUsername.getText().isBlank()) {
+			errorMessages.add("- Username field cannot be empty.");
+		} else if (database.checkUsername(tfUsername.getText())) {
+			errorMessages.add("- Username already exists.");
+		}
+		
+		if (fetchedPassword.isBlank()) {
+			errorMessages.add("- Password field cannot be empty.");
+		} else if (fetchedPassword.length() < 6) {
+			errorMessages.add("- Passwords must be greater than or equal to 6 characters.");
+		}
+		
+		if (errorMessages.size() > 0) { // REQUIRED
+			gallery.showMessage(errorMessages.toArray(new String[0])); // REQUIRED
+			return false;
+		} else {
+			
+			return true;
+		}
+	}
+	
+	private void clearForm() {
+		tfUserID.setText(Long.toString(utility.generateUserID(database.fetchLastEmployee(), 1)));
+		tfFirstName.setText("");
+		tfMiddleName.setText("");
+		tfLastName.setText("");
+		cbPosition.setSelectedIndex(0);
+		tfContact.setText("");
+		tfUsername.setText("");
+		pfPassword.setText("");
 	}
 }

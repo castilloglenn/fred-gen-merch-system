@@ -1114,7 +1114,7 @@ public class Database {
 			long max = 0;
 			for (int level = 1; level <= 3; level++) {
 				ps = con.prepareStatement(
-					  "SELECT MAX(user) "
+					  "SELECT MAX(user_id) "
 					+ "FROM user "
 					+ "WHERE user_id > ? "
 					+ "AND user_id < ?"
@@ -1146,10 +1146,38 @@ public class Database {
 				}
 			}
 			
-			if (max != 1) return max;
+			if (max > 1) return max;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return -1;
+	}
+	
+	/**
+	 * This will check if there is an existing user that holds the same username
+	 * 
+	 * @param username the value of the user name submitted by the input
+	 * @return true if it exists, false if not
+	 */
+	public boolean checkUsername(String username) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT COUNT(*) "
+				+ "FROM user "
+				+ "WHERE username = ?;"
+			);
+			ps.setString(1, username);
+			
+			ResultSet result = ps.executeQuery();
+			result.next();
+			int count = result.getInt(1);
+			
+			if (count == 0) {
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 }
