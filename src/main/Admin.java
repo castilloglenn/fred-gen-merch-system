@@ -53,6 +53,7 @@ public class Admin extends JFrame {
 	private Database database; 
 	private Gallery gallery;
 	private Utility utility;
+	private Main main;
 	
 	private JDatePickerImpl datePicker;
 	private RoundedPanel navigationPanel, displayPanel;
@@ -87,10 +88,11 @@ public class Admin extends JFrame {
 	private JScrollPane logsScrollPane;
 	private JTextArea taLogs;
 
-	public Admin(Database database, Gallery gallery, Utility utility) {
-		this.database = database;
-		this.gallery = gallery;
-		this.utility = utility;
+	public Admin(Main main) {
+		this.database = Database.getInstance();
+		this.gallery = Gallery.getInstance();
+		this.utility = Utility.getInstance();
+		this.main = main;
 		
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);

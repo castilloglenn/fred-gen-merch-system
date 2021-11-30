@@ -39,6 +39,9 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
+
+import main.Main;
+
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.JTabbedPane;
@@ -52,6 +55,7 @@ public class Inventory extends JFrame {
 	
 	private Gallery gallery;
 	private Utility utility;
+	private Main main;
 	
 	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
 	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, panel, supplierTablePanel,productImagePanel;
@@ -87,9 +91,9 @@ public class Inventory extends JFrame {
 	}
 
 	public Inventory() {
-		
 		gallery = Gallery.getInstance();
 		utility = Utility.getInstance();
+//		this.main = main;
 		
 		SupplierAdd invSupplierAdd = new SupplierAdd();
 		SupplierUpdate invSupplierUpdate = new SupplierUpdate();

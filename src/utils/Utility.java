@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
@@ -140,6 +141,16 @@ public class Utility {
 					return false;
 				}
 			};
+	}
+	
+	public String encodeData(String data) {
+		byte[] bytesEncoded = Base64.getEncoder().encode(data.getBytes());
+		return new String(bytesEncoded);
+	}
+	
+	public String decodeData(String data) {
+		byte[] bytesDecoded = Base64.getDecoder().decode(data); 
+		return new String(bytesDecoded);
 	}
 	
 	public String hashData(String data) {

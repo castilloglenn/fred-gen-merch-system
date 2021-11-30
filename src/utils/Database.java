@@ -34,6 +34,8 @@ public class Database {
 	 */
 	private static Database singletonInstance = null;
 	
+	private String defaultAdminPassword = "superadmin!";
+	
 	private String db_url = "jdbc:mysql://localhost/?serverTimezone=UTC";
 	private String db_name = "fred_gen_merch";
 	private String db_user = "root";
@@ -154,6 +156,11 @@ public class Database {
 		);
 		
 		/* Initial records */
+		
+		/**
+		 * The following codes will insert an initial record for the customers which is
+		 * the default category named Regular.
+		 */
 		initialRecordsTest = stmt.executeQuery(
 			"SELECT COUNT(*) "
 			+ "FROM customer_discount "
@@ -164,11 +171,22 @@ public class Database {
 					+ "VALUES (1, \"REGULAR\", \"\", \"\", \"\", \"\");");
 		}
 		
-//		Is this still useful idk
-//		Calendar today = Calendar.getInstance();
-//		today.add(Calendar.YEAR, -1);
-//		
-//		getTransactionsByRange(today.getTime(), Calendar.getInstance().getTime());
+		/**
+		 * The following codes will insert the default administrators user and password
+		 */
+		initialRecordsTest = stmt.executeQuery(
+			"SELECT COUNT(*) "
+			+ "FROM user "
+			+ "WHERE user_id=10000000000;");
+		initialRecordsTest.next();
+		if (initialRecordsTest.getInt(1) == 0) {
+			stmt.execute("INSERT INTO user "
+					+ "VALUES (10000000000, \"\", \"\", \"\", \"Administrator\", "
+					+ "\"\", \"admin\", \"" 
+					+ Utility.getInstance().hashData(defaultAdminPassword) 
+					+ "\");");
+		}
+
 	}
 	
 	/**
@@ -428,7 +446,7 @@ public class Database {
 			ps = con.prepareStatement(
 					"SELECT * " 
 					+ "FROM user " 
-					+ "WHERE user_id LIKE ?;", 
+					+ "WHERE username LIKE ?;", 
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);
@@ -1083,5 +1101,55 @@ public class Database {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	/**
+	 * Fetches the latest user id not by directly getting the max in id column,
+	 * but by the entry number which is the substring of the full id <p>
+	 * 
+	 * @return returns the latest employee by the substring 3 to end.
+	 */
+	public long fetchLastEmployee() {
+		try {
+			long max = 0;
+			for (int level = 1; level <= 3; level++) {
+				ps = con.prepareStatement(
+					  "SELECT MAX(user) "
+					+ "FROM user "
+					+ "WHERE user_id > ? "
+					+ "AND user_id < ?"
+					+ ";"
+				);
+				StringBuilder least = new StringBuilder("1");
+				StringBuilder most = new StringBuilder("1");
+				
+				least.append(Integer.toString(level));
+				most.append(Integer.toString(level + 1));
+				
+				least.append(String.format("%09d", 0));
+				most.append(String.format("%09d", 0));
+				
+				ps.setLong(1, Long.parseLong(least.toString()));
+				ps.setLong(2, Long.parseLong(most.toString()));
+				
+				ResultSet pid = ps.executeQuery();
+				pid.next();
+				long current = pid.getLong(1);
+				
+				if (max == 0) {
+					max = current;
+				} else if (current != 0) {
+					long subs = Long.parseLong(Long.toString(current).substring(8));
+					long maxsub = Long.parseLong(Long.toString(max).substring(8));
+					
+					if (subs > maxsub) max = current;
+				}
+			}
+			
+			if (max != 1) return max;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 }

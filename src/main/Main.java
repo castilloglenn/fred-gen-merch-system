@@ -2,7 +2,9 @@ package main;
 
 import java.awt.EventQueue;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import pos.POS;
@@ -14,14 +16,19 @@ import javax.swing.SpringLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import java.awt.event.KeyEvent;
 import javax.swing.SwingConstants;
 
 import inventory.Inventory;
 
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.JPasswordField;
+
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 
 /**
@@ -228,6 +235,8 @@ public class Main extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO login redirect to portal
+				String[] inputs = getInput();
+				
 			}
 		});
 		lblAdminButton.addMouseListener(new MouseAdapter() {
@@ -235,21 +244,60 @@ public class Main extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblAdminButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO admin password UI
-				
+				checkAdminLogin();
 			}
 		});
 		
+		// Key bindings to password
+		tfPassword
+			.getInputMap(JComponent.WHEN_FOCUSED)
+			.put(
+				KeyStroke.getKeyStroke(
+					KeyEvent.VK_ENTER, 
+					KeyEvent.SHIFT_DOWN_MASK, 
+					true)
+						, "Shift-Enter Action");
+		tfPassword.getActionMap().put("Shift-Enter Action", new AbstractAction() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		    	checkAdminLogin();
+		    }
+		});
 		
-//		setVisible(true);
+		setVisible(true);
 		
-		pos = new POS(gallery);
-		pos.setVisible(true);
+//		pos = new POS(gallery);
+//		pos.setVisible(true);
 		
 //		inventory = new Inventory();
 //		inventory.setVisible(true);
+	}
+	
+	private void checkAdminLogin() {
+		String[] inputs = getInput();
 		
-//		admin = new Admin(database, gallery, utility);
-//		admin.setVisible(true);
+		Object[] fetch = database.getUsersByKeyword("admin")[0];
+		String[] result = {fetch[6].toString(), fetch[7].toString()};
+
+		if (Arrays.equals(inputs, result)) {
+			openAdmin();
+		}
+	}
+	
+	private String[] getInput() {
+		String[] inputs = new String[2];
+		
+		inputs[0] = tfUsername.getText();
+		inputs[1] = utility.hashData(
+						new String(
+							tfPassword.getPassword()));
+		
+		return inputs;
+	}
+	
+	private void openAdmin() {
+		setVisible(false);
+		admin = new Admin(this);
+		admin.setVisible(true);
 	}
 }

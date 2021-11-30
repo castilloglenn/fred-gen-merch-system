@@ -28,6 +28,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
+import main.Main;
 import utils.Database;
 import utils.Gallery;
 import utils.RoundedPanel;
@@ -82,6 +83,7 @@ public class POS extends JFrame {
 	
 	private Database database; 
 	private Gallery gallery;
+	private Main main;
 	private VerticalLabelUI verticalUI;
 	
 	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel,
@@ -108,9 +110,10 @@ public class POS extends JFrame {
 	
 	private CardLayout cardLayout, queryCardLayout, cartListCardLayout;
 
-	public POS(Gallery gallery) {
+	public POS(Main main) {
 		this.database = Database.getInstance();
-		this.gallery = gallery;
+		this.gallery = Gallery.getInstance();
+		this.main = main;
 		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false); 
