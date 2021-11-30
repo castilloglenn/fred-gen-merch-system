@@ -13,8 +13,8 @@ import utils.Utility;
 
 class DatabaseTest {
 	
-	private Database database = new Database();
-	private Utility utility = new Utility();
+	private Database database = Database.getInstance();
+	private Utility utility = Utility.getInstance();
 
 	@Test
 	void test1() {

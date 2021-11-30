@@ -64,8 +64,8 @@ public class ProductUpdate extends JFrame {
 		SpringLayout sl_contentPane = new SpringLayout();
 		contentPane.setLayout(sl_contentPane);
 		
-		gallery = new Gallery();
-		utility = new Utility();
+		gallery = Gallery.getInstance();
+		utility = Utility.getInstance();
 		
 		p = new JPanel();
 		sl_contentPane.putConstraint(SpringLayout.NORTH, p, -5, SpringLayout.NORTH, contentPane);

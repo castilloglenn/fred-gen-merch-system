@@ -34,6 +34,8 @@ import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 
 @SuppressWarnings("serial")
 public class Admin extends JFrame {
@@ -82,6 +84,8 @@ public class Admin extends JFrame {
 	private JLabel lblUpdateButton;
 	private JLabel lblRemoveButton;
 	private JLabel lblCreateButton;
+	private JScrollPane logsScrollPane;
+	private JTextArea taLogs;
 
 	public Admin(Database database, Gallery gallery, Utility utility) {
 		this.database = database;
@@ -188,8 +192,25 @@ public class Admin extends JFrame {
 		
 		logListPanel = new JPanel();
 		logCardPanel.add(logListPanel, "log_result");
+		SpringLayout sl_logListPanel = new SpringLayout();
+		logListPanel.setLayout(sl_logListPanel);
+		
+		logsScrollPane = new JScrollPane();
+		logsScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		sl_logListPanel.putConstraint(SpringLayout.NORTH, logsScrollPane, 0, SpringLayout.NORTH, logListPanel);
+		sl_logListPanel.putConstraint(SpringLayout.WEST, logsScrollPane, 0, SpringLayout.WEST, logListPanel);
+		sl_logListPanel.putConstraint(SpringLayout.SOUTH, logsScrollPane, 0, SpringLayout.SOUTH, logListPanel);
+		sl_logListPanel.putConstraint(SpringLayout.EAST, logsScrollPane, 0, SpringLayout.EAST, logListPanel);
+		logListPanel.add(logsScrollPane);
+		
+		taLogs = new JTextArea();
+		taLogs.setWrapStyleWord(true);
+		taLogs.setEditable(false);
+		taLogs.setFont(gallery.getFont(15f));
+		logsScrollPane.setViewportView(taLogs);
 		
 		logEmptyPanel = new JPanel();
+		logEmptyPanel.setBackground(Gallery.RED);
 		logCardPanel.add(logEmptyPanel, "log_empty");
 		
 		userPanel = new JPanel();
@@ -333,13 +354,13 @@ public class Admin extends JFrame {
 		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, pfPassword, 0, SpringLayout.EAST, tfMiddleName);
 		usersLeftPanel.add(pfPassword);
 		
-		lblUpdateButton = new JLabel("Update");
+		lblUpdateButton = new JLabel("UPDATE");
 		lblUpdateButton.setName("secondary");
 		gallery.styleLabelToButton(lblUpdateButton, 15f, 10, 2);
 		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblUpdateButton, 0, SpringLayout.WEST, usersLeftPanel);
 		usersLeftPanel.add(lblUpdateButton);
 		
-		lblRemoveButton = new JLabel("Remove");
+		lblRemoveButton = new JLabel("REMOVE");
 		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblUpdateButton, 0, SpringLayout.EAST, lblRemoveButton);
 		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblRemoveButton, 0, SpringLayout.WEST, usersLeftPanel);
 		sl_usersLeftPanel.putConstraint(SpringLayout.SOUTH, lblUpdateButton, -10, SpringLayout.NORTH, lblRemoveButton);
@@ -349,7 +370,7 @@ public class Admin extends JFrame {
 		sl_usersLeftPanel.putConstraint(SpringLayout.EAST, lblRemoveButton, -10, SpringLayout.EAST, usersLeftPanel);
 		usersLeftPanel.add(lblRemoveButton);
 		
-		lblCreateButton = new JLabel("Create New User");
+		lblCreateButton = new JLabel("CREATE");
 		lblCreateButton.setName("primary");
 		gallery.styleLabelToButton(lblCreateButton, 15f, 10, 4);
 		sl_usersLeftPanel.putConstraint(SpringLayout.WEST, lblCreateButton, 0, SpringLayout.WEST, lblUpdateButton);

@@ -62,8 +62,8 @@ public class ProductAdd extends JFrame {
 		SpringLayout sl_contentPane = new SpringLayout();
 		contentPane.setLayout(sl_contentPane);
 		
-		gallery = new Gallery();
-		utility = new Utility();
+		gallery = Gallery.getInstance();
+		utility = Utility.getInstance();
 		
 		p = new JPanel();
 		p.setBackground(Gallery.GRAY);

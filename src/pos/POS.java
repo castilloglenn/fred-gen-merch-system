@@ -108,8 +108,8 @@ public class POS extends JFrame {
 	
 	private CardLayout cardLayout, queryCardLayout, cartListCardLayout;
 
-	public POS(Database database, Gallery gallery) {
-		this.database = database;
+	public POS(Gallery gallery) {
+		this.database = Database.getInstance();
 		this.gallery = gallery;
 		
 		// rotated 90 degrees counter-clockwise
@@ -695,7 +695,7 @@ public class POS extends JFrame {
 //			cartList.forEach((cartItem) -> System.out.println(cartItem));
 //			System.out.println("========================================");
 			
-			Utility testUtil = new Utility();
+			Utility testUtil = Utility.getInstance();
 			String message = testUtil.showImageChooser();
 			
 			if (!database.addProduct(3L, "others", "idk", message, 225, "piece", 622.95, 4112.0)) {

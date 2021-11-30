@@ -58,9 +58,9 @@ public class Main extends JFrame {
 	}
 
 	public Main() {
-		gallery = new Gallery();
-		database = new Database();
-		utility = new Utility();
+		gallery = Gallery.getInstance();
+		database = Database.getInstance();
+		utility = Utility.getInstance();
 
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE);
@@ -243,13 +243,13 @@ public class Main extends JFrame {
 		
 //		setVisible(true);
 		
-//		pos = new POS(database, gallery);
-//		pos.setVisible(true);
+		pos = new POS(gallery);
+		pos.setVisible(true);
 		
 //		inventory = new Inventory();
 //		inventory.setVisible(true);
 		
-		admin = new Admin(database, gallery, utility);
-		admin.setVisible(true);
+//		admin = new Admin(database, gallery, utility);
+//		admin.setVisible(true);
 	}
 }

@@ -29,6 +29,11 @@ import javax.swing.ImageIcon;
  */
 public class Database {
 	
+	/**
+	 * Singleton instance
+	 */
+	private static Database singletonInstance = null;
+	
 	private String db_url = "jdbc:mysql://localhost/?serverTimezone=UTC";
 	private String db_name = "fred_gen_merch";
 	private String db_user = "root";
@@ -44,7 +49,7 @@ public class Database {
 	private Image im, myImg;
 	public int imageSize = 48;
 	
-	public Database() {
+	private Database() {
 		try {
 			con = DriverManager.getConnection(
 				db_url, db_user, db_pass
@@ -56,6 +61,14 @@ public class Database {
 			e.printStackTrace();
 			System.exit(0);
 		}
+	}
+	
+	public static Database getInstance() {
+		if (singletonInstance == null) {
+			singletonInstance = new Database();
+		}
+		
+		return singletonInstance;
 	}
 	
 	public void createDatabase() throws SQLException {

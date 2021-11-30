@@ -88,8 +88,8 @@ public class Inventory extends JFrame {
 
 	public Inventory() {
 		
-		gallery = new Gallery();
-		utility = new Utility();
+		gallery = Gallery.getInstance();
+		utility = Utility.getInstance();
 		
 		SupplierAdd invSupplierAdd = new SupplierAdd();
 		SupplierUpdate invSupplierUpdate = new SupplierUpdate();

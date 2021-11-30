@@ -30,6 +30,11 @@ import javax.swing.border.LineBorder;
  *
  */
 public class Gallery {
+
+	/**
+	 * Singleton instance
+	 */
+	private static Gallery singletonInstance = null;
 	
 	/**
 	 *  System theme color reference:
@@ -77,8 +82,16 @@ public class Gallery {
 	public Font font;
 	public Font mfont;
 	
-	public Gallery() {
+	private Gallery() {
 		setupCustomFonts();
+	}
+	
+	public static Gallery getInstance() {
+		if (singletonInstance == null) {
+			singletonInstance = new Gallery();
+		}
+		
+		return singletonInstance;
 	}
 	
 	public void setupCustomFonts() {

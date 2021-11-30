@@ -60,8 +60,8 @@ public class SupplierAdd extends JFrame {
 	 */
 	public SupplierAdd() {
 		
-		utility = new Utility();
-		gallery = new Gallery();
+		utility = Utility.getInstance();
+		gallery = Gallery.getInstance();
 		
 		setResizable(false);
 		setLocationRelativeTo(null);

@@ -64,8 +64,8 @@ public class SupplierUpdate extends JFrame {
 	
 	public SupplierUpdate() {
 		
-		utility = new Utility();
-		gallery = new Gallery();
+		utility = Utility.getInstance();
+		gallery = Gallery.getInstance();
 		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

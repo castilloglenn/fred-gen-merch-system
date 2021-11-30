@@ -33,6 +33,11 @@ import org.jdatepicker.impl.UtilDateModel;
  *
  */
 public class Utility {
+
+	/**
+	 * Singleton instance
+	 */
+	private static Utility singletonInstance = null;
 	
 	/**
 	 * System default values
@@ -68,12 +73,19 @@ public class Utility {
 
 	        return dateFormatter.format(Calendar.getInstance().getTime());
 	    }
-
 	}
 
 	
-	public Utility() {
+	private Utility() {
 		chooser = new JFileChooser();
+	}
+	
+	public static Utility getInstance() {
+		if (singletonInstance == null) {
+			singletonInstance = new Utility();
+		}
+		
+		return singletonInstance;
 	}
 	
 	/**
@@ -115,6 +127,7 @@ public class Utility {
 		p.put("text.year", "Year");
 		
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+		
 		return new JDatePickerImpl(datePanel, new DateLabelFormatter());
 	}
 	
