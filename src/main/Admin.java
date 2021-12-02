@@ -39,6 +39,9 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.ListSelectionModel;
 
 @SuppressWarnings("serial")
 public class Admin extends JFrame {
@@ -46,12 +49,15 @@ public class Admin extends JFrame {
 	private final String TITLE = "Administrator Mode";
 	private final String logTitle = "System Logs";
 	private final String userTitle = "Users Management";
-	private final String[] positionsList = new String[] {"Store Clerk", "Manager"};
+	private final String[] positionsList = new String[] {"Store Clerk", "Manager", "Administrator"};
 	
 	private int defaultHeight = 710; // 600
 	private int defaultWidth = 990; // 1000
 	private int minHeight = 600; // 710
 	private int minWidth = 800; // 990
+	
+	private String currentTask = "create";
+	private String updateUsername = null;
 
 	private Database database; 
 	private Gallery gallery;
@@ -69,7 +75,7 @@ public class Admin extends JFrame {
 	private JPanel logListPanel;
 	private JPanel logEmptyPanel;
 	private JScrollPane scrollPane;
-	private JTable table;
+	private JTable usersTable;
 	private JLabel lblFirstName;
 	private JLabel lblMiddleName;
 	private JLabel lblLastName;
@@ -405,8 +411,10 @@ public class Admin extends JFrame {
 		sl_usersRightPanel.putConstraint(SpringLayout.EAST, scrollPane, 0, SpringLayout.EAST, usersRightPanel);
 		usersRightPanel.add(scrollPane);
 		
-		table = new JTable();
-		scrollPane.setViewportView(table);
+		usersTable = new JTable();
+		usersTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scrollPane.setViewportView(usersTable);
+		refreshTable();
 		
 		getContentPane().setBackground(Gallery.BLACK);
 		setLocationRelativeTo(null);
@@ -439,6 +447,101 @@ public class Admin extends JFrame {
 				Date datePicked = (Date) datePicker.getModel().getValue();
 				
 				System.out.println(datePicked);
+				
+
+				
+				refreshTable();
+			}
+		});
+		
+		// USERS HERE ----------------
+		cbPosition.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int selected = cbPosition.getSelectedIndex();
+				
+				if (updateUsername == null) {
+					// For creating new users
+					switch (selected) {
+					case 0:
+						tfUserID.setText(Long.toString(utility.generateUserID(database.fetchLastEmployee(), 1)));
+						break;
+					case 1:
+						tfUserID.setText(Long.toString(utility.generateUserID(database.fetchLastEmployee(), 2)));
+						break;
+					case 2:
+						tfUserID.setText(Long.toString(utility.generateUserID(database.fetchLastEmployee(), 3)));
+						break;
+					}
+				} else {
+					// For updating users
+					StringBuilder sb = new StringBuilder(tfUserID.getText());
+			        char level = 0;
+					
+					switch (selected) {
+					case 0:
+						level = '1';
+						break;
+					case 1:
+						level = '2';
+						break;
+					case 2:
+						level = '3';
+						break;
+					}
+					
+			        sb.setCharAt(1, level);
+			        tfUserID.setText(sb.toString());
+				}
+			}
+		});
+		usersTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				int selectedRow = usersTable.getSelectedRow();
+				
+				String selectedID = usersTable.getValueAt(selectedRow, 0).toString();
+				String selectedFname = usersTable.getValueAt(selectedRow, 1).toString();
+				String selectedMname = usersTable.getValueAt(selectedRow, 2).toString();
+				String selectedLname = usersTable.getValueAt(selectedRow, 3).toString();
+				String selectedPosition = usersTable.getValueAt(selectedRow, 4).toString();
+				String selectedContact = usersTable.getValueAt(selectedRow, 5).toString();
+				String selectedUsername = usersTable.getValueAt(selectedRow, 6).toString();
+				
+				tfFirstName.setText(selectedFname);
+				tfMiddleName.setText(selectedMname);
+				tfLastName.setText(selectedLname);
+				
+				if (selectedPosition.equals(positionsList[0])) {
+					cbPosition.setSelectedIndex(0);
+				} else if (selectedPosition.equals(positionsList[1])) {
+					cbPosition.setSelectedIndex(1);
+				} else if (selectedPosition.equals(positionsList[2])) {
+					cbPosition.setSelectedIndex(2);
+				}
+				
+				tfContact.setText(selectedContact);
+				tfUsername.setText(selectedUsername);
+				pfPassword.setText("");
+				
+				if (selectedID.equals("10000000000")) {
+					tfFirstName.setEditable(false);
+					tfMiddleName.setEditable(false);
+					tfLastName.setEditable(false);
+					cbPosition.setEnabled(false);
+					tfContact.setEditable(false);
+					tfUsername.setEditable(false);
+				} else {
+					tfFirstName.setEditable(true);
+					tfMiddleName.setEditable(true);
+					tfLastName.setEditable(true);
+					cbPosition.setEnabled(true);
+					tfContact.setEditable(true);
+					tfUsername.setEditable(true);
+				}
+
+				tfUserID.setText(selectedID);
+				updateUsername = selectedUsername;
+				currentTask = "update";
 			}
 		});
 		lblUpdateButton.addMouseListener(new MouseAdapter() {
@@ -446,8 +549,51 @@ public class Admin extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblUpdateButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO Update the user details
+				if (checkForm("update")) {
+					long selectedID = Long.parseLong(usersTable.getValueAt(usersTable.getSelectedRow(), 0).toString());
 					
+					String tablePosition = usersTable.getValueAt(usersTable.getSelectedRow(), 4).toString();
+					String selectedPosition = cbPosition.getSelectedItem().toString();
+					
+					String passwordChanged = usersTable.getValueAt(usersTable.getSelectedRow(), 7).toString();
+					String typedPassword = new String(pfPassword.getPassword());
+					
+					if (!typedPassword.isBlank()) {
+						passwordChanged = utility.hashData(typedPassword);
+					}
+					
+					if (!tablePosition.equals(selectedPosition)) {
+						// if the user is promoting an employee we will replace the id with the new one
+						if (database.deleteEntry("user", "user_id", selectedID)) {
+							database.addUser(
+									Long.parseLong(tfUserID.getText()), 
+									tfFirstName.getText(), 
+									tfMiddleName.getText(), 
+									tfLastName.getText(), 
+									cbPosition.getSelectedItem().toString(), 
+									tfContact.getText(), 
+									tfUsername.getText(), 
+									passwordChanged);
+						}
+					} else {
+						database.setUser(
+							Long.parseLong(tfUserID.getText()), 
+							tfFirstName.getText(), 
+							tfMiddleName.getText(), 
+							tfLastName.getText(), 
+							cbPosition.getSelectedItem().toString(), 
+							tfContact.getText(), 
+							tfUsername.getText(), 
+							passwordChanged);
+					}
+					
+					JOptionPane.showMessageDialog(
+						null, "Successfully updated the user " + tfFirstName.getText() + ".", 
+						Utility.APP_TITLE, 
+						JOptionPane.INFORMATION_MESSAGE);
+					clearForm();
+					refreshTable();
+				}
 			}
 		});
 		lblRemoveButton.addMouseListener(new MouseAdapter() {
@@ -456,7 +602,28 @@ public class Admin extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO Delete the user details
-				
+				if (checkForm("delete")) {
+					long selectedID = Long.parseLong(usersTable.getValueAt(usersTable.getSelectedRow(), 0).toString());
+					
+					// Confirmation message
+					int result = JOptionPane.showConfirmDialog(
+						null, "Are you sure you want to delete ID:" + selectedID + "?", 
+						Utility.APP_TITLE, 
+						JOptionPane.OK_CANCEL_OPTION, 
+						JOptionPane.WARNING_MESSAGE);
+					
+					// Execution
+					if (result == 0) {
+						if (database.deleteEntry("user", "user_id", selectedID)) {
+							JOptionPane.showMessageDialog(
+									null, "Successfully deleted the user with the ID:" + selectedID + ".", 
+									Utility.APP_TITLE, 
+									JOptionPane.INFORMATION_MESSAGE);
+							clearForm();
+							refreshTable();
+						}
+					}
+				}
 			}
 		});
 		lblCreateButton.addMouseListener(new MouseAdapter() {
@@ -464,8 +631,7 @@ public class Admin extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCreateButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO Create a new user
-				if (checkForm()) {
+				if (checkForm("create")) {
 					database.addUser(
 						Long.parseLong(
 							tfUserID.getText()), 
@@ -483,6 +649,7 @@ public class Admin extends JFrame {
 						Utility.APP_TITLE, 
 						JOptionPane.INFORMATION_MESSAGE);
 					clearForm();
+					refreshTable();
 				}
 			}
 		});
@@ -494,35 +661,97 @@ public class Admin extends JFrame {
 				clearForm();
 			}
 		});
+		
 	}
 	
-	private boolean checkForm() {
+	private boolean checkForm(String task) {
 		// Constructor for error handling to be displayed into the custom error message display
 		ArrayList<String> errorMessages = new ArrayList<>(); // REQUIRED
 		String fetchedPassword = new String(pfPassword.getPassword());
 		
 		// If conditions to handle all kinds of possible errors
+		String selectedID = tfUserID.getText();
+		if (selectedID.equals("10000000000")) {
+			// For administrator
+			if (task.equals("create")) {
+				errorMessages.add("- You cannot create another default administrator login.");
+				gallery.showMessage(errorMessages.toArray(new String[0])); // Shortcut to the end
+				return false;
+			}
+			
+			if (task.equals("update")) {
+				if (fetchedPassword.isEmpty() || fetchedPassword.length() < 6) {
+					errorMessages.add("- The new administrator password must be greater than or equal to 6 characters.");
+					gallery.showMessage(errorMessages.toArray(new String[0])); // Shortcut to the end
+					return false;
+				} else {
+					return true;
+				}
+			}
+			
+			if (task.equals("delete")) {
+				errorMessages.add("- You cannot delete the default administrator login.");
+				gallery.showMessage(errorMessages.toArray(new String[0])); // Shortcut to the end
+				return false;
+			}
+		}
+		
+		if (currentTask != task) {
+			if (task.equals("create")) {
+				errorMessages.add("- You should clear the form first before creating a new one.");
+				gallery.showMessage(errorMessages.toArray(new String[0])); // Shortcut to the end
+				return false;
+			}
+			
+			if (task.equals("update")) {
+				errorMessages.add("- You cannot update a non-existent user.");
+				gallery.showMessage(errorMessages.toArray(new String[0])); // Shortcut to the end
+				return false;
+			}
+			
+			if (task.equals("delete")) {
+				if (usersTable.getSelectedRow() == -1) {
+					errorMessages.add("- You must select a row of a user in the table to delete it.");
+					gallery.showMessage(errorMessages.toArray(new String[0])); // Shortcut to the end
+					return false;
+				} else 
+					return true;
+			}
+		}
+		
+		// Text field checks
 		if (tfFirstName.getText().isBlank()) errorMessages.add("- First Name field cannot be empty.");
 		if (tfLastName.getText().isBlank()) errorMessages.add("- Last Name field cannot be empty.");
 		if (tfContact.getText().isBlank()) errorMessages.add("- Contact detail field cannot be empty.");
 		
 		if (tfUsername.getText().isBlank()) {
 			errorMessages.add("- Username field cannot be empty.");
-		} else if (database.checkUsername(tfUsername.getText())) {
+		} else if (database.checkUsername(tfUsername.getText()) &&
+				!tfUsername.getText().equals(updateUsername)) {
 			errorMessages.add("- Username already exists.");
 		}
 		
-		if (fetchedPassword.isBlank()) {
-			errorMessages.add("- Password field cannot be empty.");
-		} else if (fetchedPassword.length() < 6) {
-			errorMessages.add("- Passwords must be greater than or equal to 6 characters.");
+		if (updateUsername == null) {
+			if (fetchedPassword.isBlank()) {
+				errorMessages.add("- Password field cannot be empty.");
+			} else if (fetchedPassword.length() < 6) {
+				errorMessages.add("- Passwords must be greater than or equal to 6 characters.");
+			}
+		} else {
+			// this condition is for update users
+			if (usersTable.getSelectedRow() == -1) {
+				errorMessages.add("- Please select a record of a user to update.");
+			}
+			
+			if (!fetchedPassword.isEmpty() && fetchedPassword.length() < 6) {
+				errorMessages.add("- Passwords must be greater than or equal to 6 characters.");
+			}
 		}
-		
+
 		if (errorMessages.size() > 0) { // REQUIRED
 			gallery.showMessage(errorMessages.toArray(new String[0])); // REQUIRED
 			return false;
 		} else {
-			
 			return true;
 		}
 	}
@@ -536,5 +765,34 @@ public class Admin extends JFrame {
 		tfContact.setText("");
 		tfUsername.setText("");
 		pfPassword.setText("");
+		
+		tfFirstName.setEditable(true);
+		tfMiddleName.setEditable(true);
+		tfLastName.setEditable(true);
+		cbPosition.setEnabled(true);
+		tfContact.setEditable(true);
+		tfUsername.setEditable(true);
+		
+		usersTable.getSelectionModel().clearSelection();
+		
+		updateUsername = null;
+		currentTask = "create";
+	}
+	
+	private void refreshTable() {
+		usersTable.setModel(
+			utility.generateTable(
+				database.getUsersByKeyword(""), 
+				Database.userHeaders));
+
+		usersTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		usersTable.getColumnModel().getColumn(0).setPreferredWidth(85);
+		usersTable.getColumnModel().getColumn(1).setPreferredWidth(100);
+		usersTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+		usersTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+		usersTable.getColumnModel().getColumn(4).setPreferredWidth(80);
+		usersTable.getColumnModel().getColumn(5).setPreferredWidth(85);
+		usersTable.getColumnModel().getColumn(6).setPreferredWidth(90);
+		usersTable.getColumnModel().getColumn(7).setPreferredWidth(200);
 	}
 }

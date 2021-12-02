@@ -34,12 +34,21 @@ public class Database {
 	 */
 	private static Database singletonInstance = null;
 	
+	/**
+	 * Database headers for table
+	 */
+	public static Object[] userHeaders = {
+			"User ID", "First Name", "Middle Name", "Last Name", 
+			"Position", "Contact", "Username", "Password"
+	};
+	
 	private String defaultAdminPassword = "superadmin!";
 	
 	private String db_url = "jdbc:mysql://localhost/?serverTimezone=UTC";
 	private String db_name = "fred_gen_merch";
 	private String db_user = "root";
 	private String db_pass = "";
+	
 	
 	private DateFormat sqlDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	private Connection con;
@@ -216,8 +225,8 @@ public class Database {
 			ps.setLong(1, userID);
 			ps.setString(2, fname);
 			
-			if (mname == null) {
-				ps.setNull(3,  Types.NULL);
+			if (mname.isBlank()) {
+				ps.setString(3, "");
 			} else {
 				ps.setString(3, mname);
 			}
@@ -927,8 +936,8 @@ public class Database {
 			);
 			ps.setString(1, fname);
 
-			if (mname == null) {
-				ps.setNull(2,  Types.NULL);
+			if (mname.isBlank()) {
+				ps.setString(2, "");
 			} else {
 				ps.setString(2, mname);
 			}
