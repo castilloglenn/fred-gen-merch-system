@@ -31,9 +31,13 @@ public class ProductAdd extends JFrame {
 	private String imagePath;
 	
 	private JPanel contentPane, p, newProductPanel, iconSelectionPanel, buttonPanel, formPanel,iconPanel;
-	private JLabel lblNewProduct, btnConfirm, btnCancel,lblProductID,lblStocks,lblUOM,lblPriceBought,lblName,lblSellingPrice,lblSupplier;
-	private JTextField txtProductID,txtName,txtStocks,txtUOM,txtPriceBought,txtSellingPrice;
+	private JLabel lblNewProduct, btnConfirm,lblProductID,lblName,lblStocks,lblUOM,lblCategory,lblPriceBought,lblSupplier;
+	private JTextField txtProductID,txtName,txtStocks,txtUOM,txtPriceBought;
 	private JComboBox comboSupplier;
+	private JLabel lblSellingPrice;
+	private JComboBox comboCategory;
+	private JTextField txtSellingPrice;
+	private JLabel btnCancel;
 
 	/**
 	 * Launch the application.
@@ -123,10 +127,17 @@ public class ProductAdd extends JFrame {
 		formPanel.add(txtProductID);
 		txtProductID.setColumns(10);
 		
+		lblCategory = new JLabel("Category");
+		lblCategory.setFont(gallery.getFont(14f));
+		sl_formPanel.putConstraint(SpringLayout.WEST, lblCategory, 0, SpringLayout.WEST, lblProductID);
+		sl_formPanel.putConstraint(SpringLayout.EAST, lblCategory, 0, SpringLayout.EAST, lblProductID);
+		formPanel.add(lblCategory);
+		
 		lblName = new JLabel("Name");
 		lblName.setFont(gallery.getFont(14f));
-		sl_formPanel.putConstraint(SpringLayout.WEST, lblName, 0, SpringLayout.WEST, lblProductID);
+		sl_formPanel.putConstraint(SpringLayout.NORTH, lblName, 15, SpringLayout.SOUTH, lblCategory);
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblName, 0, SpringLayout.EAST, lblProductID);
+		sl_formPanel.putConstraint(SpringLayout.WEST, lblName, 0, SpringLayout.WEST, lblProductID);
 		formPanel.add(lblName);
 		
 		txtName = new JTextField();
@@ -146,25 +157,25 @@ public class ProductAdd extends JFrame {
 		formPanel.add(lblStocks);
 		
 		txtStocks = new JTextField();
+		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtStocks, 0, SpringLayout.SOUTH, lblStocks);
 		txtStocks.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtStocks, -2, SpringLayout.NORTH, lblStocks);
-		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtStocks, 2, SpringLayout.SOUTH, lblStocks);
 		sl_formPanel.putConstraint(SpringLayout.EAST, txtStocks, 0, SpringLayout.EAST, txtProductID);
 		sl_formPanel.putConstraint(SpringLayout.WEST, txtStocks, 0, SpringLayout.WEST, txtProductID);
 		formPanel.add(txtStocks);
 		txtStocks.setColumns(10);
 		
-		lblUOM = new JLabel("<html>Unit of Measurement</html>\r\n");
+		lblUOM = new JLabel("<html>Unit of Measurement</html");
 		lblUOM.setFont(gallery.getFont(14f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, lblUOM, 15, SpringLayout.SOUTH, lblStocks);
-		sl_formPanel.putConstraint(SpringLayout.EAST, lblUOM, 0, SpringLayout.EAST, lblProductID);
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblUOM, 0, SpringLayout.WEST, lblProductID);
+		sl_formPanel.putConstraint(SpringLayout.EAST, lblUOM, 0, SpringLayout.EAST, lblProductID);
 		formPanel.add(lblUOM);
 		
 		txtUOM = new JTextField();
+		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtUOM, -20, SpringLayout.SOUTH, lblUOM);
 		txtUOM.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtUOM, -2, SpringLayout.NORTH, lblUOM);
-		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtUOM, -18, SpringLayout.SOUTH, lblUOM);
 		sl_formPanel.putConstraint(SpringLayout.EAST, txtUOM, 0, SpringLayout.EAST, txtProductID);
 		sl_formPanel.putConstraint(SpringLayout.WEST, txtUOM, 0, SpringLayout.WEST, txtProductID);
 		formPanel.add(txtUOM);
@@ -185,32 +196,17 @@ public class ProductAdd extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.WEST, txtPriceBought, 0, SpringLayout.WEST, txtProductID);
 		formPanel.add(txtPriceBought);
 		txtPriceBought.setColumns(10);
-		
-		lblSellingPrice = new JLabel("Selling Price");
-		lblSellingPrice.setFont(gallery.getFont(14f));
-		sl_formPanel.putConstraint(SpringLayout.NORTH, lblSellingPrice, 15, SpringLayout.SOUTH, lblPriceBought);
-		sl_formPanel.putConstraint(SpringLayout.WEST, lblSellingPrice, 0, SpringLayout.WEST, lblProductID);
-		sl_formPanel.putConstraint(SpringLayout.EAST, lblSellingPrice, 0, SpringLayout.EAST, lblProductID);
-		formPanel.add(lblSellingPrice);
-		
-		txtSellingPrice = new JTextField();
-		txtSellingPrice.setFont(gallery.getFont(15f));
-		sl_formPanel.putConstraint(SpringLayout.NORTH, txtSellingPrice, -2, SpringLayout.NORTH, lblSellingPrice);
-		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtSellingPrice, 2, SpringLayout.SOUTH, lblSellingPrice);
-		sl_formPanel.putConstraint(SpringLayout.EAST, txtSellingPrice, 0, SpringLayout.EAST, txtProductID);
-		sl_formPanel.putConstraint(SpringLayout.WEST, txtSellingPrice, 0, SpringLayout.WEST, txtProductID);
-		formPanel.add(txtSellingPrice);
-		txtSellingPrice.setColumns(10);
 		p.add(iconSelectionPanel);
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
-		sl_p.putConstraint(SpringLayout.SOUTH, formPanel, -10, SpringLayout.NORTH, buttonPanel);
+		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, -70, SpringLayout.SOUTH, p);
+		sl_p.putConstraint(SpringLayout.SOUTH, formPanel, -5, SpringLayout.NORTH, buttonPanel);
 		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, 0, SpringLayout.WEST, formPanel);
 		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, 0, SpringLayout.EAST, formPanel);
 		
 		lblSupplier = new JLabel("Supplier");
 		lblSupplier.setFont(gallery.getFont(14f));
-		sl_formPanel.putConstraint(SpringLayout.NORTH, lblName, 15, SpringLayout.SOUTH, lblSupplier);
+		sl_formPanel.putConstraint(SpringLayout.NORTH, lblCategory, 15, SpringLayout.SOUTH, lblSupplier);
 		sl_formPanel.putConstraint(SpringLayout.NORTH, lblSupplier, 15, SpringLayout.SOUTH, lblProductID);
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblSupplier, 0, SpringLayout.WEST, lblProductID);
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblSupplier, 0, SpringLayout.EAST, lblProductID);
@@ -220,12 +216,32 @@ public class ProductAdd extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.NORTH, comboSupplier, -2, SpringLayout.NORTH, lblSupplier);
 		sl_formPanel.putConstraint(SpringLayout.WEST, comboSupplier, 0, SpringLayout.WEST, txtProductID);
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, comboSupplier, 2, SpringLayout.SOUTH, lblSupplier);
-		sl_formPanel.putConstraint(SpringLayout.EAST, comboSupplier, 0, SpringLayout.EAST, txtProductID);
-		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, -100, SpringLayout.SOUTH, p);;
+		sl_formPanel.putConstraint(SpringLayout.EAST, comboSupplier, 0, SpringLayout.EAST, txtProductID);;
 		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -10, SpringLayout.SOUTH, p);
 		SpringLayout sl_iconSelectionPanel = new SpringLayout();
 		iconSelectionPanel.setLayout(sl_iconSelectionPanel);
 		formPanel.add(comboSupplier);
+		
+		lblSellingPrice = new JLabel("Selling Price");
+		lblSellingPrice.setFont(gallery.getFont(14f));
+		sl_formPanel.putConstraint(SpringLayout.NORTH, lblSellingPrice, 18, SpringLayout.SOUTH, lblPriceBought);
+		sl_formPanel.putConstraint(SpringLayout.WEST, lblSellingPrice, 0, SpringLayout.WEST, lblProductID);
+		formPanel.add(lblSellingPrice);
+		
+		comboCategory = new JComboBox();
+		sl_formPanel.putConstraint(SpringLayout.NORTH, comboCategory, 0, SpringLayout.NORTH, lblCategory);
+		sl_formPanel.putConstraint(SpringLayout.WEST, comboCategory, 0, SpringLayout.WEST, txtProductID);
+		sl_formPanel.putConstraint(SpringLayout.SOUTH, comboCategory, 2, SpringLayout.SOUTH, lblCategory);
+		sl_formPanel.putConstraint(SpringLayout.EAST, comboCategory, 0, SpringLayout.EAST, txtProductID);
+		formPanel.add(comboCategory);
+		
+		txtSellingPrice = new JTextField();
+		txtSellingPrice.setFont(gallery.getFont(15f));
+		sl_formPanel.putConstraint(SpringLayout.NORTH, txtSellingPrice, 0, SpringLayout.NORTH, lblSellingPrice);
+		sl_formPanel.putConstraint(SpringLayout.WEST, txtSellingPrice, 0, SpringLayout.WEST, txtProductID);
+		sl_formPanel.putConstraint(SpringLayout.EAST, txtSellingPrice, 0, SpringLayout.EAST, txtProductID);
+		txtSellingPrice.setColumns(10);
+		formPanel.add(txtSellingPrice);
 		
 		iconPanel = new JPanel();
 		sl_iconSelectionPanel.putConstraint(SpringLayout.SOUTH, iconPanel, -20, SpringLayout.SOUTH, iconSelectionPanel);
@@ -250,20 +266,20 @@ public class ProductAdd extends JFrame {
 		btnConfirm = new JLabel("Confirm");
 		btnConfirm.setName("primary");
 		gallery.styleLabelToButton(btnConfirm, 14f, 15, 10);
+		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnConfirm, 15, SpringLayout.NORTH, buttonPanel);
+		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnConfirm, -15, SpringLayout.SOUTH, buttonPanel);
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnConfirm, -225, SpringLayout.EAST, buttonPanel);
 		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnConfirm, 15, SpringLayout.WEST, buttonPanel);
-		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnConfirm, -15, SpringLayout.EAST, buttonPanel);
-		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnConfirm, -49, SpringLayout.SOUTH, buttonPanel);
-		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnConfirm, 10, SpringLayout.NORTH, buttonPanel);
 		btnConfirm.setHorizontalAlignment(SwingConstants.CENTER);
 		buttonPanel.add(btnConfirm);
 		
 		btnCancel = new JLabel("Cancel");
 		btnCancel.setName("danger");
 		gallery.styleLabelToButton(btnCancel, 14f, 15, 10);
-		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnCancel, 7, SpringLayout.SOUTH, btnConfirm);
-		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnCancel, 0, SpringLayout.WEST, btnConfirm);
-		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnCancel, -10, SpringLayout.SOUTH, buttonPanel);
-		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnCancel, 0, SpringLayout.EAST, btnConfirm);
+		sl_buttonPanel.putConstraint(SpringLayout.NORTH, btnCancel, -2, SpringLayout.NORTH, btnConfirm);
+		sl_buttonPanel.putConstraint(SpringLayout.WEST, btnCancel, 10, SpringLayout.EAST, btnConfirm);
+		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnCancel, 0, SpringLayout.SOUTH, btnConfirm);
+		sl_buttonPanel.putConstraint(SpringLayout.EAST, btnCancel, -15, SpringLayout.EAST, buttonPanel);
 		btnCancel.setHorizontalAlignment(SwingConstants.CENTER);
 		buttonPanel.add(btnCancel);
 		
@@ -284,21 +300,22 @@ public class ProductAdd extends JFrame {
 			@Override
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnCancel);}
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				dispose();
-			}
+			public void mouseClicked(MouseEvent e) {dispose();}
 		});
 		
 	}
+	
+	
 	private void missingFields() {
 		ArrayList<String> errorMessages = new ArrayList<>();
 		
 		String supplier = String.valueOf(comboSupplier.getSelectedItem());
+		String category = String.valueOf(comboCategory.getSelectedItem());
 		String name = txtName.getText();
-		String stocks = txtStocks.getText();
-		String unitofMeasurement = txtUOM.getText();
-		String priceBought = txtPriceBought.getText();
-		String sellPrice = txtSellingPrice.getText();
+		String stocks = txtName.getText();
+		String unitofMeasurement = txtStocks.getText();
+		String priceBought = txtUOM.getText();
+		String sellPrice = txtPriceBought.getText();
 		
 		if(supplier.equals("") || name.equals("") || stocks.equals("") || unitofMeasurement.equals("") || priceBought.equals("") || sellPrice.equals("")) {
 			errorMessages.add(" - Please fill out the missing fields!");
