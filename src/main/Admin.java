@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 
 import utils.Database;
 import utils.Gallery;
+import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
@@ -63,6 +64,8 @@ public class Admin extends JFrame {
 	private Gallery gallery;
 	private Utility utility;
 	private Main main;
+	private Logger logger;
+	private Object[] user;
 	
 	private JDatePickerImpl datePicker;
 	private RoundedPanel navigationPanel, displayPanel;
@@ -98,10 +101,11 @@ public class Admin extends JFrame {
 	private JTextArea taLogs;
 	private JLabel lblClearButton;
 
-	public Admin(Main main) {
-		this.database = Database.getInstance();
-		this.gallery = Gallery.getInstance();
-		this.utility = Utility.getInstance();
+	public Admin(Main main, Object[] user) {
+		database = Database.getInstance();
+		gallery = Gallery.getInstance();
+		utility = Utility.getInstance();
+		logger = Logger.getInstance();
 		this.main = main;
 		
 		setIconImage(gallery.getSystemIcon());

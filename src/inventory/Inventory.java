@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import utils.Gallery;
+import utils.Logger;
 import utils.RoundedPanel;
 import utils.Database;
 
@@ -56,6 +57,7 @@ public class Inventory extends JFrame {
 	private Gallery gallery;
 	private Utility utility;
 	private Main main;
+	private Logger logger;
 	
 	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
 	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, panel, supplierTablePanel,productImagePanel;
@@ -93,6 +95,7 @@ public class Inventory extends JFrame {
 	public Inventory() {
 		gallery = Gallery.getInstance();
 		utility = Utility.getInstance();
+		logger = Logger.getInstance();
 //		this.main = main;
 		
 		SupplierAdd invSupplierAdd = new SupplierAdd();

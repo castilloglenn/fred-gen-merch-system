@@ -1163,7 +1163,7 @@ public class Database {
 	}
 	
 	/**
-	 * This will check if there is an existing user that holds the same username
+	 * This will check if there is an existing user that holds the same user name
 	 * 
 	 * @param username the value of the user name submitted by the input
 	 * @return true if it exists, false if not

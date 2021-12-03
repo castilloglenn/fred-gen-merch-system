@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import pos.POS;
 import utils.Database;
 import utils.Gallery;
+import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 import javax.swing.SpringLayout;
@@ -28,7 +29,9 @@ import javax.swing.JPasswordField;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.awt.event.KeyAdapter;
 
 
 /**
@@ -43,11 +46,13 @@ public class Main extends JFrame {
 	private Gallery gallery;
 	private Database database;
 	private Utility utility;
+	private Logger logger;
 	
 	// System Modules
 	private Admin admin;
 	private POS pos;
 	private Inventory inventory;
+	private Object[] user;
 	
 	// Window Components
 	private RoundedPanel adminPanel, loginPanel, shadowPanel, titlePanel;
@@ -68,6 +73,15 @@ public class Main extends JFrame {
 		gallery = Gallery.getInstance();
 		database = Database.getInstance();
 		utility = Utility.getInstance();
+		logger = Logger.getInstance();
+		
+		logger.addLog("System started.");
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				logger.addLog("System closed.");
+			}
+		});
 
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE);
@@ -235,7 +249,7 @@ public class Main extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO login redirect to portal
-				String[] inputs = getInput();
+				checkLogin();
 				
 			}
 		});
@@ -263,6 +277,20 @@ public class Main extends JFrame {
 		    	checkAdminLogin();
 		    }
 		});
+		tfPassword
+		.getInputMap(JComponent.WHEN_FOCUSED)
+		.put(
+			KeyStroke.getKeyStroke(
+				KeyEvent.VK_ENTER, 
+				0, 
+				false)
+					, "Enter Action");
+		tfPassword.getActionMap().put("Enter Action", new AbstractAction() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		    	checkLogin();
+		    }
+		});
 		
 		setVisible(true);
 		
@@ -273,14 +301,62 @@ public class Main extends JFrame {
 //		inventory.setVisible(true);
 	}
 	
+	private Object[] checkAndGetUserDetails(String[] user) {
+		ArrayList<String> errorMessages = new ArrayList<>(); // REQUIRED
+		Object[] userDetails = new Object[8];
+		
+		if (database.checkUsername(user[0])) {
+			userDetails = database.getUsersByKeyword(user[0])[0];
+			if (!userDetails[7].equals(user[1])) {
+				errorMessages.add("- Password does not match the username provided.");
+			}
+		} else {
+			errorMessages.add("- Username does not exists.");
+		}
+		
+		if (errorMessages.size() > 0) { 
+			gallery.showMessage(errorMessages.toArray(new String[0])); 
+			return null;
+		}
+		
+		return userDetails;
+	}
+	
+	private void checkLogin() {
+		String[] inputs = getInput();
+		Object[] userDetails = checkAndGetUserDetails(inputs);
+		
+		logger.addLog(String.format("Username '%s' has been attempted to sign in.", inputs[0]));
+		
+		if (userDetails != null) {
+			System.out.println("hehe boi");
+		}
+
+	}
+	
 	private void checkAdminLogin() {
 		String[] inputs = getInput();
+		logger.addLog(String.format("The admin account has been attempted to sign in.", inputs[0]));
 		
-		Object[] fetch = database.getUsersByKeyword("admin")[0];
-		String[] result = {fetch[6].toString(), fetch[7].toString()};
+		if (inputs[0].equals("admin")) {
+			Object[] fetch = database.getUsersByKeyword("admin")[0];
+			String[] result = {fetch[6].toString(), fetch[7].toString()};
 
-		if (Arrays.equals(inputs, result)) {
-			openAdmin();
+			if (Arrays.equals(inputs, result)) {
+				user = fetch;
+				logger.addLog(String.format("The admin account has been logged on and opened Administrator Mode.", user[0]));
+				openAdmin();
+			}
+		} else {
+			Object[] userDetails = checkAndGetUserDetails(inputs);
+			if (userDetails != null) {
+				char level = userDetails[0].toString().charAt(1);
+				if (level == '2' || level == '3') {
+					user = userDetails;
+					logger.addLog(String.format("User '%s' has logged on and opened Administrator Mode.", user[0]));
+					openAdmin();
+				}
+			}
 		}
 	}
 	
@@ -297,7 +373,7 @@ public class Main extends JFrame {
 	
 	private void openAdmin() {
 		setVisible(false);
-		admin = new Admin(this);
+		admin = new Admin(this, user);
 		admin.setVisible(true);
 	}
 }
