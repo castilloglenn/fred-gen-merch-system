@@ -493,6 +493,50 @@ public class Database {
 	}
 	
 	/**
+	 * Gets a detail of a specific user name.
+	 * 
+	 * @param username the user name given by the input 
+	 * @return the details from the database
+	 */
+	public Object[] getUserLogin(String username) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT * " 
+					+ "FROM user " 
+					+ "WHERE username=?;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[] result = new Object[8];
+            while (rs.next()){
+
+            	result[0] = rs.getLong("user_id");
+            	result[1] = rs.getString("fname");
+            	result[2] = rs.getString("mname");
+            	result[3] = rs.getString("lname");
+            	result[4] = rs.getString("position");
+            	result[5] = rs.getString("contact");
+            	result[6] = rs.getString("username");
+            	result[7] = rs.getString("password");
+            }
+            if (size != 0) {
+                return result;
+            }
+        } catch(Exception ex){
+            ex.printStackTrace();
+        }
+		return null;
+	}
+	
+	/**
 	 * Fetches suppliers based on a keyword of any of its details
 	 * 
 	 * @param keyword key-sensitive search term use to get suppliers from the database

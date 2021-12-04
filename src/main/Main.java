@@ -306,7 +306,7 @@ public class Main extends JFrame {
 		Object[] userDetails = new Object[8];
 		
 		if (database.checkUsername(user[0])) {
-			userDetails = database.getUsersByKeyword(user[0])[0];
+			userDetails = database.getUserLogin(user[0]);
 			if (!userDetails[7].equals(user[1])) {
 				errorMessages.add("- Password does not match the username provided.");
 			}
@@ -339,7 +339,7 @@ public class Main extends JFrame {
 		logger.addLog(String.format("The admin account has been attempted to sign in.", inputs[0]));
 		
 		if (inputs[0].equals("admin")) {
-			Object[] fetch = database.getUsersByKeyword("admin")[0];
+			Object[] fetch = database.getUserLogin("admin");
 			String[] result = {fetch[6].toString(), fetch[7].toString()};
 
 			if (Arrays.equals(inputs, result)) {

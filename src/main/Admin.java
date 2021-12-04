@@ -1,48 +1,43 @@
 package main;
 
+import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Properties;
 
-import javax.swing.JFormattedTextField.AbstractFormatter;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+
+import org.jdatepicker.impl.JDatePickerImpl;
 
 import utils.Database;
 import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
-import utils.VerticalLabelUI;
-import javax.swing.SpringLayout;
-
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
-
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
-import java.awt.CardLayout;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.ListSelectionModel;
 
 @SuppressWarnings("serial")
 public class Admin extends JFrame {
@@ -51,6 +46,7 @@ public class Admin extends JFrame {
 	private final String logTitle = "System Logs";
 	private final String userTitle = "Users Management";
 	private final String[] positionsList = new String[] {"Store Clerk", "Manager", "Administrator"};
+	private final String logEmptyMessage = "There are no logs within the date of ";
 	
 	private int defaultHeight = 710; // 600
 	private int defaultWidth = 990; // 1000
@@ -100,6 +96,7 @@ public class Admin extends JFrame {
 	private JScrollPane logsScrollPane;
 	private JTextArea taLogs;
 	private JLabel lblClearButton;
+	private JLabel lblLogEmptyMessage;
 
 	public Admin(Main main, Object[] user) {
 		database = Database.getInstance();
@@ -107,6 +104,7 @@ public class Admin extends JFrame {
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
 		this.main = main;
+		this.user = user;
 		
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
@@ -226,8 +224,19 @@ public class Admin extends JFrame {
 		logsScrollPane.setViewportView(taLogs);
 		
 		logEmptyPanel = new JPanel();
-		logEmptyPanel.setBackground(Gallery.RED);
+		logEmptyPanel.setBackground(Gallery.WHITE);
 		logCardPanel.add(logEmptyPanel, "log_empty");
+		SpringLayout sl_logEmptyPanel = new SpringLayout();
+		logEmptyPanel.setLayout(sl_logEmptyPanel);
+		
+		lblLogEmptyMessage = new JLabel();
+		lblLogEmptyMessage.setFont(gallery.getFont(15f));
+		lblLogEmptyMessage.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_logEmptyPanel.putConstraint(SpringLayout.NORTH, lblLogEmptyMessage, 0, SpringLayout.NORTH, logEmptyPanel);
+		sl_logEmptyPanel.putConstraint(SpringLayout.WEST, lblLogEmptyMessage, 0, SpringLayout.WEST, logEmptyPanel);
+		sl_logEmptyPanel.putConstraint(SpringLayout.SOUTH, lblLogEmptyMessage, 0, SpringLayout.SOUTH, logEmptyPanel);
+		sl_logEmptyPanel.putConstraint(SpringLayout.EAST, lblLogEmptyMessage, 0, SpringLayout.EAST, logEmptyPanel);
+		logEmptyPanel.add(lblLogEmptyMessage);
 		
 		userPanel = new JPanel();
 		userPanel.setBackground(Gallery.WHITE);
@@ -438,6 +447,10 @@ public class Admin extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblUsersButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
+				logger.addLog(
+					String.format(
+						"User %s opened the user management panel.", 
+						user[0]));
 
 				cardLayout.show(cardPanel, "user");
 			}
@@ -447,14 +460,7 @@ public class Admin extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblSearchButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO Search
-				Date datePicked = (Date) datePicker.getModel().getValue();
-				
-				System.out.println(datePicked);
-				
-
-				
-				refreshTable();
+				displayLog();
 			}
 		});
 		
@@ -590,7 +596,11 @@ public class Admin extends JFrame {
 							tfUsername.getText(), 
 							passwordChanged);
 					}
-					
+
+					logger.addLog(
+						String.format(
+							"User %s updated the user %s's details.", 
+							user[0], tfUserID.getText()));
 					JOptionPane.showMessageDialog(
 						null, "Successfully updated the user " + tfFirstName.getText() + ".", 
 						Utility.APP_TITLE, 
@@ -605,7 +615,6 @@ public class Admin extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblRemoveButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO Delete the user details
 				if (checkForm("delete")) {
 					long selectedID = Long.parseLong(usersTable.getValueAt(usersTable.getSelectedRow(), 0).toString());
 					
@@ -619,6 +628,11 @@ public class Admin extends JFrame {
 					// Execution
 					if (result == 0) {
 						if (database.deleteEntry("user", "user_id", selectedID)) {
+							logger.addLog(
+								String.format(
+									"User %s deleted user %s.", 
+									user[0], tfUserID.getText()));
+							
 							JOptionPane.showMessageDialog(
 									null, "Successfully deleted the user with the ID:" + selectedID + ".", 
 									Utility.APP_TITLE, 
@@ -648,6 +662,10 @@ public class Admin extends JFrame {
 							utility.hashData(
 								new String(
 									pfPassword.getPassword())));
+					logger.addLog(
+						String.format(
+							"User %s added the user %s to the database.", 
+							user[0], tfUserID.getText()));
 					JOptionPane.showMessageDialog(
 						null, "Successfully registered new user.", 
 						Utility.APP_TITLE, 
@@ -666,6 +684,7 @@ public class Admin extends JFrame {
 			}
 		});
 		
+		displayLog();
 	}
 	
 	private boolean checkForm(String task) {
@@ -798,5 +817,70 @@ public class Admin extends JFrame {
 		usersTable.getColumnModel().getColumn(5).setPreferredWidth(85);
 		usersTable.getColumnModel().getColumn(6).setPreferredWidth(90);
 		usersTable.getColumnModel().getColumn(7).setPreferredWidth(200);
+	}
+	
+	// Methods below this is binded to the logs panel
+	
+	private void displayLog() {
+		Date datePicked = (Date) datePicker.getModel().getValue();
+		StringBuilder logFilePath = new StringBuilder("reports/system/");
+        Calendar time = Calendar.getInstance();
+        
+		if (datePicked != null) {
+			time.setTime(datePicked); 
+		}
+
+        logFilePath.append(time.get(Calendar.YEAR));
+        logFilePath.append(String.format("%02d", time.get(Calendar.MONTH) + 1));
+        logFilePath.append(String.format("%02d", time.get(Calendar.DAY_OF_MONTH)));
+        logFilePath.append(".txt");
+
+        String filePath = logFilePath.toString();
+        File logFile = new File(filePath);
+        
+        StringBuilder logDay = new StringBuilder("");
+		
+		logDay.append(time.get(Calendar.YEAR));
+		logDay.append("/");
+		logDay.append(String.format("%02d", time.get(Calendar.MONTH) + 1));
+		logDay.append("/");
+		logDay.append(String.format("%02d", time.get(Calendar.DAY_OF_MONTH)));
+		
+		logger.addLog(
+			String.format(
+				"User %s searched the logs for the day of %s.", 
+				user[0], logDay.toString()));
+        
+        if (!logFile.isFile()) {
+    		logDay.insert(0, logEmptyMessage);
+    		
+    		lblLogEmptyMessage.setText(logDay.toString());
+    		logCartLayout.show(logCardPanel, "log_empty");
+        } 
+        
+        else {
+        	try {
+				FileReader fr = new FileReader(filePath);
+				BufferedReader logFileReader = new BufferedReader(fr);
+				StringBuilder logMessage = new StringBuilder("Logs for the day: " + logDay.toString() + "\n\n");
+				
+				String fileLine;
+				while ((fileLine = logFileReader.readLine()) != null) {
+					logMessage.append(
+						utility.decodeData(fileLine));
+					
+					logMessage.append("\n");
+				}
+				
+				logFileReader.close();
+				fr.close();
+
+				taLogs.setText(logMessage.toString());
+				taLogs.setCaretPosition(0);
+	    		logCartLayout.show(logCardPanel, "log_result");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
 	}
 }
