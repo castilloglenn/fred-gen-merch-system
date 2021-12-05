@@ -32,6 +32,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.awt.event.KeyAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 /**
@@ -49,9 +51,9 @@ public class Main extends JFrame {
 	private Logger logger;
 	
 	// System Modules
-	private Admin admin;
-	private POS pos;
-	private Inventory inventory;
+	public Admin admin;
+	public POS pos;
+	public Inventory inventory;
 	private Object[] user;
 	
 	// Window Components
@@ -75,13 +77,7 @@ public class Main extends JFrame {
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
 		
-		logger.addLog("System started.");
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				logger.addLog("System closed.");
-			}
-		});
+		logger.addLog("Login window opened.");
 
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE);
@@ -203,6 +199,13 @@ public class Main extends JFrame {
 		
 		
 
+
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				logger.addLog("System closed.");
+			}
+		});
 		lblForgotPasswordButton.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblForgotPasswordButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblForgotPasswordButton); }
@@ -228,10 +231,10 @@ public class Main extends JFrame {
 				                         null, options, options[0]);
 				
 				// Manager password return value
-				String managerPassword = null;
+				String managerPassword = "";
 				if(option == 0) {
 				    char[] password = pass.getPassword();
-				    managerPassword = new String(password);
+				    managerPassword = utility.hashData(new String(password));
 				}
 				
 				// TODO continue the logic by creating the id of users and fetch only the managers
@@ -372,8 +375,7 @@ public class Main extends JFrame {
 	}
 	
 	private void openAdmin() {
-		setVisible(false);
-		admin = new Admin(this, user);
-		admin.setVisible(true);
+		new Admin(user);
+		dispose();
 	}
 }

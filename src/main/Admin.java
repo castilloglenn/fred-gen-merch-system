@@ -38,6 +38,8 @@ import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 @SuppressWarnings("serial")
 public class Admin extends JFrame {
@@ -59,7 +61,6 @@ public class Admin extends JFrame {
 	private Database database; 
 	private Gallery gallery;
 	private Utility utility;
-	private Main main;
 	private Logger logger;
 	private Object[] user;
 	
@@ -98,18 +99,17 @@ public class Admin extends JFrame {
 	private JLabel lblClearButton;
 	private JLabel lblLogEmptyMessage;
 
-	public Admin(Main main, Object[] user) {
+	public Admin(Object[] user) {
 		database = Database.getInstance();
 		gallery = Gallery.getInstance();
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
-		this.main = main;
 		this.user = user;
 		
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setMinimumSize(new Dimension(minWidth, minHeight));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
 		Dimension selfDisplay = Toolkit.getDefaultToolkit().getScreenSize();
 		if (defaultWidth >= selfDisplay.getWidth() || defaultHeight >= selfDisplay.getHeight()) {
@@ -432,7 +432,22 @@ public class Admin extends JFrame {
 		getContentPane().setBackground(Gallery.BLACK);
 		setLocationRelativeTo(null);
 		
-		
+
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				logger.addLog(
+					String.format(
+						"User %s closed the administrator mode.", 
+						user[0]));
+				
+				dispose();
+				new Main();
+			}
+			@Override
+			public void windowClosed(WindowEvent e) {
+			}
+		});
 		lblLogsButton.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblLogsButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblLogsButton); }
@@ -685,6 +700,7 @@ public class Admin extends JFrame {
 		});
 		
 		displayLog();
+		setVisible(true);
 	}
 	
 	private boolean checkForm(String task) {
