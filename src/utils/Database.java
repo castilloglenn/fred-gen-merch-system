@@ -1207,6 +1207,42 @@ public class Database {
 	}
 	
 	/**
+	 * Fetches only the hashed passwords of all managers
+	 * 
+	 * @return String array of managers hashed password
+	 */
+	public String[] fetchManagerHashes() {
+		try {
+			ps = con.prepareStatement(
+					"SELECT password " 
+					+ "FROM user " 
+					+ "WHERE user_id = 10000000000 "
+					+ "OR user_id  >= 12000000000;", 
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    String[] result = new String[size];
+
+		    int index = 0;
+            while (rs.next()){
+            	result[index] = rs.getString("password");
+                index++;
+            }
+            return result;
+        } catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	/**
 	 * This will check if there is an existing user that holds the same user name
 	 * 
 	 * @param username the value of the user name submitted by the input

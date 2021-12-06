@@ -210,9 +210,7 @@ public class Main extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblForgotPasswordButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblForgotPasswordButton); }
 			
-			@Override public void mouseClicked(MouseEvent e) { 
-				// TODO forgot password UI
-				
+			@Override public void mouseClicked(MouseEvent e) {
 				// Manager password request panel setup and execution
 				JPanel panel = new JPanel();
 				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -235,15 +233,88 @@ public class Main extends JFrame {
 				if(option == 0) {
 				    char[] password = pass.getPassword();
 				    managerPassword = utility.hashData(new String(password));
+					String[] hashes = database.fetchManagerHashes();
+					
+					boolean hasEqual = false;
+					for (String hash : hashes) {
+						if (managerPassword.equals(hash)) {
+							hasEqual = true;
+						}
+					}
+					
+					if (hasEqual) {
+						JPanel panel2 = new JPanel();
+						panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
+						
+						JLabel label3 = new JLabel("Enter your username.");
+						JTextField field = new JTextField();
+						
+						JLabel label4 = new JLabel("Please enter a new password.");
+						JPasswordField pass4 = new JPasswordField(10);
+						
+						JLabel label5 = new JLabel("Please confirm it by typing again.");
+						JPasswordField pass5 = new JPasswordField(10);
+						String[] options2 = new String[]{"OK", "Cancel"};
+						
+						panel2.add(label3);
+						panel2.add(field);
+						panel2.add(label4);
+						panel2.add(pass4);
+						panel2.add(label5);
+						panel2.add(pass5);
+						
+						// Manager password request dialog shows up
+						int option2 = 
+							JOptionPane
+								.showOptionDialog(null, panel2, Utility.APP_TITLE,
+						                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+						                         null, options2, options2[0]);
+						if (option2 == 0) {
+							// Constructor for error handling to be displayed into the custom error message display
+							ArrayList<String> errorMessages = new ArrayList<>(); // REQUIRED
+							
+							String enteredUsername = field.getText();
+							String enteredPassword = new String(pass4.getPassword());
+							String enteredConfirmation = new String(pass5.getPassword());
+							Object[] fetchedUserDetail = database.getUserLogin(enteredUsername);
+							
+							if (fetchedUserDetail == null) {
+								errorMessages.add("- Username does not exists.");
+							} else {
+								if (enteredPassword.isBlank() || enteredConfirmation.isBlank() || enteredUsername.isBlank()) {
+									errorMessages.add("- Please fill up all the fields.");
+								}
+								
+								if (!enteredPassword.equals(enteredConfirmation)) {
+									errorMessages.add("- Passwords do not match.");
+									
+									if (enteredPassword.length() < 6) {
+										errorMessages.add("- Password size must be 6 or more characters.");
+									}
+								}
+							}
+							
+							if (errorMessages.size() > 0) { // REQUIRED
+								errorMessages.add("<br>Please restart the process.");
+								gallery.showMessage(errorMessages.toArray(new String[0])); // REQUIRED
+							} else {
+								String hashedNewPassword = utility.hashData(enteredConfirmation);
+								
+								if (database.setUser((long) fetchedUserDetail[0], fetchedUserDetail[1].toString(), 
+										fetchedUserDetail[2].toString(), fetchedUserDetail[3].toString(), 
+										fetchedUserDetail[4].toString(), fetchedUserDetail[5].toString(), 
+										fetchedUserDetail[6].toString(), hashedNewPassword)) {
+									JOptionPane.showMessageDialog(
+										null, "Successfully updated the password.", 
+										Utility.APP_TITLE, 
+										JOptionPane.INFORMATION_MESSAGE);
+								}
+							}
+						}
+					} else {
+						gallery.showMessage(new String[] {"- Incorrect input."}); // REQUIRED
+					}
 				}
-				
-				// TODO continue the logic by creating the id of users and fetch only the managers
-				//	then compare the hashed value of the inputed password if it matches any of the
-				//	managers or administrators password then continue the logic here
-//				System.out.println(managerPassword);
-
-				System.out.println(utility.generateTransactionID());
-//				System.out.println(utility.generateProductID(4211129419L));
 			}
 		});
 		lblLoginButton.addMouseListener(new MouseAdapter() {
@@ -251,9 +322,7 @@ public class Main extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblLoginButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO login redirect to portal
 				checkLogin();
-				
 			}
 		});
 		lblAdminButton.addMouseListener(new MouseAdapter() {
@@ -332,7 +401,9 @@ public class Main extends JFrame {
 		logger.addLog(String.format("Username '%s' has been attempted to sign in.", inputs[0]));
 		
 		if (userDetails != null) {
-			System.out.println("hehe boi");
+			user = userDetails;
+			new Portal(user);
+			dispose();
 		}
 
 	}
