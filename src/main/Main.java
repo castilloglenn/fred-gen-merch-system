@@ -1,39 +1,33 @@
 package main;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 
-import pos.POS;
 import utils.Database;
 import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
-import javax.swing.SpringLayout;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import java.awt.event.KeyEvent;
-import javax.swing.SwingConstants;
-
-import inventory.Inventory;
-
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.JPasswordField;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.awt.event.KeyAdapter;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 
 /**
@@ -52,8 +46,6 @@ public class Main extends JFrame {
 	
 	// System Modules
 	public Admin admin;
-	public POS pos;
-	public Inventory inventory;
 	private Object[] user;
 	
 	// Window Components
@@ -365,12 +357,6 @@ public class Main extends JFrame {
 		});
 		
 		setVisible(true);
-		
-//		pos = new POS(gallery);
-//		pos.setVisible(true);
-		
-//		inventory = new Inventory();
-//		inventory.setVisible(true);
 	}
 	
 	private Object[] checkAndGetUserDetails(String[] user) {
@@ -399,11 +385,20 @@ public class Main extends JFrame {
 		Object[] userDetails = checkAndGetUserDetails(inputs);
 		
 		logger.addLog(String.format("Username '%s' has been attempted to sign in.", inputs[0]));
-		
+			
 		if (userDetails != null) {
-			user = userDetails;
-			new Portal(user);
-			dispose();
+			int rank = Integer.parseInt(Character.toString(userDetails[0].toString().charAt(1)));
+			
+			if (rank == 0 || rank == 3) {
+				logger.addLog("An admin account has been attempted to use for business transactions.");
+				gallery.showMessage(new String[] {"- You cannot use the administrator account for business transactions."});
+			} else {
+				user = userDetails;
+				logger.addLog(String.format("Username '%s' has been logged on and opened the portal.", inputs[0]));
+				
+				new Portal(user);
+				dispose();
+			}
 		}
 
 	}
@@ -427,7 +422,7 @@ public class Main extends JFrame {
 				char level = userDetails[0].toString().charAt(1);
 				if (level == '2' || level == '3') {
 					user = userDetails;
-					logger.addLog(String.format("User '%s' has logged on and opened Administrator Mode.", user[0]));
+					logger.addLog(String.format("User %s has logged on and opened Administrator Mode.", user[0]));
 					openAdmin();
 				}
 			}

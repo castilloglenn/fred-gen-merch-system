@@ -441,11 +441,8 @@ public class Admin extends JFrame {
 						"User %s closed the administrator mode.", 
 						user[0]));
 				
-				dispose();
 				new Main();
-			}
-			@Override
-			public void windowClosed(WindowEvent e) {
+				dispose();
 			}
 		});
 		lblLogsButton.addMouseListener(new MouseAdapter() {

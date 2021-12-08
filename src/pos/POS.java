@@ -29,12 +29,15 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import main.Main;
+import main.Portal;
 import utils.Database;
 import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 /**
@@ -84,9 +87,9 @@ public class POS extends JFrame {
 	
 	private Database database; 
 	private Gallery gallery;
-	private Main main;
 	private Logger logger;
 	private VerticalLabelUI verticalUI;
+	private Object[] user;
 	
 	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel,
 		queryResultPanel, cartListCardPanel, cartListPanel,
@@ -112,11 +115,11 @@ public class POS extends JFrame {
 	
 	private CardLayout cardLayout, queryCardLayout, cartListCardLayout;
 
-	public POS(Main main) {
+	public POS(Object[] user) {
 		database = Database.getInstance();
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
-		this.main = main;
+		this.user = user;
 		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false); 
@@ -472,6 +475,17 @@ public class POS extends JFrame {
 		lblCartIndicator.setVisible(false);
 		
 		// Component behaviors, listeners
+
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				logger.addLog(String.format("User %s has been close the Point of Sales.", user[0].toString()));
+				
+				// TODO Fix close all bug
+				new Portal(user);
+				dispose();
+			}
+		});
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -676,6 +690,7 @@ public class POS extends JFrame {
 		timer.start();
 		
 		setLocationRelativeTo(null);
+		setVisible(true);
 		/**
 		 *  ========================= End of constructor ====================================
 		 */

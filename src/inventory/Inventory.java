@@ -26,6 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.CardLayout;
@@ -42,6 +44,7 @@ import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 
 import main.Main;
+import main.Portal;
 
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -56,8 +59,8 @@ public class Inventory extends JFrame {
 	
 	private Gallery gallery;
 	private Utility utility;
-	private Main main;
 	private Logger logger;
+	private Object[] user;
 	
 	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
 	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, panel, supplierTablePanel,productImagePanel;
@@ -75,28 +78,12 @@ public class Inventory extends JFrame {
 
 	private String supplierSearchMessage = "Search for Supplier...";
 	private String productSearchMessage = "Search for Products...";
-	
 
-	
-	
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Inventory frame = new Inventory();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	public Inventory() {
+	public Inventory(Object[] user) {
 		gallery = Gallery.getInstance();
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
-//		this.main = main;
+		this.user = user;
 		
 		SupplierAdd invSupplierAdd = new SupplierAdd();
 		SupplierUpdate invSupplierUpdate = new SupplierUpdate();
@@ -389,6 +376,16 @@ public class Inventory extends JFrame {
 		
 		
 		// NOTE: Please put all mouse listeners here at the end
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				logger.addLog(String.format("User %s has been close the Inventory System.", user[0].toString()));
+
+				// TODO Fix close all bug
+				dispose();
+				new Portal(user);
+			}
+		});
 		btnDashboard.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnDashboard);;}
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnDashboard); }
@@ -497,7 +494,7 @@ public class Inventory extends JFrame {
 			}
 		});
 		
-		
+		setVisible(true);
 	}
 }
 
