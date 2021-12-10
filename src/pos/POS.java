@@ -127,7 +127,7 @@ public class POS extends JFrame {
 		setIconImage(gallery.getSystemIcon());
 		setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setMinimumSize(new Dimension(minWidth, minHeight));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		Dimension selfDisplay = Toolkit.getDefaultToolkit().getScreenSize();
 		if (defaultWidth >= selfDisplay.getWidth() || defaultHeight >= selfDisplay.getHeight()) {
@@ -481,7 +481,6 @@ public class POS extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				logger.addLog(String.format("User %s has been close the Point of Sales.", user[0].toString()));
 				
-				// TODO Fix close all bug
 				new Portal(user);
 				dispose();
 			}

@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import utils.Gallery;
+import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 
@@ -25,10 +26,14 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 
 public class ProductAdd extends JFrame {
+	
+	private final String TITLE = "Add Product";
 
 	private Utility utility;
 	private Gallery gallery;
 	private String imagePath;
+	private Logger logger;
+	private Object[] user;
 	
 	private JPanel contentPane, p, newProductPanel, iconSelectionPanel, buttonPanel, formPanel,iconPanel;
 	private JLabel lblNewProduct, btnConfirm,lblProductID,lblName,lblStocks,lblUOM,lblCategory,lblPriceBought,lblSupplier;
@@ -38,25 +43,16 @@ public class ProductAdd extends JFrame {
 	private JComboBox comboCategory;
 	private JTextField txtSellingPrice;
 	private JLabel btnCancel;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ProductAdd frame = new ProductAdd();
-					frame.setVisible(true);
-					frame.setLocationRelativeTo(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	
 		
-	public ProductAdd() {
+	public ProductAdd(Object[] user) {
+		gallery = Gallery.getInstance();
+		utility = Utility.getInstance();
+		logger = Logger.getInstance();
+		this.user = user;
+
+		setIconImage(gallery.getSystemIcon());
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
@@ -65,9 +61,6 @@ public class ProductAdd extends JFrame {
 		setContentPane(contentPane);
 		SpringLayout sl_contentPane = new SpringLayout();
 		contentPane.setLayout(sl_contentPane);
-		
-		gallery = Gallery.getInstance();
-		utility = Utility.getInstance();
 		
 		p = new JPanel();
 		p.setBackground(Gallery.GRAY);
@@ -302,7 +295,9 @@ public class ProductAdd extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {dispose();}
 		});
-		
+
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 	
 	

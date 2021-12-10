@@ -109,7 +109,7 @@ public class Admin extends JFrame {
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setMinimumSize(new Dimension(minWidth, minHeight));
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		Dimension selfDisplay = Toolkit.getDefaultToolkit().getScreenSize();
 		if (defaultWidth >= selfDisplay.getWidth() || defaultHeight >= selfDisplay.getHeight()) {

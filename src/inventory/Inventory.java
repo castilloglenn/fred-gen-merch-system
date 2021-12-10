@@ -49,6 +49,9 @@ import main.Portal;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.JTabbedPane;
+import java.awt.event.WindowFocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * To be done by: Sebastian Garcia
@@ -57,6 +60,9 @@ import javax.swing.JTabbedPane;
 @SuppressWarnings("serial")
 public class Inventory extends JFrame {
 	
+	private final String TITLE = "Inventory";
+	
+	private Database database;
 	private Gallery gallery;
 	private Utility utility;
 	private Logger logger;
@@ -80,30 +86,19 @@ public class Inventory extends JFrame {
 	private String productSearchMessage = "Search for Products...";
 
 	public Inventory(Object[] user) {
+		database = Database.getInstance();
 		gallery = Gallery.getInstance();
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
 		this.user = user;
 		
-		SupplierAdd invSupplierAdd = new SupplierAdd();
-		SupplierUpdate invSupplierUpdate = new SupplierUpdate();
-		ProductAdd invProductAdd = new ProductAdd();
-		ProductUpdate invProductUpdate = new ProductUpdate();
-		
-		/**
-		 *  	After designing, change all Panel to Rounded Panel like this:
-		 * panelVariableExample = new RoundedPanel(Gallery.BLUE);
-		 *     
-		 * 	 	To set the default font, first set the size then set the font:
-		 * utility.setFontSize(20f);
-		 * lblNewLabel.setFont(gallery.font);
-		 */
-		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false);
-		
+
+		setIconImage(gallery.getSystemIcon());
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setMinimumSize(new Dimension(990, 600));
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
 		mainPanel = new JPanel();
 		mainPanel.setBackground(Gallery.BLACK);
@@ -176,7 +171,7 @@ public class Inventory extends JFrame {
 		lblSupplierList.setFont(gallery.getFont(20f));
 		supplierPanel.add(lblSupplierList);
 		
-		supplierSearchPanel = new RoundedPanel(gallery.WHITE);
+		supplierSearchPanel = new RoundedPanel(Gallery.WHITE);
 		sl_supplierPanel.putConstraint(SpringLayout.NORTH, supplierSearchPanel, 15, SpringLayout.SOUTH, lblSupplierList);
 		sl_supplierPanel.putConstraint(SpringLayout.WEST, supplierSearchPanel, 15, SpringLayout.WEST, supplierPanel);
 		sl_supplierPanel.putConstraint(SpringLayout.SOUTH, supplierSearchPanel, 55, SpringLayout.SOUTH, lblSupplierList);
@@ -290,14 +285,14 @@ public class Inventory extends JFrame {
 		productSearchPanel.add(txtProductSearch);
 		txtProductSearch.setColumns(10);
 		
-		productImagePanel = new RoundedPanel(gallery.WHITE);
+		productImagePanel = new RoundedPanel(Gallery.WHITE);
 		sl_productPanel.putConstraint(SpringLayout.NORTH, productImagePanel, 15, SpringLayout.SOUTH, productSearchPanel);
 		sl_productPanel.putConstraint(SpringLayout.WEST, productImagePanel, -325, SpringLayout.EAST, productPanel);
 		sl_productPanel.putConstraint(SpringLayout.SOUTH, productImagePanel, 315, SpringLayout.SOUTH, productSearchPanel);
 		sl_productPanel.putConstraint(SpringLayout.EAST, productImagePanel, -15, SpringLayout.EAST, productPanel);
 		productPanel.add(productImagePanel);
 		
-		productButtonPanel = new RoundedPanel(gallery.WHITE);
+		productButtonPanel = new RoundedPanel(Gallery.WHITE);
 		sl_productPanel.putConstraint(SpringLayout.WEST, productButtonPanel, 0, SpringLayout.WEST, productImagePanel);
 		productButtonPanel.setBackground(Color.RED);
 		sl_productPanel.putConstraint(SpringLayout.NORTH, productButtonPanel, -100, SpringLayout.SOUTH, productPanel);
@@ -381,9 +376,16 @@ public class Inventory extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				logger.addLog(String.format("User %s has been close the Inventory System.", user[0].toString()));
 
-				// TODO Fix close all bug
 				dispose();
 				new Portal(user);
+			}
+		});
+		addWindowFocusListener(new WindowFocusListener() {
+			public void windowGainedFocus(WindowEvent e) {
+				refreshTable();
+			}
+			public void windowLostFocus(WindowEvent e) {
+				refreshTable();
 			}
 		});
 		btnDashboard.addMouseListener(new MouseAdapter() {
@@ -419,7 +421,16 @@ public class Inventory extends JFrame {
 			public void focusLost(FocusEvent e) {
 				gallery.textFieldFocusLost(txtSupplierSearch, supplierSearchMessage);}
 		});
-		
+		txtSupplierSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String keyword = txtSupplierSearch.getText();
+				Object[][] result = database.getSuppliersByKeyword(keyword);
+				if (result != null) {
+					supplierTable.setModel(utility.generateTable(result, Database.supplierHeaders));
+				}
+			}
+		});
 		btnNew.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnNew);}
@@ -427,8 +438,7 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnNew);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				invSupplierAdd.setVisible(true);
-				invSupplierAdd.setLocationRelativeTo(null);
+				new SupplierAdd(user);
 			}
 		});
 		
@@ -438,7 +448,9 @@ public class Inventory extends JFrame {
 			@Override
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnManage);}
 			@Override
-			public void mouseClicked(MouseEvent e) {invSupplierUpdate.setVisible(true);}
+			public void mouseClicked(MouseEvent e) {
+				new SupplierUpdate(user);
+			}
 		});
 		
 		txtProductSearch.addFocusListener(new FocusAdapter() {
@@ -455,8 +467,7 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductNew);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				invProductAdd.setVisible(true);
-				invProductAdd.setLocationRelativeTo(null);
+				new ProductAdd(user);
 			}
 		});		
 		
@@ -467,8 +478,7 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductManage);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				invProductUpdate.setVisible(true);
-				invProductUpdate.setLocationRelativeTo(null);
+				new ProductUpdate(user);
 			}
 		});
 		
@@ -494,7 +504,13 @@ public class Inventory extends JFrame {
 			}
 		});
 		
+		refreshTable();
+		
 		setVisible(true);
+	}
+	
+	private void refreshTable() {
+		supplierTable.setModel(utility.generateTable(database.getSuppliersByKeyword(""), Database.supplierHeaders));
 	}
 }
 

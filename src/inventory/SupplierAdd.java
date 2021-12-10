@@ -7,7 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import utils.Database;
 import utils.Gallery;
+import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 
@@ -16,6 +18,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
@@ -31,37 +34,28 @@ import java.awt.event.KeyEvent;
 
 public class SupplierAdd extends JFrame {
 	
+	private final String TITLE = "New Supplier";
+	
+	private Database database;
 	private Utility utility;
 	private Gallery gallery;
+	private Logger logger;
+	private Object[] user;
 	
 	private JPanel contentPane, p, buttonPanel, newSupplierPanel;
 	private JLabel btnAdd, lblNewSupplier,btnCancel,lblName,lblContactNumber,lblSupplierID,lblAddress;
 	private JTextField txtSupplierID,txtName,txtContactNumber,txtAddress;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					SupplierAdd frame = new SupplierAdd();
-					frame.setVisible(true);
-					frame.setLocationRelativeTo(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public SupplierAdd() {
-		
+	
+	public SupplierAdd(Object[] user) {
+		database = Database.getInstance();
 		utility = Utility.getInstance();
 		gallery = Gallery.getInstance();
+		logger = Logger.getInstance();
+		this.user = user;
+
+		setIconImage(gallery.getSystemIcon());
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		
 		setResizable(false);
 		setLocationRelativeTo(null);
@@ -128,7 +122,7 @@ public class SupplierAdd extends JFrame {
 		sl_newSupplierPanel.putConstraint(SpringLayout.WEST, lblNewSupplier, 30, SpringLayout.WEST, newSupplierPanel);
 		newSupplierPanel.add(lblNewSupplier);
 		
-		JPanel formsPanel = new RoundedPanel(gallery.WHITE);
+		JPanel formsPanel = new RoundedPanel(Gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.NORTH, formsPanel, 10, SpringLayout.SOUTH, newSupplierPanel);
 		sl_p.putConstraint(SpringLayout.WEST, formsPanel, 10, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, formsPanel, -10, SpringLayout.NORTH, buttonPanel);
@@ -144,7 +138,7 @@ public class SupplierAdd extends JFrame {
 		sl_formsPanel.putConstraint(SpringLayout.NORTH, lblSupplierID, 25, SpringLayout.NORTH, formsPanel);
 		formsPanel.add(lblSupplierID);
 		
-		txtSupplierID = new JTextField();
+		txtSupplierID = new JTextField(Long.toString(utility.generateSupplierID(database.fetchLastID("supplier", "supplier_id"))));
 		txtSupplierID.setFont(gallery.getFont(15f));
 		txtSupplierID.setEditable(false);
 		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtSupplierID, -2, SpringLayout.NORTH, lblSupplierID);
@@ -213,7 +207,23 @@ public class SupplierAdd extends JFrame {
 			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnAdd);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				 missingFields();
+				 if (checkFields()) {
+					 long id = Long.parseLong(txtSupplierID.getText());
+					 String name = txtName.getText();
+					 String contactNum = txtContactNumber.getText();
+					 String address = txtAddress.getText();
+					 
+					 if (database.addSupplier(id, name, contactNum, address)) {
+						 logger.addLog(String.format("User %s added a new supplier with the ID:%s", user[1].toString(), id));
+						 
+						 JOptionPane.showMessageDialog(
+							null, "Successfully register the new supplier with the ID of " + id + ".", 
+							Utility.APP_TITLE, 
+							JOptionPane.INFORMATION_MESSAGE);
+						 
+						 clearFields();
+					 }
+				 }
 			}
 		});
 		
@@ -233,6 +243,9 @@ public class SupplierAdd extends JFrame {
 				constraintPhoneNumber(phoneNumber, evt);
 			}
 		});
+		
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 	
 	//User Defined Methods
@@ -256,20 +269,30 @@ public class SupplierAdd extends JFrame {
 			}
 		}
 	}
-	private void missingFields() {
+	
+	private boolean checkFields() {
 		ArrayList<String> errorMessages = new ArrayList<>();
 		
 		String name = txtName.getText();
 		String contactNum = txtContactNumber.getText();
 		String address = txtAddress.getText();
 		
-		if(name.equals("") || contactNum.equals("") || address.equals("")) {
+		if(name.isBlank() || contactNum.isBlank() || address.isBlank()) {
 			errorMessages.add(" - Please fill out the missing fields!");
-			}
+		}
 		
 		if (errorMessages.size() > 0) { 
 			gallery.showMessage(errorMessages.toArray(new String[0]));
+			return false;
 		}
+		return true;
+	}
+	
+	private void clearFields() {
+		txtSupplierID.setText(Long.toString(utility.generateSupplierID(database.fetchLastID("supplier", "supplier_id"))));
+		txtName.setText("");
+		txtContactNumber.setText("");
+		txtAddress.setText("");
 	}
 
 }

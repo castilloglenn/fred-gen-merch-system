@@ -41,6 +41,9 @@ public class Database {
 			"User ID", "First Name", "Middle Name", "Last Name", 
 			"Position", "Contact", "Username", "Password"
 	};
+	public static Object[] supplierHeaders = {
+			"Supplier ID", "Name", "Contact Number", "Address"
+	};
 	
 	private String defaultAdminPassword = "superadmin!";
 	
@@ -547,11 +550,17 @@ public class Database {
 			ps = con.prepareStatement(
 					"SELECT * " 
 					+ "FROM supplier " 
-					+ "WHERE supplier_id LIKE ?;", 
+					+ "WHERE supplier_id LIKE ? "
+					+ "OR name LIKE ? "
+					+ "OR contact_no LIKE ? "
+					+ "OR address LIKE ?;", 
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);
 			ps.setString(1, "%" + keyword + "%");
+			ps.setString(2, "%" + keyword + "%");
+			ps.setString(3, "%" + keyword + "%");
+			ps.setString(4, "%" + keyword + "%");
 			ResultSet rs = ps.executeQuery();
 			
 			int size = 0;
@@ -1200,6 +1209,35 @@ public class Database {
 			}
 			
 			if (max > 1) return max;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+	
+	/**
+	 * Returns the max value of the table's ID column.
+	 * 
+	 * @param table database table to be inspected
+	 * @return the id value from the table
+	 */
+	public long fetchLastID(String table, String column) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT MAX("
+					+ column
+					+ ") "
+					+ "FROM "
+					+ table
+					+ ";"
+				);
+			ResultSet pid = ps.executeQuery();
+			pid.next();
+			long maxID = pid.getLong(1);
+			
+			if (maxID != 0) {
+				return maxID;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

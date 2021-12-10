@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import utils.Gallery;
+import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 import javax.swing.SpringLayout;
@@ -27,11 +28,17 @@ import javax.swing.border.LineBorder;
 import java.awt.event.KeyAdapter;
 
 public class SupplierUpdate extends JFrame {
+	
+	private final String TITLE = "Update Supplier";
 
 	private JPanel contentPane, p, formsPanel, buttonPanel, manageSupplierPanel;
 	private JLabel lblManageSupplier, btnConfirm, btnCancel;
+	
 	private Utility utility;
 	private Gallery gallery;
+	private Logger logger;
+	private Object[] user;
+	
 	private JLabel lblSupplierID;
 	private JTextField txtName;
 	private JLabel lblContactNumber;
@@ -41,36 +48,18 @@ public class SupplierUpdate extends JFrame {
 	
 	
 	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					SupplierUpdate frame = new SupplierUpdate();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	
-	
-	public SupplierUpdate() {
-		
+	public SupplierUpdate(Object[] user) {
 		utility = Utility.getInstance();
 		gallery = Gallery.getInstance();
+		logger = Logger.getInstance();
+		this.user = user;
 		
+		setIconImage(gallery.getSystemIcon());
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
-		setLocationRelativeTo(null);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -193,7 +182,7 @@ public class SupplierUpdate extends JFrame {
 		sl_buttonPanel.putConstraint(SpringLayout.SOUTH, btnCancel, -10, SpringLayout.SOUTH, buttonPanel);
 		buttonPanel.add(btnCancel);
 		
-		manageSupplierPanel = new RoundedPanel(gallery.BLUE);
+		manageSupplierPanel = new RoundedPanel(Gallery.BLUE);
 		sl_p.putConstraint(SpringLayout.NORTH, manageSupplierPanel, -15, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, manageSupplierPanel, -15, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, manageSupplierPanel, 50, SpringLayout.NORTH, p);
@@ -237,7 +226,9 @@ public class SupplierUpdate extends JFrame {
 				constraintPhoneNumber(phoneNumber, e);
 			}
 		});
-		
+
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 	
 	//User Defined Methods

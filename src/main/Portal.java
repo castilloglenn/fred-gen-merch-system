@@ -54,7 +54,7 @@ public class Portal extends JFrame {
 
 		setIconImage(gallery.getSystemIcon());
 		setTitle(portalTitle + " | " + Utility.APP_TITLE);
-		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setSize(windowWidth, windowHeight);
 		setResizable(false);
 		

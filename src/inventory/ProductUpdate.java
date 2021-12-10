@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import utils.Gallery;
+import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 import javax.swing.SpringLayout;
@@ -24,9 +25,13 @@ import javax.swing.JTextField;
 
 public class ProductUpdate extends JFrame {
 	
+	private final String TITLE = "Update Product";
+	
 	private Utility utility;
 	private Gallery gallery;
 	private String imagePath;
+	private Logger logger;
+	private Object[] user;
 	
 	private JComboBox comboProductID,comboSupplier;
 	private JPanel contentPane, p, manageProductPanel, formsPanel, iconSelectionPanel, buttonsPanel;
@@ -36,29 +41,16 @@ public class ProductUpdate extends JFrame {
 	private JComboBox comboCategory;
 	private JTextField txtSellingPrice;
 	private JLabel btnCancel;
+	
+	
+	public ProductUpdate(Object[] user) {
+		gallery = Gallery.getInstance();
+		utility = Utility.getInstance();
+		logger = Logger.getInstance();
+		this.user = user;
 		
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ProductUpdate frame = new ProductUpdate();
-					frame.setVisible(true);
-					frame.setLocationRelativeTo(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
-	public ProductUpdate() {
+		setIconImage(gallery.getSystemIcon());
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
@@ -67,9 +59,6 @@ public class ProductUpdate extends JFrame {
 		setContentPane(contentPane);
 		SpringLayout sl_contentPane = new SpringLayout();
 		contentPane.setLayout(sl_contentPane);
-		
-		gallery = Gallery.getInstance();
-		utility = Utility.getInstance();
 		
 		p = new JPanel();
 		sl_contentPane.putConstraint(SpringLayout.NORTH, p, -5, SpringLayout.NORTH, contentPane);
@@ -80,7 +69,7 @@ public class ProductUpdate extends JFrame {
 		SpringLayout sl_p = new SpringLayout();
 		p.setLayout(sl_p);
 		
-		manageProductPanel = new RoundedPanel(gallery.BLUE);
+		manageProductPanel = new RoundedPanel(Gallery.BLUE);
 		sl_p.putConstraint(SpringLayout.NORTH, manageProductPanel, -15, SpringLayout.NORTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, manageProductPanel, -15, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.SOUTH, manageProductPanel, 50, SpringLayout.NORTH, p);
@@ -97,7 +86,7 @@ public class ProductUpdate extends JFrame {
 		sl_manageProductPanel.putConstraint(SpringLayout.WEST, lblManageProduct, 30, SpringLayout.WEST, manageProductPanel);
 		manageProductPanel.add(lblManageProduct);
 		
-		formsPanel = new RoundedPanel(gallery.WHITE);
+		formsPanel = new RoundedPanel(Gallery.WHITE);
 		sl_p.putConstraint(SpringLayout.NORTH, formsPanel, 10, SpringLayout.SOUTH, manageProductPanel);
 		sl_p.putConstraint(SpringLayout.WEST, formsPanel, 10, SpringLayout.WEST, p);
 		sl_p.putConstraint(SpringLayout.EAST, formsPanel, -250, SpringLayout.EAST, p);
@@ -307,7 +296,9 @@ public class ProductUpdate extends JFrame {
 				missingFields();
 			}
 		});
-		
+
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 	
 	//User Defined Methods
