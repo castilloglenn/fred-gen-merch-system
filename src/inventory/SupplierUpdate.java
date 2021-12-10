@@ -1,32 +1,28 @@
 package inventory;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import utils.Gallery;
-import utils.Logger;
-import utils.RoundedPanel;
-import utils.Utility;
-import javax.swing.SpringLayout;
 import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.border.LineBorder;
-import java.awt.event.KeyAdapter;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
+import utils.Database;
+import utils.Gallery;
+import utils.Logger;
+import utils.RoundedPanel;
+import utils.Utility;
+
+@SuppressWarnings("serial")
 public class SupplierUpdate extends JFrame {
 	
 	private final String TITLE = "Update Supplier";
@@ -34,10 +30,9 @@ public class SupplierUpdate extends JFrame {
 	private JPanel contentPane, p, formsPanel, buttonPanel, manageSupplierPanel;
 	private JLabel lblManageSupplier, btnConfirm, btnCancel;
 	
-	private Utility utility;
+	private Database database;
 	private Gallery gallery;
 	private Logger logger;
-	private Object[] user;
 	
 	private JLabel lblSupplierID;
 	private JTextField txtName;
@@ -45,14 +40,14 @@ public class SupplierUpdate extends JFrame {
 	private JTextField txtContactNumber;
 	private JLabel lblAddress;
 	private JTextField txtAddress;
+	private JTextField txtSupplierID;
 	
 	
 	
-	public SupplierUpdate(Object[] user) {
-		utility = Utility.getInstance();
+	public SupplierUpdate(Object[] user, Object[] supplierData) {
+		database = Database.getInstance();
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
-		this.user = user;
 		
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
@@ -96,13 +91,14 @@ public class SupplierUpdate extends JFrame {
 		sl_formsPanel.putConstraint(SpringLayout.EAST, lblSupplierID, 145, SpringLayout.WEST, formsPanel);
 		formsPanel.add(lblSupplierID);
 		
-		JComboBox comboSupplierID = new JComboBox();
-		comboSupplierID.setFont(gallery.getFont(15f));
-		sl_formsPanel.putConstraint(SpringLayout.NORTH, comboSupplierID, -2, SpringLayout.NORTH, lblSupplierID);
-		sl_formsPanel.putConstraint(SpringLayout.WEST, comboSupplierID, 15, SpringLayout.EAST, lblSupplierID);
-		sl_formsPanel.putConstraint(SpringLayout.SOUTH, comboSupplierID, 2, SpringLayout.SOUTH, lblSupplierID);
-		sl_formsPanel.putConstraint(SpringLayout.EAST, comboSupplierID, -30, SpringLayout.EAST, formsPanel);
-		formsPanel.add(comboSupplierID);
+		txtSupplierID = new JTextField(supplierData[0].toString());
+		txtSupplierID.setEditable(false);
+		txtSupplierID.setFont(gallery.getFont(15f));
+		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtSupplierID, -2, SpringLayout.NORTH, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtSupplierID, 15, SpringLayout.EAST, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtSupplierID, 2, SpringLayout.SOUTH, lblSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtSupplierID, -30, SpringLayout.EAST, formsPanel);
+		formsPanel.add(txtSupplierID);
 		
 		JLabel lblName = new JLabel("Name");
 		lblName.setFont(gallery.getFont(14f));
@@ -111,13 +107,12 @@ public class SupplierUpdate extends JFrame {
 		sl_formsPanel.putConstraint(SpringLayout.EAST, lblName, 0, SpringLayout.EAST, lblSupplierID);
 		formsPanel.add(lblName);
 		
-		txtName = new JTextField();
+		txtName = new JTextField(supplierData[1].toString());
 		txtName.setFont(gallery.getFont(15f));
-		txtName.setEnabled(false);
 		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtName, -2, SpringLayout.NORTH, lblName);
-		sl_formsPanel.putConstraint(SpringLayout.WEST, txtName, 0, SpringLayout.WEST, comboSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtName, 0, SpringLayout.WEST, txtSupplierID);
 		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtName, 2, SpringLayout.SOUTH, lblName);
-		sl_formsPanel.putConstraint(SpringLayout.EAST, txtName, 0, SpringLayout.EAST, comboSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtName, 0, SpringLayout.EAST, txtSupplierID);
 		formsPanel.add(txtName);
 		txtName.setColumns(10);
 		
@@ -128,13 +123,12 @@ public class SupplierUpdate extends JFrame {
 		sl_formsPanel.putConstraint(SpringLayout.EAST, lblContactNumber, 0, SpringLayout.EAST, lblSupplierID);
 		formsPanel.add(lblContactNumber);
 		
-		txtContactNumber = new JTextField();
+		txtContactNumber = new JTextField(supplierData[2].toString());
 		txtContactNumber.setFont(gallery.getFont(15f));
-		txtContactNumber.setEnabled(false);
 		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtContactNumber, -2, SpringLayout.NORTH, lblContactNumber);
-		sl_formsPanel.putConstraint(SpringLayout.WEST, txtContactNumber, 0, SpringLayout.WEST, comboSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtContactNumber, 0, SpringLayout.WEST, txtSupplierID);
 		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtContactNumber, 2, SpringLayout.SOUTH, lblContactNumber);
-		sl_formsPanel.putConstraint(SpringLayout.EAST, txtContactNumber, 0, SpringLayout.EAST, comboSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtContactNumber, 0, SpringLayout.EAST, txtSupplierID);
 		formsPanel.add(txtContactNumber);
 		txtContactNumber.setColumns(10);
 		
@@ -145,13 +139,12 @@ public class SupplierUpdate extends JFrame {
 		sl_formsPanel.putConstraint(SpringLayout.EAST, lblAddress, 0, SpringLayout.EAST, lblSupplierID);
 		formsPanel.add(lblAddress);
 		
-		txtAddress = new JTextField();
+		txtAddress = new JTextField(supplierData[3].toString());
 		txtAddress.setFont(gallery.getFont(15f));
-		txtAddress.setEnabled(false);
 		sl_formsPanel.putConstraint(SpringLayout.NORTH, txtAddress, -2, SpringLayout.NORTH, lblAddress);
-		sl_formsPanel.putConstraint(SpringLayout.WEST, txtAddress, 0, SpringLayout.WEST, comboSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.WEST, txtAddress, 0, SpringLayout.WEST, txtSupplierID);
 		sl_formsPanel.putConstraint(SpringLayout.SOUTH, txtAddress, 2, SpringLayout.SOUTH, lblAddress);
-		sl_formsPanel.putConstraint(SpringLayout.EAST, txtAddress, 0, SpringLayout.EAST, comboSupplierID);
+		sl_formsPanel.putConstraint(SpringLayout.EAST, txtAddress, 0, SpringLayout.EAST, txtSupplierID);
 		formsPanel.add(txtAddress);
 		txtAddress.setColumns(10);
 		
@@ -206,7 +199,23 @@ public class SupplierUpdate extends JFrame {
 			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnConfirm);}
 			@Override
 			public void mouseClicked(MouseEvent e) { 
-				missingFields();
+				if (checkFields()) {
+					long id = Long.parseLong(txtSupplierID.getText());
+					String name = txtName.getText();
+					String contactNum = txtContactNumber.getText();
+					String address = txtAddress.getText();
+					
+					if (database.setSupplier(id, name, contactNum, address)) {
+						 logger.addLog(String.format("User %s updated a supplier with the ID:%s", user[0].toString(), id));
+						 
+						 JOptionPane.showMessageDialog(
+							null, "Successfully updated the supplier with the ID of " + id + ".", 
+							Utility.APP_TITLE, 
+							JOptionPane.INFORMATION_MESSAGE);
+						 
+						 dispose();
+					 }
+				}
 			}
 		});
 		
@@ -231,11 +240,10 @@ public class SupplierUpdate extends JFrame {
 		setVisible(true);
 	}
 	
-	//User Defined Methods
 	private void constraintPhoneNumber(String phoneNumber, KeyEvent evt){
 		int length = phoneNumber.length();
 		
-			if(evt.getKeyChar()>='0' && evt.getKeyChar()<='9') {
+			if(evt.getKeyChar()>='0' && evt.getKeyChar() <= '9') {
 			if(length<11) {
 				txtContactNumber.setEditable(true);
 			}
@@ -252,20 +260,22 @@ public class SupplierUpdate extends JFrame {
 			}
 		}
 	}
-	private void missingFields() {
+	
+	private boolean checkFields() {
 		ArrayList<String> errorMessages = new ArrayList<>();
 		
 		String name = txtName.getText();
 		String contactNum = txtContactNumber.getText();
 		String address = txtAddress.getText();
 		
-		if(name.equals("") || contactNum.equals("") || address.equals("")) {
+		if(name.isBlank() || contactNum.isBlank() || address.isBlank()) {
 			errorMessages.add(" - Please fill out the missing fields!");
-			errorMessages.add(" - Please grind more social credit!");
 		}
 		
 		if (errorMessages.size() > 0) { 
 			gallery.showMessage(errorMessages.toArray(new String[0]));
+			return false;
 		}
+		return true;
 	}
 }

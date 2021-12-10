@@ -1,61 +1,41 @@
 package inventory;
 
-import java.awt.BorderLayout;
-
-import java.awt.EventQueue;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import utils.Gallery;
-import utils.Logger;
-import utils.RoundedPanel;
-import utils.Database;
-
-import utils.Utility;
-import utils.VerticalLabelUI;
-
-import javax.swing.SpringLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Cursor;
-
-import javax.swing.border.LineBorder;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+import java.awt.Dimension;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.CardLayout;
-import javax.swing.JTable;
-import javax.swing.JSeparator;
-import java.awt.Component;
-import javax.swing.Box;
-import java.awt.Dimension;
-import javax.swing.JLayeredPane;
-import javax.swing.JDesktopPane;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.table.DefaultTableModel;
-
-import main.Main;
-import main.Portal;
-
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import javax.swing.JTabbedPane;
 import java.awt.event.WindowFocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import main.Portal;
+import utils.Database;
+import utils.Gallery;
+import utils.Logger;
+import utils.RoundedPanel;
+import utils.Utility;
+import utils.VerticalLabelUI;
 
 /**
- * To be done by: Sebastian Garcia
- * test
+ * @author Sebastian Garcia (UI design)
+ * @author Allen Glenn E. Castillo (Logical implementation)
  */
 @SuppressWarnings("serial")
 public class Inventory extends JFrame {
@@ -363,9 +343,11 @@ public class Inventory extends JFrame {
 		//JTable
 		
 		supplierTable = new JTable();
+		supplierTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		supplierScrollPane.setViewportView(supplierTable);
 		
 		productTable = new JTable();
+		productTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		productScrollPane.setViewportView(productTable);
 		
 		
@@ -384,9 +366,7 @@ public class Inventory extends JFrame {
 			public void windowGainedFocus(WindowEvent e) {
 				refreshTable();
 			}
-			public void windowLostFocus(WindowEvent e) {
-				refreshTable();
-			}
+			public void windowLostFocus(WindowEvent e) {}
 		});
 		btnDashboard.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(btnDashboard);;}
@@ -449,7 +429,19 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnManage);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new SupplierUpdate(user);
+				int rowSelected = supplierTable.getSelectedRow();
+				if (rowSelected == -1) {
+					gallery.showMessage(new String[] {"Please select a row on the table to edit it."});
+				} else {
+					Object[] supplierData = {
+						supplierTable.getValueAt(rowSelected, 0),
+						supplierTable.getValueAt(rowSelected, 1),
+						supplierTable.getValueAt(rowSelected, 2),
+						supplierTable.getValueAt(rowSelected, 3)
+					};
+
+					new SupplierUpdate(user, supplierData);
+				}
 			}
 		});
 		
@@ -500,7 +492,29 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnDelete);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//backend here
+				int rowSelected = supplierTable.getSelectedRow();
+				if (rowSelected == -1) {
+					gallery.showMessage(new String[] {"Please select a row on the table to remove it."});
+				} else {
+					String supplierID = supplierTable.getValueAt(rowSelected, 0).toString();
+
+					int confirmation = JOptionPane.showConfirmDialog(
+						null, "Are you sure you want to remove supplier with the ID of: " + supplierID, 
+						Utility.APP_TITLE,
+						JOptionPane.YES_OPTION,
+						JOptionPane.WARNING_MESSAGE);
+					
+					if (confirmation == 0) {
+						if (database.deleteEntry("supplier", "supplier_id", Long.parseLong(supplierID))) {
+							logger.addLog(String.format("User %s removed a new supplier with the ID:%s", user[0].toString(), supplierID));
+							
+							JOptionPane.showMessageDialog(
+									null, "Successfully removed the supplier with the ID of " + supplierID + ".", 
+									Utility.APP_TITLE, 
+									JOptionPane.INFORMATION_MESSAGE);
+						}
+					}
+				}
 			}
 		});
 		

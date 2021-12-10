@@ -1,10 +1,19 @@
 package inventory;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import utils.Database;
@@ -13,25 +22,7 @@ import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 
-import javax.swing.SpringLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-
-import javax.swing.border.LineBorder;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
+@SuppressWarnings("serial")
 public class SupplierAdd extends JFrame {
 	
 	private final String TITLE = "New Supplier";
@@ -40,7 +31,6 @@ public class SupplierAdd extends JFrame {
 	private Utility utility;
 	private Gallery gallery;
 	private Logger logger;
-	private Object[] user;
 	
 	private JPanel contentPane, p, buttonPanel, newSupplierPanel;
 	private JLabel btnAdd, lblNewSupplier,btnCancel,lblName,lblContactNumber,lblSupplierID,lblAddress;
@@ -52,7 +42,6 @@ public class SupplierAdd extends JFrame {
 		utility = Utility.getInstance();
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
-		this.user = user;
 
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
@@ -214,7 +203,7 @@ public class SupplierAdd extends JFrame {
 					 String address = txtAddress.getText();
 					 
 					 if (database.addSupplier(id, name, contactNum, address)) {
-						 logger.addLog(String.format("User %s added a new supplier with the ID:%s", user[1].toString(), id));
+						 logger.addLog(String.format("User %s added a new supplier with the ID:%s", user[0].toString(), id));
 						 
 						 JOptionPane.showMessageDialog(
 							null, "Successfully register the new supplier with the ID of " + id + ".", 

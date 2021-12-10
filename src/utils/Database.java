@@ -1023,7 +1023,7 @@ public class Database {
 	public boolean setSupplier(long supplierID, String name, String contactNo, String address) {
 		try {
 			ps = con.prepareStatement(
-				"UPDATE user "
+				"UPDATE supplier "
 				+ "SET "
 					+ "name = ?, "
 					+ "contact_no = ?, "
