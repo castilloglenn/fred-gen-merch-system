@@ -237,16 +237,16 @@ public class ProductAdd extends JFrame {
 		formPanel.add(txtSellingPrice);
 		
 		iconPanel = new JPanel();
-		sl_iconSelectionPanel.putConstraint(SpringLayout.SOUTH, iconPanel, -20, SpringLayout.SOUTH, iconSelectionPanel);
+		sl_iconSelectionPanel.putConstraint(SpringLayout.SOUTH, iconPanel, -15, SpringLayout.SOUTH, iconSelectionPanel);
 		iconPanel.setBackground(Gallery.WHITE);
 		iconSelectionPanel.add(iconPanel);
 		iconPanel.setLayout(null);
 		
 		JLabel lblIconMessage = new JLabel("Select icons here:");
+		sl_iconSelectionPanel.putConstraint(SpringLayout.NORTH, lblIconMessage, 15, SpringLayout.NORTH, iconSelectionPanel);
 		lblIconMessage.setFont(gallery.getFont(14f));
 		sl_iconSelectionPanel.putConstraint(SpringLayout.WEST, iconPanel, 0, SpringLayout.WEST, lblIconMessage);
 		sl_iconSelectionPanel.putConstraint(SpringLayout.EAST, iconPanel, 0, SpringLayout.EAST, lblIconMessage);
-		sl_iconSelectionPanel.putConstraint(SpringLayout.NORTH, lblIconMessage, 20, SpringLayout.NORTH, iconSelectionPanel);
 		sl_iconSelectionPanel.putConstraint(SpringLayout.WEST, lblIconMessage, 15, SpringLayout.WEST, iconSelectionPanel);
 		sl_iconSelectionPanel.putConstraint(SpringLayout.EAST, lblIconMessage, -15, SpringLayout.EAST, iconSelectionPanel);
 		lblIconMessage.setHorizontalAlignment(SwingConstants.LEFT);
