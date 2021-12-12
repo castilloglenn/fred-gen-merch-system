@@ -34,8 +34,10 @@ public class ProductAdd extends JFrame {
 	private String imagePath;
 	private Logger logger;
 	private Object[] user;
+	private String defaultIconPath;
+	private String iconPath;
 	
-	private JPanel contentPane, p, newProductPanel, iconSelectionPanel, buttonPanel, formPanel,iconPanel;
+	private JPanel contentPane, p, newProductPanel, iconSelectionPanel, buttonPanel, formPanel;
 	private JLabel lblNewProduct, btnConfirm,lblProductID,lblName,lblStocks,lblUOM,lblCategory,lblPriceBought,lblSupplier;
 	private JTextField txtProductID,txtName,txtStocks,txtUOM,txtPriceBought;
 	private JComboBox comboSupplier;
@@ -43,9 +45,16 @@ public class ProductAdd extends JFrame {
 	private JComboBox comboCategory;
 	private JTextField txtSellingPrice;
 	private JLabel btnCancel;
+	private JLabel lblPreviewIcon;
+	private JLabel lblSelectIconButton;
 	
 		
 	public ProductAdd(Object[] user) {
+		defaultIconPath = System.getProperty("user.dir");
+		defaultIconPath = defaultIconPath.replace("\\", "/");
+		defaultIconPath = defaultIconPath + "/assets/images/product-default.png";
+		iconPath = defaultIconPath;
+		
 		gallery = Gallery.getInstance();
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
@@ -89,24 +98,24 @@ public class ProductAdd extends JFrame {
 		newProductPanel.add(lblNewProduct);
 		
 		formPanel = new RoundedPanel(Gallery.WHITE);
-		sl_p.putConstraint(SpringLayout.NORTH, formPanel, 10, SpringLayout.SOUTH, newProductPanel);
-		sl_p.putConstraint(SpringLayout.WEST, formPanel, 10, SpringLayout.WEST, p);
-		sl_p.putConstraint(SpringLayout.EAST, formPanel, -250, SpringLayout.EAST, p);
+		sl_p.putConstraint(SpringLayout.NORTH, formPanel, 15, SpringLayout.SOUTH, newProductPanel);
+		sl_p.putConstraint(SpringLayout.WEST, formPanel, 15, SpringLayout.WEST, p);
 		p.add(formPanel);
 		
 		iconSelectionPanel = new RoundedPanel(Gallery.WHITE);
+		sl_p.putConstraint(SpringLayout.WEST, iconSelectionPanel, -79, SpringLayout.EAST, p);
+		sl_p.putConstraint(SpringLayout.SOUTH, iconSelectionPanel, 64, SpringLayout.NORTH, formPanel);
+		sl_p.putConstraint(SpringLayout.EAST, iconSelectionPanel, -15, SpringLayout.EAST, p);
+		sl_p.putConstraint(SpringLayout.EAST, formPanel, -15, SpringLayout.WEST, iconSelectionPanel);
 		sl_p.putConstraint(SpringLayout.NORTH, iconSelectionPanel, 0, SpringLayout.NORTH, formPanel);
-		sl_p.putConstraint(SpringLayout.SOUTH, iconSelectionPanel, -10, SpringLayout.SOUTH, p);
-		sl_p.putConstraint(SpringLayout.WEST, iconSelectionPanel, 10, SpringLayout.EAST, formPanel);
 		SpringLayout sl_formPanel = new SpringLayout();
 		formPanel.setLayout(sl_formPanel);
 		
 		lblProductID = new JLabel("Product ID");
+		sl_formPanel.putConstraint(SpringLayout.NORTH, lblProductID, 10, SpringLayout.NORTH, formPanel);
 		lblProductID.setFont(gallery.getFont(14f));
-		sl_formPanel.putConstraint(SpringLayout.NORTH, lblProductID, 25, SpringLayout.NORTH, formPanel);
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblProductID, 25, SpringLayout.WEST, formPanel);
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblProductID, 125, SpringLayout.WEST, formPanel);
-		sl_p.putConstraint(SpringLayout.EAST, iconSelectionPanel, -10, SpringLayout.EAST, p);
 		formPanel.add(lblProductID);
 		
 		txtProductID = new JTextField();
@@ -192,8 +201,9 @@ public class ProductAdd extends JFrame {
 		p.add(iconSelectionPanel);
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
+		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -15, SpringLayout.SOUTH, p);
+		sl_p.putConstraint(SpringLayout.SOUTH, formPanel, -15, SpringLayout.NORTH, buttonPanel);
 		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, -70, SpringLayout.SOUTH, p);
-		sl_p.putConstraint(SpringLayout.SOUTH, formPanel, -5, SpringLayout.NORTH, buttonPanel);
 		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, 0, SpringLayout.WEST, formPanel);
 		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, 0, SpringLayout.EAST, formPanel);
 		
@@ -210,7 +220,6 @@ public class ProductAdd extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.WEST, comboSupplier, 0, SpringLayout.WEST, txtProductID);
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, comboSupplier, 2, SpringLayout.SOUTH, lblSupplier);
 		sl_formPanel.putConstraint(SpringLayout.EAST, comboSupplier, 0, SpringLayout.EAST, txtProductID);;
-		sl_p.putConstraint(SpringLayout.SOUTH, buttonPanel, -10, SpringLayout.SOUTH, p);
 		SpringLayout sl_iconSelectionPanel = new SpringLayout();
 		iconSelectionPanel.setLayout(sl_iconSelectionPanel);
 		formPanel.add(comboSupplier);
@@ -236,22 +245,12 @@ public class ProductAdd extends JFrame {
 		txtSellingPrice.setColumns(10);
 		formPanel.add(txtSellingPrice);
 		
-		iconPanel = new JPanel();
-		sl_iconSelectionPanel.putConstraint(SpringLayout.SOUTH, iconPanel, -15, SpringLayout.SOUTH, iconSelectionPanel);
-		iconPanel.setBackground(Gallery.WHITE);
-		iconSelectionPanel.add(iconPanel);
-		iconPanel.setLayout(null);
-		
-		JLabel lblIconMessage = new JLabel("Select icons here:");
-		sl_iconSelectionPanel.putConstraint(SpringLayout.NORTH, lblIconMessage, 15, SpringLayout.NORTH, iconSelectionPanel);
-		lblIconMessage.setFont(gallery.getFont(14f));
-		sl_iconSelectionPanel.putConstraint(SpringLayout.WEST, iconPanel, 0, SpringLayout.WEST, lblIconMessage);
-		sl_iconSelectionPanel.putConstraint(SpringLayout.EAST, iconPanel, 0, SpringLayout.EAST, lblIconMessage);
-		sl_iconSelectionPanel.putConstraint(SpringLayout.WEST, lblIconMessage, 15, SpringLayout.WEST, iconSelectionPanel);
-		sl_iconSelectionPanel.putConstraint(SpringLayout.EAST, lblIconMessage, -15, SpringLayout.EAST, iconSelectionPanel);
-		lblIconMessage.setHorizontalAlignment(SwingConstants.LEFT);
-		sl_iconSelectionPanel.putConstraint(SpringLayout.NORTH, iconPanel, 10, SpringLayout.SOUTH, lblIconMessage);
-		iconSelectionPanel.add(lblIconMessage);
+		lblPreviewIcon = new JLabel(gallery.getImageViaPath(defaultIconPath, 32, 32));
+		sl_iconSelectionPanel.putConstraint(SpringLayout.NORTH, lblPreviewIcon, 16, SpringLayout.NORTH, iconSelectionPanel);
+		sl_iconSelectionPanel.putConstraint(SpringLayout.WEST, lblPreviewIcon, 16, SpringLayout.WEST, iconSelectionPanel);
+		sl_iconSelectionPanel.putConstraint(SpringLayout.SOUTH, lblPreviewIcon, 48, SpringLayout.NORTH, iconSelectionPanel);
+		sl_iconSelectionPanel.putConstraint(SpringLayout.EAST, lblPreviewIcon, -16, SpringLayout.EAST, iconSelectionPanel);
+		iconSelectionPanel.add(lblPreviewIcon);
 		p.add(buttonPanel);
 		SpringLayout sl_buttonPanel = new SpringLayout();
 		buttonPanel.setLayout(sl_buttonPanel);
@@ -276,6 +275,15 @@ public class ProductAdd extends JFrame {
 		btnCancel.setHorizontalAlignment(SwingConstants.CENTER);
 		buttonPanel.add(btnCancel);
 		
+		lblSelectIconButton = new JLabel("<html><center>Select<br>icon</center></html>");
+		lblSelectIconButton.setHorizontalAlignment(SwingConstants.CENTER);
+		lblSelectIconButton.setName("primary");
+		gallery.styleLabelToButton(lblSelectIconButton, 12f, 5, 5);
+		sl_p.putConstraint(SpringLayout.NORTH, lblSelectIconButton, 15, SpringLayout.SOUTH, iconSelectionPanel);
+		sl_p.putConstraint(SpringLayout.WEST, lblSelectIconButton, 0, SpringLayout.WEST, iconSelectionPanel);
+		sl_p.putConstraint(SpringLayout.EAST, lblSelectIconButton, 0, SpringLayout.EAST, iconSelectionPanel);
+		p.add(lblSelectIconButton);
+		
 		btnConfirm.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnConfirm);}
@@ -286,16 +294,39 @@ public class ProductAdd extends JFrame {
 				 missingFields();
 			}
 		});
-		
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(btnCancel);}
 			@Override
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnCancel);}
 			@Override
-			public void mouseClicked(MouseEvent e) {dispose();}
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+			}
+		});
+		lblSelectIconButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(lblSelectIconButton);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(lblSelectIconButton);}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				String selectedPath = utility.showImageChooser();
+
+				if (selectedPath == null) {
+					iconPath = defaultIconPath;
+				} else {
+					iconPath = selectedPath;
+				}
+				
+				lblPreviewIcon.setIcon(gallery.getImageViaPath(iconPath, 32, 32));
+				// TODO upload to database
+				System.out.println(iconPath);
+			}
 		});
 
+		
+		
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}

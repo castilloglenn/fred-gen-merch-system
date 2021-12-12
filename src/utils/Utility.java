@@ -13,9 +13,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Properties;
 
 import javax.swing.JFileChooser;
@@ -51,6 +51,7 @@ public class Utility {
 	private JFileChooser chooser;
 	private FileNameExtensionFilter filter;
 	
+	
 	/**
 	 * This class will be used for the JDateChooser
 	 */
@@ -78,7 +79,7 @@ public class Utility {
 
 	
 	private Utility() {
-		chooser = new JFileChooser();
+		chooser = new JFileChooser("assets/images/products/");
 	}
 	
 	public static Utility getInstance() {
@@ -87,60 +88,6 @@ public class Utility {
 		}
 		
 		return singletonInstance;
-	}
-	
-	/**
-	 * Shows a JFileChooser with Images-only filter
-	 * 
-	 * @return String - the absolute path of the image selected
-	 * 			<br> null - if the user did not press the select or closed the file chooser
-	 * 
-	 * @see javax.swing.JFileChooser
-	 */
-	public String showImageChooser() {
-	    filter = new FileNameExtensionFilter(
-	    	"JPG & PNG Images", 
-	    	"jpg", "jpeg", "png", "bmp"
-	    );
-	    chooser.setFileFilter(filter);
-	    
-	    int returnVal = chooser.showOpenDialog(null);
-	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	       file = chooser.getSelectedFile();
-	       return file.getPath();
-	    }
-	    
-	    return null;
-	}
-	
-	public JDatePickerImpl getDateChooser() {
-		/**
-		 * Source: https://stackoverflow.com/questions/26794698/how-do-i-implement-jdatepicker
-		 */
-		
-		UtilDateModel model = new UtilDateModel();
-		Calendar today = Calendar.getInstance();
-		model.setDate(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
-		
-		Properties p = new Properties();
-		p.put("text.today", "Today");
-		p.put("text.month", "Month");
-		p.put("text.year", "Year");
-		
-		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-		
-		return new JDatePickerImpl(datePanel, new DateLabelFormatter());
-	}
-	
-	@SuppressWarnings("serial")
-	public DefaultTableModel generateTable(Object[][] rows, Object[] column) {
-		return new DefaultTableModel(
-			rows, column
-			) {
-				public boolean isCellEditable(int row, int column) {
-					return false;
-				}
-			};
 	}
 	
 	public String encodeData(String data) {
@@ -357,5 +304,84 @@ public class Utility {
 		
 		return Long.parseLong(markup.toString());
 	}
+	
+	/**
+	 * Shows a JFileChooser with Images-only filter
+	 * 
+	 * @return String - the absolute path of the image selected
+	 * 			<br> null - if the user did not press the select or closed the file chooser
+	 * 
+	 * @see javax.swing.JFileChooser
+	 */
+	public String showImageChooser() {
+	    filter = new FileNameExtensionFilter(
+	    	"JPG & PNG Images", 
+	    	"jpg", "jpeg", "png", "bmp"
+	    );
+	    chooser.setFileFilter(filter);
+	    
+	    int returnVal = chooser.showOpenDialog(null);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	       file = chooser.getSelectedFile();
+	       return file.getPath();
+	    }
+	    
+	    return null;
+	}
+	
+	public JDatePickerImpl getDateChooser() {
+		/**
+		 * Source: https://stackoverflow.com/questions/26794698/how-do-i-implement-jdatepicker
+		 */
+		
+		UtilDateModel model = new UtilDateModel();
+		Calendar today = Calendar.getInstance();
+		model.setDate(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
+		
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		
+		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+		
+		return new JDatePickerImpl(datePanel, new DateLabelFormatter());
+	}
+	
+	@SuppressWarnings("serial")
+	public DefaultTableModel generateTable(Object[][] rows, Object[] column) {
+		return new DefaultTableModel(
+			rows, column
+			) {
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+			};
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

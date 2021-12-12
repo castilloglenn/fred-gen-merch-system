@@ -44,6 +44,10 @@ public class Database {
 	public static Object[] supplierHeaders = {
 			"Supplier ID", "Name", "Contact Number", "Address"
 	};
+	public static String[] productCategories = {
+			"agriculture", "consumables", "electronics", "general-hygiene",
+			"school-supplies", "tools"
+	};
 	
 	private String defaultAdminPassword = "superadmin!";
 	

@@ -175,6 +175,14 @@ public class Gallery {
 		return finalImage;
 	}
 	
+	public ImageIcon getImageViaPath(String path, int width, int height) {
+		ImageIcon image = new ImageIcon(path);
+		Image img = image.getImage();
+		Image scaledIcon = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		ImageIcon finalImage = new ImageIcon(scaledIcon);
+		return finalImage;
+	}
+	
 	public ImageIcon resizeImage(ImageIcon oldImage, int newWidth, int newHeight) {
 		Image image = oldImage.getImage();
 		Image newimg = image.getScaledInstance(newWidth, newHeight,  java.awt.Image.SCALE_SMOOTH);
