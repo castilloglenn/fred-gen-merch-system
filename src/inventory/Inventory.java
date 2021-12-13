@@ -459,7 +459,13 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductNew);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new ProductAdd(user);
+				int supplierQuantity = database.getSuppliersByKeyword("").length;
+				
+				if (supplierQuantity == 0) {
+					gallery.showMessage(new String[] {"You should create atleast one supplier first."});
+				} else {
+					new ProductAdd(user);
+				}
 			}
 		});		
 		

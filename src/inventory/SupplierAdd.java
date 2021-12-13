@@ -281,6 +281,7 @@ public class SupplierAdd extends JFrame {
 		txtSupplierID.setText(Long.toString(utility.generateSupplierID(database.fetchLastID("supplier", "supplier_id"))));
 		txtName.setText("");
 		txtContactNumber.setText("");
+		txtContactNumber.setEditable(true);
 		txtAddress.setText("");
 	}
 
