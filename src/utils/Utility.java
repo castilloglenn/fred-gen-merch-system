@@ -76,11 +76,6 @@ public class Utility {
 	        return dateFormatter.format(Calendar.getInstance().getTime());
 	    }
 	}
-
-	
-	private Utility() {
-		chooser = new JFileChooser("assets/images/products/");
-	}
 	
 	public static Utility getInstance() {
 		if (singletonInstance == null) {
@@ -314,6 +309,7 @@ public class Utility {
 	 * @see javax.swing.JFileChooser
 	 */
 	public String showImageChooser() {
+		chooser = new JFileChooser("assets/images/products/");
 	    filter = new FileNameExtensionFilter(
 	    	"JPG & PNG Images", 
 	    	"jpg", "jpeg", "png", "bmp"

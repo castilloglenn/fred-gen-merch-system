@@ -106,7 +106,7 @@ public class ProductUpdate extends JFrame {
 		lblProductID.setFont(gallery.getFont(14f));
 		formsPanel.add(lblProductID);
 		
-		comboProductID = new JComboBox();
+		comboProductID = new JComboBox<String>();
 		sl_formsPanel.putConstraint(SpringLayout.NORTH, comboProductID, -2, SpringLayout.NORTH, lblProductID);
 		sl_formsPanel.putConstraint(SpringLayout.WEST, comboProductID, 15, SpringLayout.EAST, lblProductID);
 		sl_formsPanel.putConstraint(SpringLayout.SOUTH, comboProductID, 2, SpringLayout.SOUTH, lblProductID);
@@ -218,7 +218,7 @@ public class ProductUpdate extends JFrame {
 		sl_formsPanel.putConstraint(SpringLayout.EAST, lblSellingPrice, 0, SpringLayout.EAST, lblProductID);
 		formsPanel.add(lblSellingPrice);
 		
-		comboCategory = new JComboBox();
+		comboCategory = new JComboBox<String>();
 		sl_formsPanel.putConstraint(SpringLayout.NORTH, comboCategory, -2, SpringLayout.NORTH, lblCategory);
 		sl_formsPanel.putConstraint(SpringLayout.WEST, comboCategory, 0, SpringLayout.WEST, comboProductID);
 		sl_formsPanel.putConstraint(SpringLayout.SOUTH, comboCategory, 2, SpringLayout.SOUTH, lblCategory);

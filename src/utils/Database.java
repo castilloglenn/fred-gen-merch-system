@@ -76,6 +76,7 @@ public class Database {
 			createDatabase();
 			createTables();
 		} catch (SQLException e) {
+			Gallery.getInstance().showMessage(new String[] {"Please open your database first."});
 			e.printStackTrace();
 			System.exit(0);
 		}
@@ -180,11 +181,11 @@ public class Database {
 		initialRecordsTest = stmt.executeQuery(
 			"SELECT COUNT(*) "
 			+ "FROM customer_discount "
-			+ "WHERE customer_discount_id=1;");
+			+ "WHERE customer_discount_id=3000000000;");
 		initialRecordsTest.next();
 		if (initialRecordsTest.getInt(1) == 0) {
 			stmt.execute("INSERT INTO customer_discount "
-					+ "VALUES (1, \"REGULAR\", \"\", \"\", \"\", \"\");");
+					+ "VALUES (3000000000, \"REGULAR\", \"\", \"\", \"\", \"\");");
 		}
 		
 		/**

@@ -16,6 +16,7 @@ import utils.Utility;
 
 import javax.swing.SpringLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.border.LineBorder;
 import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 
 public class ProductAdd extends JFrame {
@@ -35,7 +37,9 @@ public class ProductAdd extends JFrame {
 	private Gallery gallery;
 	private Logger logger;
 	private Object[] user;
-	private String[] suppliers;
+	
+	private long[] supplierIDs;
+	private String[] supplierNames;
 	
 	private String defaultIconPath;
 	private String iconPath;
@@ -154,7 +158,7 @@ public class ProductAdd extends JFrame {
 		formPanel.add(txtName);
 		txtName.setColumns(10);
 		
-		lblStocks = new JLabel("Stocks");
+		lblStocks = new JLabel("Initial Stocks");
 		lblStocks.setFont(gallery.getFont(14f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, lblStocks, 15, SpringLayout.SOUTH, lblName);
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblStocks, 0, SpringLayout.EAST, lblProductID);
@@ -162,6 +166,7 @@ public class ProductAdd extends JFrame {
 		formPanel.add(lblStocks);
 		
 		txtStocks = new JTextField();
+		txtStocks.setText("0");
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtStocks, 0, SpringLayout.SOUTH, lblStocks);
 		txtStocks.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtStocks, -2, SpringLayout.NORTH, lblStocks);
@@ -178,6 +183,7 @@ public class ProductAdd extends JFrame {
 		formPanel.add(lblUOM);
 		
 		txtUOM = new JTextField();
+		txtUOM.setText("piece");
 		txtUOM.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtUOM, -2, SpringLayout.NORTH, lblUOM);
 		sl_formPanel.putConstraint(SpringLayout.EAST, txtUOM, 0, SpringLayout.EAST, txtProductID);
@@ -193,6 +199,7 @@ public class ProductAdd extends JFrame {
 		formPanel.add(lblPriceBought);
 		
 		txtPriceBought = new JTextField();
+		txtPriceBought.setText("0.00");
 		txtPriceBought.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtPriceBought, -2, SpringLayout.NORTH, lblPriceBought);
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtPriceBought, 2, SpringLayout.SOUTH, lblPriceBought);
@@ -217,7 +224,7 @@ public class ProductAdd extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblSupplier, 0, SpringLayout.EAST, lblProductID);
 		formPanel.add(lblSupplier);
 		
-		comboSupplier = new JComboBox<String>();
+		comboSupplier = new JComboBox<>();
 		sl_formPanel.putConstraint(SpringLayout.NORTH, comboSupplier, -2, SpringLayout.NORTH, lblSupplier);
 		sl_formPanel.putConstraint(SpringLayout.WEST, comboSupplier, 0, SpringLayout.WEST, txtProductID);
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, comboSupplier, 2, SpringLayout.SOUTH, lblSupplier);
@@ -232,7 +239,9 @@ public class ProductAdd extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblSellingPrice, 0, SpringLayout.WEST, lblProductID);
 		formPanel.add(lblSellingPrice);
 		
-		comboCategory = new JComboBox<String>();
+		comboCategory = new JComboBox<>();
+		DefaultComboBoxModel<String> categoryModel = new DefaultComboBoxModel<>(Database.productCategories);
+		comboCategory.setModel(categoryModel);
 		sl_formPanel.putConstraint(SpringLayout.NORTH, comboCategory, 0, SpringLayout.NORTH, lblCategory);
 		sl_formPanel.putConstraint(SpringLayout.WEST, comboCategory, 0, SpringLayout.WEST, txtProductID);
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, comboCategory, 2, SpringLayout.SOUTH, lblCategory);
@@ -240,6 +249,7 @@ public class ProductAdd extends JFrame {
 		formPanel.add(comboCategory);
 		
 		txtSellingPrice = new JTextField();
+		txtSellingPrice.setText("0.00");
 		txtSellingPrice.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtSellingPrice, 0, SpringLayout.NORTH, lblSellingPrice);
 		sl_formPanel.putConstraint(SpringLayout.WEST, txtSellingPrice, 0, SpringLayout.WEST, txtProductID);
@@ -293,7 +303,30 @@ public class ProductAdd extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnConfirm);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				 missingFields();
+				if (checkFields()) {
+					long userID = (long) user[0];
+					long productID = Long.parseLong(txtProductID.getText());
+					long supplier = supplierIDs[comboSupplier.getSelectedIndex()];
+					String category = comboCategory.getSelectedItem().toString();
+					String name = txtName.getText();
+					double stock = Double.parseDouble(txtStocks.getText());
+					String unitofMeasurement = txtUOM.getText();
+					double priceBought = Double.parseDouble(txtPriceBought.getText());
+					double sellingPrice = Double.parseDouble(txtSellingPrice.getText());
+					
+					if (database.addProduct(productID, category, name, iconPath, stock, unitofMeasurement, priceBought, sellingPrice)) {
+						if (database.addSupplies(supplier, productID, userID, priceBought, priceBought * stock)) {
+							logger.addLog(String.format("User %s added a new product with the ID:%s", user[0].toString(), productID));
+							 
+							 JOptionPane.showMessageDialog(
+								null, "Successfully added new product '" + name + "'", 
+								Utility.APP_TITLE, 
+								JOptionPane.INFORMATION_MESSAGE);
+							 
+							 clearFields();
+						}
+					}
+				}
 			}
 		});
 		btnCancel.addMouseListener(new MouseAdapter() {
@@ -322,35 +355,79 @@ public class ProductAdd extends JFrame {
 				}
 				
 				lblPreviewIcon.setIcon(gallery.getImageViaPath(iconPath, 32, 32));
-				
-				// TODO Fetch the names of the supplier and put them on the ComboBox
 			}
 		});
 
 		
-		
+		setSuppliers();
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 	
-	
-	private void missingFields() {
+	private boolean checkFields() {
 		ArrayList<String> errorMessages = new ArrayList<>();
 		
-		String supplier = String.valueOf(comboSupplier.getSelectedItem());
-		String category = String.valueOf(comboCategory.getSelectedItem());
 		String name = txtName.getText();
-		String stocks = txtName.getText();
-		String unitofMeasurement = txtStocks.getText();
-		String priceBought = txtUOM.getText();
-		String sellPrice = txtPriceBought.getText();
+		String unitofMeasurement = txtUOM.getText();
 		
-		if (name.equals("") || stocks.equals("") || unitofMeasurement.equals("") || priceBought.equals("") || sellPrice.equals("")) {
-			errorMessages.add(" - Please fill out the missing fields!");
+		if (name.isBlank()) {
+			errorMessages.add("- Name field cannot be empty.");
+		}
+		
+		if (unitofMeasurement.isBlank()) {
+			errorMessages.add("- Unit of measurement field cannot be empty.");
+		}
+		
+		try {
+			Integer.parseInt(txtStocks.getText());
+		} catch (NumberFormatException e) {
+			errorMessages.add("- Invalid stock value, must be an integer/whole number.");
+		}
+		
+		try {
+			Double.parseDouble(txtPriceBought.getText());
+		} catch (NumberFormatException | NullPointerException e) {
+			errorMessages.add("- Invalid price bought value, must be a currency.");
+		}
+		
+		try {
+			Double.parseDouble(txtSellingPrice.getText());
+		} catch (NumberFormatException | NullPointerException e) {
+			errorMessages.add("- Invalid selling price value, must be a currency.");
 		}
 		
 		if (errorMessages.size() > 0) { 
 			gallery.showMessage(errorMessages.toArray(new String[0]));
+			return false;
 		}
+		
+		return true;
+	}
+	
+	private void setSuppliers() {
+		Object[][] suppliers = database.getSuppliersByKeyword("");
+		supplierIDs = new long[suppliers.length];
+		supplierNames = new String[suppliers.length];
+		
+		for (int supplierIndex = 0; supplierIndex < suppliers.length; supplierIndex++) {
+			supplierIDs[supplierIndex] = (long) suppliers[supplierIndex][0];
+			supplierNames[supplierIndex] = suppliers[supplierIndex][1].toString();
+		}
+		
+		DefaultComboBoxModel<String> supplierModel = new DefaultComboBoxModel<>(supplierNames);
+		comboSupplier.setModel(supplierModel);
+	}
+	
+	public void clearFields() {
+		txtProductID.setText(Long.toString(utility.generateProductID(database.fetchLastID("product", "product_id"))));
+		comboSupplier.setSelectedIndex(0);
+		comboSupplier.setSelectedIndex(0);
+		txtName.setText("");
+		iconPath = defaultIconPath;
+		lblPreviewIcon.setIcon(gallery.getImageViaPath(iconPath, 32, 32));
+		txtStocks.setText("0");
+		txtUOM.setText("piece");
+		txtPriceBought.setText("0.00");
+		txtSellingPrice.setText("0.00");
 	}
 }
