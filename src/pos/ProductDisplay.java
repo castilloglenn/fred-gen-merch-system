@@ -13,6 +13,7 @@ import javax.swing.SwingConstants;
 
 import utils.Gallery;
 import utils.RoundedPanel;
+import utils.Utility;
 
 /**
  * 
@@ -83,18 +84,15 @@ public class ProductDisplay extends RoundedPanel {
 		lblImage.setIcon((ImageIcon) product[3]);
 		lblImage.setBounds(14, 38, 48, 48);
 		add(lblImage);
-		
-		DecimalFormat formatter = new DecimalFormat("#,###.00");
-        String currency = formatter.format((((double) product[5]) * 100.0) / 100.0 );
         
-		lblPrice = new JLabel("P" + currency);
+		lblPrice = new JLabel(Utility.getInstance().formatCurrency((double) product[7]));
 		lblPrice.setVerticalAlignment(SwingConstants.BOTTOM);
 		lblPrice.setFont(gallery.getFont(16f));
 		lblPrice.setOpaque(false);
 		lblPrice.setBounds(70, 32, 72, 32);
 		add(lblPrice);
 		
-		lblUOM = new JLabel("per " + product[4].toString());
+		lblUOM = new JLabel("per " + product[5].toString());
 		lblUOM.setVerticalAlignment(SwingConstants.TOP);
 		lblUOM.setFont(gallery.getFont(10f));
 		lblUOM.setBounds(70, 60, 72, 26);

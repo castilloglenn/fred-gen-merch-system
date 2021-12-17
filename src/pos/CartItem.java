@@ -35,7 +35,7 @@ public class CartItem extends JPanel {
 	private int oneLineColumnLimit = 15;
 	private int twoLineColumnLimit = 30;
 	
-	
+	private Gallery gallery;
 	private POS pos;
 	
 	private JLabel lblCartItem, lblCartAdd, lblCartQuantity, lblCartLess, lblCartRemove;
@@ -49,11 +49,12 @@ public class CartItem extends JPanel {
 	 * @param pos used to communicate to its parent source 
 	 * 
 	 */
-	public CartItem(int indexOrder, Object[] product, int quantity, Gallery gallery, POS pos) {
+	public CartItem(int indexOrder, Object[] product, int quantity, POS pos) {
 		index = indexOrder;
 		
 		this.product = product;
 		this.quantity = quantity;
+		this.gallery = Gallery.getInstance();
 		this.pos = pos;
 		
 		setBounds(0, index * height, width, height);
@@ -186,13 +187,13 @@ public class CartItem extends JPanel {
 	 */
 	public Object[] getTransactionDetail() {
 		return new Object[] {product[0], product[1], product[2], product[3], quantity, 
-				product[4], product[5], quantity * (double) product[5]};
+				product[5], product[7], quantity * (double) product[7]};
 	}
 	
 	@Override 
 	public String toString() {
 		return String.format("\nID: %s\nName: %s\nImage Class: %s\nQuantity: %d %s\nPrice: %s\nTotal: %s",
 				product[0].toString(), product[2].toString(), product[3].toString(), quantity, 
-				product[4].toString(), product[5].toString(), quantity * (double) product[5]);
+				product[5].toString(), product[7].toString(), quantity * (double) product[7]);
 	}
 }

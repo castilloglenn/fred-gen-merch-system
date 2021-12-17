@@ -44,6 +44,9 @@ public class Database {
 	public static Object[] supplierHeaders = {
 			"Supplier ID", "Name", "Contact Number", "Address"
 	};
+	public static Object[] productHeaders = {
+			"Product ID", "Category", "Name"
+	};
 	public static String[] productCategories = {
 			"agriculture", "consumables", "electronics", "general-hygiene",
 			"school-supplies", "tools"
@@ -622,11 +625,11 @@ public class Database {
 		    size = rs.getRow();
 		    rs.beforeFirst();
 		    
-		    Object[][] resultProducts = new Object[size][6];
+		    Object[][] resultProducts = new Object[size][8];
 
 		    int index = 0;
             while (rs.next()){
-            	Object[] productRow = new Object[6];
+            	Object[] productRow = new Object[8];
             	
             	productRow[0] = rs.getLong("product_id");
             	productRow[1] = rs.getString("category");
@@ -642,8 +645,10 @@ public class Database {
                 newImage = new ImageIcon(myImg);
                 
                 productRow[3] = newImage;
-                productRow[4] = rs.getString("uom");
-                productRow[5] = rs.getDouble("selling_price");
+                productRow[4] = rs.getDouble("stocks");
+                productRow[5] = rs.getString("uom");
+                productRow[6] = rs.getDouble("price_bought");
+                productRow[7] = rs.getDouble("selling_price");
                 
                 resultProducts[index] = productRow;
                 index++;

@@ -1,11 +1,19 @@
 package inventory;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import utils.Database;
@@ -14,20 +22,7 @@ import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 
-import javax.swing.SpringLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.border.LineBorder;
-import javax.swing.SwingConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-
+@SuppressWarnings("serial")
 public class ProductAdd extends JFrame {
 	
 	private final String TITLE = "Add Product";
@@ -36,8 +31,6 @@ public class ProductAdd extends JFrame {
 	private Utility utility;
 	private Gallery gallery;
 	private Logger logger;
-	private Object[] user;
-	
 	private long[] supplierIDs;
 	private String[] supplierNames;
 	
@@ -66,8 +59,6 @@ public class ProductAdd extends JFrame {
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
 		database = Database.getInstance();
-		this.user = user;
-
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setResizable(false);

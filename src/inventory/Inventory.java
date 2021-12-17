@@ -13,6 +13,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,6 +33,7 @@ import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
+import javax.swing.JSeparator;
 
 /**
  * @author Sebastian Garcia (UI design)
@@ -46,10 +48,12 @@ public class Inventory extends JFrame {
 	private Gallery gallery;
 	private Utility utility;
 	private Logger logger;
-	private Object[] user;
+	
+	private Object[][] products;
+	private int productSelectedRow = -1;
 	
 	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
-	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, panel, supplierTablePanel,productImagePanel;
+	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, tablePanel, supplierTablePanel,productDescriptionPanel;
 	
 	private JLabel btnDashboard, btnSupplier, btnProduct, lblSupplierList, lblProductList, lblSearchIcon,btnNew, btnManage;
 	private JLabel btnDelete, lblProductSearchIcon, btnProductManage, btnProductRemove, btnProductNew;
@@ -64,14 +68,29 @@ public class Inventory extends JFrame {
 
 	private String supplierSearchMessage = "Search for Supplier...";
 	private String productSearchMessage = "Search for Products...";
+	private String priceBoughtDefaultText = "Price from supplier: ";
+	private String sellingPriceDefaultText = "Selling price: ";
+	private String stocksDefaultText = "Stocks on hand: ";
+	
+	private SpringLayout sl_descriptionDisplayPanel;
+	private CardLayout descriptionCardLayout;
+	private JPanel descriptionCardPanel;
+	private JPanel descriptionEmptyPanel;
+	private JPanel descriptionDisplayPanel;
+	private JLabel lblEmptyDescription;
+	private JLabel lblReceiveStocksButton;
+	private JLabel lblPullOutButton;
+	private JLabel lblProductIcon;
+	private JLabel lblProductName;
+	private JLabel lblPriceBought;
+	private JLabel lblSellingPrice;
+	private JLabel lblStocks;
 
 	public Inventory(Object[] user) {
 		database = Database.getInstance();
 		gallery = Gallery.getInstance();
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
-		this.user = user;
-		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false);
 
@@ -265,30 +284,30 @@ public class Inventory extends JFrame {
 		productSearchPanel.add(txtProductSearch);
 		txtProductSearch.setColumns(10);
 		
-		productImagePanel = new RoundedPanel(Gallery.WHITE);
-		sl_productPanel.putConstraint(SpringLayout.NORTH, productImagePanel, 15, SpringLayout.SOUTH, productSearchPanel);
-		sl_productPanel.putConstraint(SpringLayout.WEST, productImagePanel, -325, SpringLayout.EAST, productPanel);
-		sl_productPanel.putConstraint(SpringLayout.SOUTH, productImagePanel, 315, SpringLayout.SOUTH, productSearchPanel);
-		sl_productPanel.putConstraint(SpringLayout.EAST, productImagePanel, -15, SpringLayout.EAST, productPanel);
-		productPanel.add(productImagePanel);
+		productDescriptionPanel = new RoundedPanel(Gallery.WHITE);
+		sl_productPanel.putConstraint(SpringLayout.NORTH, productDescriptionPanel, 15, SpringLayout.SOUTH, productSearchPanel);
+		sl_productPanel.putConstraint(SpringLayout.WEST, productDescriptionPanel, -325, SpringLayout.EAST, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.SOUTH, productDescriptionPanel, 245, SpringLayout.SOUTH, productSearchPanel);
+		sl_productPanel.putConstraint(SpringLayout.EAST, productDescriptionPanel, -15, SpringLayout.EAST, productPanel);
+		productPanel.add(productDescriptionPanel);
 		
 		productButtonPanel = new RoundedPanel(Gallery.WHITE);
-		sl_productPanel.putConstraint(SpringLayout.WEST, productButtonPanel, 0, SpringLayout.WEST, productImagePanel);
+		sl_productPanel.putConstraint(SpringLayout.NORTH, productButtonPanel, 15, SpringLayout.SOUTH, productDescriptionPanel);
+		sl_productPanel.putConstraint(SpringLayout.WEST, productButtonPanel, 0, SpringLayout.WEST, productDescriptionPanel);
+		sl_productPanel.putConstraint(SpringLayout.SOUTH, productButtonPanel, 65, SpringLayout.SOUTH, productDescriptionPanel);
 		productButtonPanel.setBackground(Color.RED);
-		sl_productPanel.putConstraint(SpringLayout.NORTH, productButtonPanel, -100, SpringLayout.SOUTH, productPanel);
-		sl_productPanel.putConstraint(SpringLayout.SOUTH, productButtonPanel, -15, SpringLayout.SOUTH, productPanel);
-		sl_productPanel.putConstraint(SpringLayout.EAST, productButtonPanel, 0, SpringLayout.EAST, productImagePanel);
+		sl_productPanel.putConstraint(SpringLayout.EAST, productButtonPanel, 0, SpringLayout.EAST, productDescriptionPanel);
 		productPanel.add(productButtonPanel);
 		SpringLayout sl_productButtonPanel = new SpringLayout();
 		productButtonPanel.setLayout(sl_productButtonPanel);
 		
 		btnProductNew = new JLabel("New");
+		sl_productButtonPanel.putConstraint(SpringLayout.NORTH, btnProductNew, 10, SpringLayout.NORTH, productButtonPanel);
+		sl_productButtonPanel.putConstraint(SpringLayout.SOUTH, btnProductNew, -10, SpringLayout.SOUTH, productButtonPanel);
 		sl_productButtonPanel.putConstraint(SpringLayout.EAST, btnProductNew, -210, SpringLayout.EAST, productButtonPanel);
 		btnProductNew.setName("primary");
 		gallery.styleLabelToButton(btnProductNew, 14f, 15, 10);
 		sl_productButtonPanel.putConstraint(SpringLayout.WEST, btnProductNew, 10, SpringLayout.WEST, productButtonPanel);
-		sl_productButtonPanel.putConstraint(SpringLayout.NORTH, btnProductNew, 25, SpringLayout.NORTH, productButtonPanel);
-		sl_productButtonPanel.putConstraint(SpringLayout.SOUTH, btnProductNew, -25, SpringLayout.SOUTH, productButtonPanel);
 		btnProductNew.setHorizontalAlignment(SwingConstants.CENTER);
 		productButtonPanel.add(btnProductNew);
 		
@@ -312,24 +331,108 @@ public class Inventory extends JFrame {
 		btnProductRemove.setHorizontalAlignment(SwingConstants.CENTER);
 		productButtonPanel.add(btnProductRemove);
 		
-		panel = new RoundedPanel(Gallery.WHITE);
-		sl_productPanel.putConstraint(SpringLayout.NORTH, panel, 15, SpringLayout.SOUTH, productSearchPanel);
-		sl_productPanel.putConstraint(SpringLayout.WEST, panel, 0, SpringLayout.WEST, productSearchPanel);
-		sl_productPanel.putConstraint(SpringLayout.SOUTH, panel, -15, SpringLayout.SOUTH, productPanel);
-		sl_productPanel.putConstraint(SpringLayout.EAST, panel, -15, SpringLayout.WEST, productImagePanel);
-		productImagePanel.setLayout(new SpringLayout());
-		productPanel.add(panel);
-		SpringLayout sl_panel = new SpringLayout();
-		panel.setLayout(sl_panel);
+		tablePanel = new RoundedPanel(Gallery.WHITE);
+		sl_productPanel.putConstraint(SpringLayout.NORTH, tablePanel, 15, SpringLayout.SOUTH, productSearchPanel);
+		sl_productPanel.putConstraint(SpringLayout.WEST, tablePanel, 0, SpringLayout.WEST, productSearchPanel);
+		sl_productPanel.putConstraint(SpringLayout.SOUTH, tablePanel, -15, SpringLayout.SOUTH, productPanel);
+		sl_productPanel.putConstraint(SpringLayout.EAST, tablePanel, -15, SpringLayout.WEST, productDescriptionPanel);
+		SpringLayout sl_productDescriptionPanel = new SpringLayout();
+		productDescriptionPanel.setLayout(sl_productDescriptionPanel);
+		
+		descriptionCardPanel = new JPanel();
+		descriptionCardPanel.setBackground(Gallery.WHITE);
+		sl_productDescriptionPanel.putConstraint(SpringLayout.NORTH, descriptionCardPanel, 15, SpringLayout.NORTH, productDescriptionPanel);
+		sl_productDescriptionPanel.putConstraint(SpringLayout.WEST, descriptionCardPanel, 15, SpringLayout.WEST, productDescriptionPanel);
+		sl_productDescriptionPanel.putConstraint(SpringLayout.SOUTH, descriptionCardPanel, -15, SpringLayout.SOUTH, productDescriptionPanel);
+		sl_productDescriptionPanel.putConstraint(SpringLayout.EAST, descriptionCardPanel, -15, SpringLayout.EAST, productDescriptionPanel);
+		productDescriptionPanel.add(descriptionCardPanel);
+		descriptionCardLayout = new CardLayout(0, 0);
+		descriptionCardPanel.setLayout(descriptionCardLayout);
+		
+		descriptionDisplayPanel = new JPanel();
+		descriptionDisplayPanel.setBackground(Gallery.WHITE);
+		sl_descriptionDisplayPanel = new SpringLayout();
+		descriptionDisplayPanel.setLayout(sl_descriptionDisplayPanel);
+		
+		descriptionEmptyPanel = new JPanel();
+		descriptionEmptyPanel.setBackground(Gallery.WHITE);
+		descriptionCardPanel.add(descriptionEmptyPanel, "description_empty");
+		descriptionCardPanel.add(descriptionDisplayPanel, "description_display");
+		
+		lblReceiveStocksButton = new JLabel("Receive Stocks");
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.NORTH, lblReceiveStocksButton, -25, SpringLayout.SOUTH, descriptionDisplayPanel);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.EAST, lblReceiveStocksButton, 133, SpringLayout.WEST, descriptionDisplayPanel);
+		lblReceiveStocksButton.setName("primary");
+		gallery.styleLabelToButton(lblReceiveStocksButton, 14f, 0, 0);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.WEST, lblReceiveStocksButton, 0, SpringLayout.WEST, descriptionDisplayPanel);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.SOUTH, lblReceiveStocksButton, 0, SpringLayout.SOUTH, descriptionDisplayPanel);
+		descriptionDisplayPanel.add(lblReceiveStocksButton);
+		
+		lblPullOutButton = new JLabel("Pull Out");
+		lblPullOutButton.setName("danger");
+		gallery.styleLabelToButton(lblPullOutButton, 14f, 0, 0);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.NORTH, lblPullOutButton, 0, SpringLayout.NORTH, lblReceiveStocksButton);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.WEST, lblPullOutButton, 15, SpringLayout.EAST, lblReceiveStocksButton);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.SOUTH, lblPullOutButton, 0, SpringLayout.SOUTH, lblReceiveStocksButton);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.EAST, lblPullOutButton, 0, SpringLayout.EAST, descriptionDisplayPanel);
+		descriptionDisplayPanel.add(lblPullOutButton);
+		
+		lblProductIcon = new JLabel();
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.NORTH, lblProductIcon, 0, SpringLayout.NORTH, descriptionDisplayPanel);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.WEST, lblProductIcon, 0, SpringLayout.WEST, lblReceiveStocksButton);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.SOUTH, lblProductIcon, 48, SpringLayout.NORTH, descriptionDisplayPanel);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.EAST, lblProductIcon, 48, SpringLayout.WEST, descriptionDisplayPanel);
+		descriptionDisplayPanel.add(lblProductIcon);
+		
+		lblProductName = new JLabel();
+		lblProductName.setFont(gallery.getFont(14f));
+		lblProductName.setVerticalAlignment(SwingConstants.TOP);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.NORTH, lblProductName, 0, SpringLayout.NORTH, lblProductIcon);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.WEST, lblProductName, 6, SpringLayout.EAST, lblProductIcon);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.SOUTH, lblProductName, 0, SpringLayout.SOUTH, lblProductIcon);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.EAST, lblProductName, 0, SpringLayout.EAST, descriptionDisplayPanel);
+		descriptionDisplayPanel.add(lblProductName);
+		
+		lblPriceBought = new JLabel(priceBoughtDefaultText);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.NORTH, lblPriceBought, 20, SpringLayout.SOUTH, lblProductIcon);
+		lblPriceBought.setFont(gallery.getFont(14f));
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.WEST, lblPriceBought, 0, SpringLayout.WEST, descriptionDisplayPanel);
+		descriptionDisplayPanel.add(lblPriceBought);
+		
+		lblSellingPrice = new JLabel(sellingPriceDefaultText);
+		lblSellingPrice.setFont(gallery.getFont(14f));
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.NORTH, lblSellingPrice, 6, SpringLayout.SOUTH, lblPriceBought);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.WEST, lblSellingPrice, 0, SpringLayout.WEST, lblReceiveStocksButton);
+		descriptionDisplayPanel.add(lblSellingPrice);
+		
+		lblStocks = new JLabel(stocksDefaultText);
+		lblStocks.setFont(gallery.getFont(14f));
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.NORTH, lblStocks, 20, SpringLayout.SOUTH, lblSellingPrice);
+		sl_descriptionDisplayPanel.putConstraint(SpringLayout.WEST, lblStocks, 0, SpringLayout.WEST, lblReceiveStocksButton);
+		descriptionDisplayPanel.add(lblStocks);
+		SpringLayout sl_descriptionEmptyPanel = new SpringLayout();
+		descriptionEmptyPanel.setLayout(sl_descriptionEmptyPanel);
+		
+		lblEmptyDescription = new JLabel("<html><center>Please select a product on<br>the table first.</center></html>");
+		sl_descriptionEmptyPanel.putConstraint(SpringLayout.SOUTH, lblEmptyDescription, 0, SpringLayout.SOUTH, descriptionEmptyPanel);
+		lblEmptyDescription.setFont(gallery.getFont(14f));
+		lblEmptyDescription.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_descriptionEmptyPanel.putConstraint(SpringLayout.NORTH, lblEmptyDescription, 0, SpringLayout.NORTH, descriptionEmptyPanel);
+		sl_descriptionEmptyPanel.putConstraint(SpringLayout.WEST, lblEmptyDescription, 0, SpringLayout.WEST, descriptionEmptyPanel);
+		sl_descriptionEmptyPanel.putConstraint(SpringLayout.EAST, lblEmptyDescription, 280, SpringLayout.WEST, descriptionEmptyPanel);
+		descriptionEmptyPanel.add(lblEmptyDescription);
+		productPanel.add(tablePanel);
+		SpringLayout sl_tablePanel = new SpringLayout();
+		tablePanel.setLayout(sl_tablePanel);
 		
 		productScrollPane = new JScrollPane();
 		productScrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		productScrollPane.getViewport().setBackground(Gallery.WHITE);
-		sl_panel.putConstraint(SpringLayout.NORTH, productScrollPane, 10, SpringLayout.NORTH, panel);
-		sl_panel.putConstraint(SpringLayout.WEST, productScrollPane, 10, SpringLayout.WEST, panel);
-		sl_panel.putConstraint(SpringLayout.SOUTH, productScrollPane, -10, SpringLayout.SOUTH, panel);
-		sl_panel.putConstraint(SpringLayout.EAST, productScrollPane, -10, SpringLayout.EAST, panel);
-		panel.add(productScrollPane);
+		sl_tablePanel.putConstraint(SpringLayout.NORTH, productScrollPane, 10, SpringLayout.NORTH, tablePanel);
+		sl_tablePanel.putConstraint(SpringLayout.WEST, productScrollPane, 10, SpringLayout.WEST, tablePanel);
+		sl_tablePanel.putConstraint(SpringLayout.SOUTH, productScrollPane, -10, SpringLayout.SOUTH, tablePanel);
+		sl_tablePanel.putConstraint(SpringLayout.EAST, productScrollPane, -10, SpringLayout.EAST, tablePanel);
+		tablePanel.add(productScrollPane);
 		
 		supplierScrollPane = new JScrollPane();
 		supplierScrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -364,7 +467,7 @@ public class Inventory extends JFrame {
 		});
 		addWindowFocusListener(new WindowFocusListener() {
 			public void windowGainedFocus(WindowEvent e) {
-				refreshTable();
+				refreshTables();
 			}
 			public void windowLostFocus(WindowEvent e) {}
 		});
@@ -381,7 +484,9 @@ public class Inventory extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnSupplier); }
 			
 			@Override
-			public void mouseClicked(MouseEvent e) { cardLayout.show(displayPanel, "supplier");}
+			public void mouseClicked(MouseEvent e) {
+				cardLayout.show(displayPanel, "supplier");
+			}
 
 		});
 		btnProduct.addMouseListener(new MouseAdapter() {
@@ -390,7 +495,9 @@ public class Inventory extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnProduct);}
 
 			@Override
-			public void mouseClicked(MouseEvent e) { cardLayout.show(displayPanel, "product");}
+			public void mouseClicked(MouseEvent e) {
+				cardLayout.show(displayPanel, "product");
+			}
 		});
 		
 		txtSupplierSearch.addFocusListener(new FocusAdapter() {
@@ -408,6 +515,18 @@ public class Inventory extends JFrame {
 				Object[][] result = database.getSuppliersByKeyword(keyword);
 				if (result != null) {
 					supplierTable.setModel(utility.generateTable(result, Database.supplierHeaders));
+				}
+			}
+		});
+		txtProductSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String keyword = txtProductSearch.getText();
+				Object[][] result = database.getSuppliersByKeyword(keyword);
+				if (result != null) {
+					productSelectedRow = -1;
+					productTable.setModel(utility.generateTable(trimProductDetails(keyword), Database.productHeaders));
+					descriptionCardLayout.show(descriptionCardPanel, "description_empty");
 				}
 			}
 		});
@@ -476,7 +595,8 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductManage);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new ProductUpdate(user);
+				// TODO select one product to send 
+				new ProductUpdate(user, null);
 			}
 		});
 		
@@ -523,14 +643,75 @@ public class Inventory extends JFrame {
 				}
 			}
 		});
+		lblReceiveStocksButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(lblReceiveStocksButton);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(lblReceiveStocksButton);	}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO receive stock window
+				System.out.println("test receive stock");
+				
+			}
+		});
+		lblPullOutButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {gallery.buttonHovered(lblPullOutButton);}
+			@Override
+			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(lblPullOutButton);	}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO receive stock window
+				System.out.println("test pull out stock");
+				
+			}
+		});
+		productTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				productSelectedRow = productTable.getSelectedRow();
+
+				if (productSelectedRow == -1) {
+					descriptionCardLayout.show(descriptionCardPanel, "description_empty");
+				} else {
+					lblProductIcon.setIcon((ImageIcon) products[productSelectedRow][3]);
+					lblProductName.setText("<html>" + products[productSelectedRow][2].toString() + "</html>");
+					lblPriceBought.setText(priceBoughtDefaultText + utility.formatCurrency((double) products[productSelectedRow][6]));
+					lblSellingPrice.setText(sellingPriceDefaultText + utility.formatCurrency((double) products[productSelectedRow][7]));
+					lblStocks.setText(stocksDefaultText + products[productSelectedRow][4].toString() + " "  + products[productSelectedRow][5].toString());
+
+					descriptionCardLayout.show(descriptionCardPanel, "description_display");
+				}
+			}
+		});
 		
-		refreshTable();
+		refreshTables();
 		
 		setVisible(true);
 	}
 	
-	private void refreshTable() {
+	private void refreshTables() {
 		supplierTable.setModel(utility.generateTable(database.getSuppliersByKeyword(""), Database.supplierHeaders));
+		productTable.setModel(utility.generateTable(trimProductDetails(""), Database.productHeaders));
+	}
+	
+	private Object[][] trimProductDetails(String keyword) {
+		products = database.getProductsByKeyword(keyword);
+		
+		if (products != null) {
+			Object[][] trimmedProducts = new Object[products.length][3];
+			
+			for (int productIndex = 0; productIndex < products.length; productIndex++) {
+				trimmedProducts[productIndex][0] = products[productIndex][0];
+				trimmedProducts[productIndex][1] = products[productIndex][1];
+				trimmedProducts[productIndex][2] = products[productIndex][2];
+			}
+			
+			return trimmedProducts;
+		}
+		
+		return null;
 	}
 }
 

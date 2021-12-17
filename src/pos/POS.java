@@ -949,7 +949,7 @@ public class POS extends JFrame {
 				cartList.add(
 					new CartItem(cartList.size(), 
 						queryResult[tableSelectedIndex + (tableMaxPerPage * (tableCurrentPage - 1))], 
-						quantity, gallery, this)
+						quantity, this)
 				);
 			}
 			

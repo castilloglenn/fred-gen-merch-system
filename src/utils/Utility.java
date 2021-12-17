@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -128,6 +129,13 @@ public class Utility {
 			}
 		}
 		return null;
+	}
+	
+	public String formatCurrency(double value) {
+		DecimalFormat formatter = new DecimalFormat("#,###.00");
+        String currency = formatter.format((value * 100.0) / 100.0 );
+        
+        return "P" + currency;
 	}
 	
 	/**
