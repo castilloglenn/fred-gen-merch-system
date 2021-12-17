@@ -33,7 +33,6 @@ import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
-import javax.swing.JSeparator;
 
 /**
  * @author Sebastian Garcia (UI design)
@@ -595,8 +594,11 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductManage);}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO select one product to send 
-				new ProductUpdate(user, null);
+				if (productSelectedRow == -1) {
+					gallery.showMessage(new String[] {"Please select a product on the table first in order to edit it."});
+				} else {
+					new ProductUpdate(user, products[productSelectedRow]);
+				}
 			}
 		});
 		
@@ -607,7 +609,29 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(btnProductRemove);	}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//code d2
+				if (productSelectedRow == -1) {
+					gallery.showMessage(new String[] {"Please select a product on the table first in order to delete it."});
+				} else {
+					int confirmation1 = JOptionPane.showConfirmDialog(null, 
+						"<html>Are your sure you want to delete a product? <br><br>"
+						+ "This is not recoverable and it would delete all <br>"
+						+ "records that are tied to this product including <br>"
+						+ "the transactions and supplies. <br><br>"
+						+ "Make sure that only newly created products without <br>"
+						+ "any ties are to be deleted.</html>", 
+						Utility.APP_TITLE, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+					if (confirmation1 == 0) {
+						if (database.deleteEntry("product", "product_id", (long) products[productTable.getSelectedRow()][0])) {
+							logger.addLog(String.format("User %s deleted a product with the ID:%s", user[0].toString(), 
+								products[productTable.getSelectedRow()][0].toString()));
+							 
+							JOptionPane.showMessageDialog(
+								null, "Successfully deleted the product '" + products[productTable.getSelectedRow()][2].toString() + "'", 
+								Utility.APP_TITLE, 
+								JOptionPane.INFORMATION_MESSAGE);
+						}
+					}
+				}
 			}
 		});
 		
@@ -686,12 +710,15 @@ public class Inventory extends JFrame {
 			}
 		});
 		
-		refreshTables();
 		
+		refreshTables();
 		setVisible(true);
 	}
 	
 	private void refreshTables() {
+		productSelectedRow = -1;
+		descriptionCardLayout.show(descriptionCardPanel, "description_empty");
+		
 		supplierTable.setModel(utility.generateTable(database.getSuppliersByKeyword(""), Database.supplierHeaders));
 		productTable.setModel(utility.generateTable(trimProductDetails(""), Database.productHeaders));
 	}

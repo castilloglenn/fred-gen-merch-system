@@ -1,11 +1,20 @@
 package inventory;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import utils.Database;
@@ -13,18 +22,6 @@ import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
-import javax.swing.SpringLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-
-import javax.swing.border.LineBorder;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
 public class ProductUpdate extends JFrame {
@@ -35,16 +32,15 @@ public class ProductUpdate extends JFrame {
 	private Utility utility;
 	private Gallery gallery;
 	private Logger logger;
-	private long[] supplierIDs;
-	private String[] supplierNames;
+	
+	private Object[] product;
 	
 	private String defaultIconPath;
 	private String iconPath;
 	
 	private JPanel contentPane, p, newProductPanel, iconSelectionPanel, buttonPanel, formPanel;
-	private JLabel lblUpdateProduct, btnConfirm,lblProductID,lblName,lblStocks,lblUOM,lblCategory,lblPriceBought,lblSupplier;
-	private JTextField txtProductID,txtName,txtStocks,txtUOM,txtPriceBought;
-	private JComboBox<String> comboSupplier;
+	private JLabel lblUpdateProduct, btnConfirm,lblProductID,lblName,lblStocks,lblUOM,lblCategory;
+	private JTextField txtProductID,txtName,txtStocks,txtUOM;
 	private JLabel lblSellingPrice;
 	private JComboBox<String> comboCategory;
 	private JTextField txtSellingPrice;
@@ -54,6 +50,8 @@ public class ProductUpdate extends JFrame {
 	
 		
 	public ProductUpdate(Object[] user, Object[] product) {
+		this.product = product;
+		
 		defaultIconPath = System.getProperty("user.dir");
 		defaultIconPath = defaultIconPath.replace("\\", "/");
 		defaultIconPath = defaultIconPath + "/assets/images/product-default.png";
@@ -67,7 +65,7 @@ public class ProductUpdate extends JFrame {
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 700, 500);
+		setBounds(100, 100, 700, 450);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -121,7 +119,7 @@ public class ProductUpdate extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblProductID, 125, SpringLayout.WEST, formPanel);
 		formPanel.add(lblProductID);
 		
-		txtProductID = new JTextField(Long.toString(utility.generateProductID(database.fetchLastID("product", "product_id"))));
+		txtProductID = new JTextField(product[0].toString());
 		txtProductID.setEditable(false);
 		txtProductID.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtProductID, -2, SpringLayout.NORTH, lblProductID);
@@ -132,6 +130,7 @@ public class ProductUpdate extends JFrame {
 		txtProductID.setColumns(10);
 		
 		lblCategory = new JLabel("Category");
+		sl_formPanel.putConstraint(SpringLayout.NORTH, lblCategory, 15, SpringLayout.SOUTH, lblProductID);
 		lblCategory.setFont(gallery.getFont(14f));
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblCategory, 0, SpringLayout.WEST, lblProductID);
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblCategory, 0, SpringLayout.EAST, lblProductID);
@@ -144,7 +143,7 @@ public class ProductUpdate extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblName, 0, SpringLayout.WEST, lblProductID);
 		formPanel.add(lblName);
 		
-		txtName = new JTextField();
+		txtName = new JTextField(product[2].toString());
 		txtName.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtName, -2, SpringLayout.NORTH, lblName);
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtName, 2, SpringLayout.SOUTH, lblName);
@@ -153,15 +152,14 @@ public class ProductUpdate extends JFrame {
 		formPanel.add(txtName);
 		txtName.setColumns(10);
 		
-		lblStocks = new JLabel("Initial Stocks");
+		lblStocks = new JLabel("Stocks");
 		lblStocks.setFont(gallery.getFont(14f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, lblStocks, 15, SpringLayout.SOUTH, lblName);
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblStocks, 0, SpringLayout.EAST, lblProductID);
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblStocks, 0, SpringLayout.WEST, lblProductID);
 		formPanel.add(lblStocks);
 		
-		txtStocks = new JTextField();
-		txtStocks.setText("0");
+		txtStocks = new JTextField(Long.toString(Math.round((double) product[4])));
 		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtStocks, 0, SpringLayout.SOUTH, lblStocks);
 		txtStocks.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtStocks, -2, SpringLayout.NORTH, lblStocks);
@@ -177,31 +175,13 @@ public class ProductUpdate extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.EAST, lblUOM, 0, SpringLayout.EAST, lblProductID);
 		formPanel.add(lblUOM);
 		
-		txtUOM = new JTextField();
-		txtUOM.setText("piece");
+		txtUOM = new JTextField(product[5].toString());
 		txtUOM.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtUOM, -2, SpringLayout.NORTH, lblUOM);
 		sl_formPanel.putConstraint(SpringLayout.EAST, txtUOM, 0, SpringLayout.EAST, txtProductID);
 		sl_formPanel.putConstraint(SpringLayout.WEST, txtUOM, 0, SpringLayout.WEST, txtProductID);
 		formPanel.add(txtUOM);
 		txtUOM.setColumns(10);
-		
-		lblPriceBought = new JLabel("Price Bought");
-		sl_formPanel.putConstraint(SpringLayout.NORTH, lblPriceBought, 10, SpringLayout.SOUTH, lblUOM);
-		lblPriceBought.setFont(gallery.getFont(14f));
-		sl_formPanel.putConstraint(SpringLayout.WEST, lblPriceBought, 0, SpringLayout.WEST, lblProductID);
-		sl_formPanel.putConstraint(SpringLayout.EAST, lblPriceBought, 0, SpringLayout.EAST, lblProductID);
-		formPanel.add(lblPriceBought);
-		
-		txtPriceBought = new JTextField();
-		txtPriceBought.setText("0.00");
-		txtPriceBought.setFont(gallery.getFont(15f));
-		sl_formPanel.putConstraint(SpringLayout.NORTH, txtPriceBought, -2, SpringLayout.NORTH, lblPriceBought);
-		sl_formPanel.putConstraint(SpringLayout.SOUTH, txtPriceBought, 2, SpringLayout.SOUTH, lblPriceBought);
-		sl_formPanel.putConstraint(SpringLayout.EAST, txtPriceBought, 0, SpringLayout.EAST, txtProductID);
-		sl_formPanel.putConstraint(SpringLayout.WEST, txtPriceBought, 0, SpringLayout.WEST, txtProductID);
-		formPanel.add(txtPriceBought);
-		txtPriceBought.setColumns(10);
 		p.add(iconSelectionPanel);
 		
 		buttonPanel = new RoundedPanel(Gallery.WHITE);
@@ -209,28 +189,13 @@ public class ProductUpdate extends JFrame {
 		sl_p.putConstraint(SpringLayout.SOUTH, formPanel, -15, SpringLayout.NORTH, buttonPanel);
 		sl_p.putConstraint(SpringLayout.NORTH, buttonPanel, -70, SpringLayout.SOUTH, p);
 		sl_p.putConstraint(SpringLayout.WEST, buttonPanel, 0, SpringLayout.WEST, formPanel);
-		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, 0, SpringLayout.EAST, formPanel);
-		
-		lblSupplier = new JLabel("Supplier");
-		lblSupplier.setFont(gallery.getFont(14f));
-		sl_formPanel.putConstraint(SpringLayout.NORTH, lblCategory, 15, SpringLayout.SOUTH, lblSupplier);
-		sl_formPanel.putConstraint(SpringLayout.NORTH, lblSupplier, 15, SpringLayout.SOUTH, lblProductID);
-		sl_formPanel.putConstraint(SpringLayout.WEST, lblSupplier, 0, SpringLayout.WEST, lblProductID);
-		sl_formPanel.putConstraint(SpringLayout.EAST, lblSupplier, 0, SpringLayout.EAST, lblProductID);
-		formPanel.add(lblSupplier);
-		
-		comboSupplier = new JComboBox<>();
-		sl_formPanel.putConstraint(SpringLayout.NORTH, comboSupplier, -2, SpringLayout.NORTH, lblSupplier);
-		sl_formPanel.putConstraint(SpringLayout.WEST, comboSupplier, 0, SpringLayout.WEST, txtProductID);
-		sl_formPanel.putConstraint(SpringLayout.SOUTH, comboSupplier, 2, SpringLayout.SOUTH, lblSupplier);
-		sl_formPanel.putConstraint(SpringLayout.EAST, comboSupplier, 0, SpringLayout.EAST, txtProductID);;
+		sl_p.putConstraint(SpringLayout.EAST, buttonPanel, 0, SpringLayout.EAST, formPanel);;
 		SpringLayout sl_iconSelectionPanel = new SpringLayout();
 		iconSelectionPanel.setLayout(sl_iconSelectionPanel);
-		formPanel.add(comboSupplier);
 		
 		lblSellingPrice = new JLabel("Selling Price");
+		sl_formPanel.putConstraint(SpringLayout.NORTH, lblSellingPrice, 15, SpringLayout.SOUTH, lblUOM);
 		lblSellingPrice.setFont(gallery.getFont(14f));
-		sl_formPanel.putConstraint(SpringLayout.NORTH, lblSellingPrice, 18, SpringLayout.SOUTH, lblPriceBought);
 		sl_formPanel.putConstraint(SpringLayout.WEST, lblSellingPrice, 0, SpringLayout.WEST, lblProductID);
 		formPanel.add(lblSellingPrice);
 		
@@ -243,8 +208,7 @@ public class ProductUpdate extends JFrame {
 		sl_formPanel.putConstraint(SpringLayout.EAST, comboCategory, 0, SpringLayout.EAST, txtProductID);
 		formPanel.add(comboCategory);
 		
-		txtSellingPrice = new JTextField();
-		txtSellingPrice.setText("0.00");
+		txtSellingPrice = new JTextField(utility.formatCurrency((double) product[7]).replace("P", "").replace(",", ""));
 		txtSellingPrice.setFont(gallery.getFont(15f));
 		sl_formPanel.putConstraint(SpringLayout.NORTH, txtSellingPrice, 0, SpringLayout.NORTH, lblSellingPrice);
 		sl_formPanel.putConstraint(SpringLayout.WEST, txtSellingPrice, 0, SpringLayout.WEST, txtProductID);
@@ -252,7 +216,7 @@ public class ProductUpdate extends JFrame {
 		txtSellingPrice.setColumns(10);
 		formPanel.add(txtSellingPrice);
 		
-		lblPreviewIcon = new JLabel(gallery.getImageViaPath(defaultIconPath, 32, 32));
+		lblPreviewIcon = new JLabel((ImageIcon) product[3]);
 		sl_iconSelectionPanel.putConstraint(SpringLayout.NORTH, lblPreviewIcon, 16, SpringLayout.NORTH, iconSelectionPanel);
 		sl_iconSelectionPanel.putConstraint(SpringLayout.WEST, lblPreviewIcon, 16, SpringLayout.WEST, iconSelectionPanel);
 		sl_iconSelectionPanel.putConstraint(SpringLayout.SOUTH, lblPreviewIcon, 48, SpringLayout.NORTH, iconSelectionPanel);
@@ -282,9 +246,9 @@ public class ProductUpdate extends JFrame {
 		btnCancel.setHorizontalAlignment(SwingConstants.CENTER);
 		buttonPanel.add(btnCancel);
 		
-		lblSelectIconButton = new JLabel("<html><center>Select<br>icon</center></html>");
+		lblSelectIconButton = new JLabel("<html><center>Change<br>icon</center></html>");
 		lblSelectIconButton.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSelectIconButton.setName("primary");
+		lblSelectIconButton.setName("danger");
 		gallery.styleLabelToButton(lblSelectIconButton, 12f, 5, 5);
 		sl_p.putConstraint(SpringLayout.NORTH, lblSelectIconButton, 15, SpringLayout.SOUTH, iconSelectionPanel);
 		sl_p.putConstraint(SpringLayout.WEST, lblSelectIconButton, 0, SpringLayout.WEST, iconSelectionPanel);
@@ -299,27 +263,31 @@ public class ProductUpdate extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (checkFields()) {
-					long userID = (long) user[0];
 					long productID = Long.parseLong(txtProductID.getText());
-					long supplier = supplierIDs[comboSupplier.getSelectedIndex()];
-					String category = comboCategory.getSelectedItem().toString();
-					String name = txtName.getText();
-					double stock = Double.parseDouble(txtStocks.getText());
-					String unitofMeasurement = txtUOM.getText();
-					double priceBought = Double.parseDouble(txtPriceBought.getText());
-					double sellingPrice = Double.parseDouble(txtSellingPrice.getText());
+					String productCategory = comboCategory.getSelectedItem().toString();
+					String productName = txtName.getText();
+					double productStocks = Double.parseDouble(txtStocks.getText());
+					String productUOM = txtUOM.getText();
+					double productSellingPrice = Double.parseDouble(txtSellingPrice.getText());
 					
-					if (database.addProduct(productID, category, name, iconPath, stock, unitofMeasurement, priceBought, sellingPrice)) {
-						if (database.addSupplies(supplier, productID, userID, priceBought, priceBought * stock)) {
-							logger.addLog(String.format("User %s added a new product with the ID:%s", user[0].toString(), productID));
-							 
-							 JOptionPane.showMessageDialog(
-								null, "Successfully added new product '" + name + "'", 
-								Utility.APP_TITLE, 
-								JOptionPane.INFORMATION_MESSAGE);
-							 
-							 clearFields();
-						}
+					boolean successfulExecution = false;
+					if (iconPath.equals(defaultIconPath)) {
+						// icon is unchanged
+						successfulExecution = database.setProduct(productID, productCategory, productName, productStocks, productUOM, productSellingPrice);
+					} else {
+						// icon is changed
+						successfulExecution = database.setProduct(productID, productCategory, productName, iconPath, productStocks, productUOM, productSellingPrice);
+					}
+					
+					if (successfulExecution) {
+						logger.addLog(String.format("User %s edited a product with the ID:%s", user[0].toString(), productID));
+						 
+						 JOptionPane.showMessageDialog(
+							null, "Successfully edited product '" + productName + "'", 
+							Utility.APP_TITLE, 
+							JOptionPane.INFORMATION_MESSAGE);
+						 
+						 dispose();
 					}
 				}
 			}
@@ -354,7 +322,7 @@ public class ProductUpdate extends JFrame {
 		});
 
 		
-		setSuppliers();
+		setCategories();
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -380,12 +348,6 @@ public class ProductUpdate extends JFrame {
 		}
 		
 		try {
-			Double.parseDouble(txtPriceBought.getText());
-		} catch (NumberFormatException | NullPointerException e) {
-			errorMessages.add("- Invalid price bought value, must be a currency.");
-		}
-		
-		try {
 			Double.parseDouble(txtSellingPrice.getText());
 		} catch (NumberFormatException | NullPointerException e) {
 			errorMessages.add("- Invalid selling price value, must be a currency.");
@@ -399,30 +361,13 @@ public class ProductUpdate extends JFrame {
 		return true;
 	}
 	
-	private void setSuppliers() {
-		Object[][] suppliers = database.getSuppliersByKeyword("");
-		supplierIDs = new long[suppliers.length];
-		supplierNames = new String[suppliers.length];
+	private void setCategories() {
+		String productCategory = product[1].toString();
 		
-		for (int supplierIndex = 0; supplierIndex < suppliers.length; supplierIndex++) {
-			supplierIDs[supplierIndex] = (long) suppliers[supplierIndex][0];
-			supplierNames[supplierIndex] = suppliers[supplierIndex][1].toString();
+		for (int categoryIndex = 0; categoryIndex < Database.productCategories.length; categoryIndex++) {
+			if (productCategory.equals(Database.productCategories[categoryIndex])) {
+				comboCategory.setSelectedIndex(categoryIndex);
+			}
 		}
-		
-		DefaultComboBoxModel<String> supplierModel = new DefaultComboBoxModel<>(supplierNames);
-		comboSupplier.setModel(supplierModel);
-	}
-	
-	public void clearFields() {
-		txtProductID.setText(Long.toString(utility.generateProductID(database.fetchLastID("product", "product_id"))));
-		comboSupplier.setSelectedIndex(0);
-		comboSupplier.setSelectedIndex(0);
-		txtName.setText("");
-		iconPath = defaultIconPath;
-		lblPreviewIcon.setIcon(gallery.getImageViaPath(iconPath, 32, 32));
-		txtStocks.setText("0");
-		txtUOM.setText("piece");
-		txtPriceBought.setText("0.00");
-		txtSellingPrice.setText("0.00");
 	}
 }

@@ -144,9 +144,11 @@ public class Database {
 				+ "date DATETIME NOT NULL, "
 				+ "total_price DOUBLE(8, 2) NOT NULL, "
 				+ "FOREIGN KEY (user_id) "
-				+ "REFERENCES user(user_id), "
+				+ "REFERENCES user(user_id) "
+				+ "ON DELETE CASCADE, "
 				+ "FOREIGN KEY (customer_discount_id) "
-				+ "REFERENCES customer_discount(customer_discount_id)"
+				+ "REFERENCES customer_discount(customer_discount_id) "
+				+ "ON DELETE CASCADE"
 			+ ");"
 		);
 		stmt.execute("CREATE TABLE IF NOT EXISTS supplies ("
@@ -157,11 +159,14 @@ public class Database {
 				+ "total_price DOUBLE(8, 2) NOT NULL, "
 				+ "date DATETIME NOT NULL, "
 				+ "FOREIGN KEY (supplier_id) "
-				+ "REFERENCES supplier(supplier_id), "
+				+ "REFERENCES supplier(supplier_id) "
+				+ "ON DELETE CASCADE, "
 				+ "FOREIGN KEY (product_id) "
-				+ "REFERENCES product(product_id), "
+				+ "REFERENCES product(product_id) "
+				+ "ON DELETE CASCADE, "
 				+ "FOREIGN KEY (user_id) "
-				+ "REFERENCES user(user_id)"
+				+ "REFERENCES user(user_id) "
+				+ "ON DELETE CASCADE"
 			+ ");"
 		);
 		stmt.execute("CREATE TABLE IF NOT EXISTS contains ("
@@ -169,9 +174,11 @@ public class Database {
 				+ "product_id BIGINT NOT NULL, "
 				+ "quantity DOUBLE(8, 2) NOT NULL, "
 				+ "FOREIGN KEY (transaction_id) "
-				+ "REFERENCES transaction(transaction_id), "
+				+ "REFERENCES transaction(transaction_id) "
+				+ "ON DELETE CASCADE, "
 				+ "FOREIGN KEY (product_id) "
-				+ "REFERENCES product(product_id)"
+				+ "REFERENCES product(product_id) "
+				+ "ON DELETE CASCADE"
 			+ ");"
 		);
 		
@@ -1068,7 +1075,7 @@ public class Database {
 	 * @see utils.Utility#showImageChooser()
 	 */
 	public boolean setProduct(long productID, String category, String name, 
-		String path, double stock, String uom, double priceBought, double sellingPrice
+		String path, double stock, String uom, double sellingPrice
 	) {
 		try {
 			ps = con.prepareStatement(
@@ -1078,7 +1085,6 @@ public class Database {
 					+ "image = ?, "
 					+ "stocks = ?, "
 					+ "uom = ?, "
-					+ "price_bought = ?, " 
 					+ "selling_price = ? "
 				+ "WHERE product_id = ?;"
 			);
@@ -1091,15 +1097,54 @@ public class Database {
 			
 			ps.setDouble(4, stock);
 			ps.setString(5, uom);
-			ps.setDouble(6, priceBought);
-			ps.setDouble(7, sellingPrice);
-			ps.setLong(8, productID);
+			ps.setDouble(6, sellingPrice);
+			ps.setLong(7, productID);
 			
 			ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * Method for updating the details of a product. (Without updating the image)
+	 * 
+	 * @param productID The ID must be generated from the Utility class method generateProductID()
+	 * @param category the category in which the product belongs to
+	 * @param name The product's general name, may/may not include the brand and company name
+	 * @param stock The quantity of the initial stocks, default can be zero
+	 * @param uom The quantity description on how it will be sold or packaged, examples will be on kilograms or pieces
+	 * @param sellingPrice The selling price, this is also important for monitoring profit margin upon stocks
+	 * 
+	 * @see utils.Utility#showImageChooser()
+	 */
+	public boolean setProduct(long productID, String category, String name, 
+		double stock, String uom, double sellingPrice
+	) {
+		try {
+			ps = con.prepareStatement(
+				"UPDATE product "
+				+ "SET category = ?,"
+					+ "name = ?, "
+					+ "stocks = ?, "
+					+ "uom = ?, "
+					+ "selling_price = ? "
+				+ "WHERE product_id = ?;"
+			);
+			ps.setString(1, category);
+			ps.setString(2, name);
+			ps.setDouble(3, stock);
+			ps.setString(4, uom);
+			ps.setDouble(5, sellingPrice);
+			ps.setLong(6, productID);
+			
+			ps.executeUpdate();
+			return true;
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
