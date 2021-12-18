@@ -675,8 +675,7 @@ public class Inventory extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO receive stock window
-				System.out.println("test receive stock");
-				
+				new ProductStock(0, user, products[productSelectedRow]);
 			}
 		});
 		lblPullOutButton.addMouseListener(new MouseAdapter() {
@@ -687,8 +686,7 @@ public class Inventory extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO receive stock window
-				System.out.println("test pull out stock");
-				
+				new ProductStock(1, user, products[productSelectedRow]);
 			}
 		});
 		productTable.addMouseListener(new MouseAdapter() {
