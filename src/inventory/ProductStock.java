@@ -1,29 +1,25 @@
 package inventory;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 
 import utils.Database;
 import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
-import javax.swing.SpringLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
 
 @SuppressWarnings("serial")
 public class ProductStock extends JDialog {
@@ -42,9 +38,6 @@ public class ProductStock extends JDialog {
 	private JPanel mainPanel;
 	private JPanel titlePanel;
 	
-	private int config;
-	private Object[] user;
-	private Object[] product;
 	private long[] supplierIDs;
 	private String[] supplierNames;
 	
@@ -60,10 +53,6 @@ public class ProductStock extends JDialog {
 		gallery = Gallery.getInstance();
 		database = Database.getInstance();
 		logger = Logger.getInstance();
-		
-		this.config = config;
-		this.user = user;
-		this.product = product;
 		
 		setTitle(Utility.APP_TITLE);
 		setIconImage(gallery.getSystemIcon());
@@ -137,17 +126,6 @@ public class ProductStock extends JDialog {
 		sl_mainPanel.putConstraint(SpringLayout.WEST, lblProceedButton, 0, SpringLayout.WEST, comboSupplier);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, lblProceedButton, -15, SpringLayout.SOUTH, mainPanel);
 		mainPanel.add(lblProceedButton);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		lblProceedButton.addMouseListener(new MouseAdapter() {
 			@Override
