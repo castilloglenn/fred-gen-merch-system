@@ -674,7 +674,6 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(lblReceiveStocksButton);	}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO receive stock window
 				new ProductStock(0, user, products[productSelectedRow]);
 			}
 		});
@@ -685,7 +684,6 @@ public class Inventory extends JFrame {
 			public void mouseExited(MouseEvent e) {gallery.buttonNormalized(lblPullOutButton);	}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO receive stock window
 				new ProductStock(1, user, products[productSelectedRow]);
 			}
 		});
