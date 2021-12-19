@@ -170,6 +170,14 @@ public class CartItem extends JPanel {
 		setBounds(0, index * height, width, height);
 	}
 	
+	public String getName() {
+		return product[2].toString();
+	}
+	
+	public Object[] getProduct() {
+		return product;
+	}
+	
 	/**
 	 * Size 7 object list that will get from the cart item.
 	 * 

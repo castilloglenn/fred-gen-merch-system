@@ -19,9 +19,12 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
@@ -54,6 +57,7 @@ public class POS extends JFrame {
 
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
+	private String clearCartMessage = "Please let the manager put their password for verification.";
 	
 	private int defaultHeight = 710; // 600
 	private int defaultWidth = 990; // 1000
@@ -83,11 +87,12 @@ public class POS extends JFrame {
 	private double totalCartPrice = 0.0;
 	
 	// User details
-	private String cashierName = "Castillo"; // TEST ONLY, REMOVE THIS AFTER MAKING THE USER SYSTEM
+	private String cashierName; // TEST ONLY, REMOVE THIS AFTER MAKING THE USER SYSTEM
 	
 	private Database database; 
 	private Gallery gallery;
 	private Logger logger;
+	private Utility utility;
 	private VerticalLabelUI verticalUI;
 	private Object[] user;
 	
@@ -119,7 +124,10 @@ public class POS extends JFrame {
 		database = Database.getInstance();
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
+		utility = Utility.getInstance();
 		this.user = user;
+		
+		cashierName = user[3].toString();
 		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false); 
@@ -706,29 +714,8 @@ public class POS extends JFrame {
 		if (code == KeyEvent.VK_F1) {
 			// TODO Checkout
 			
-		} else if (code == KeyEvent.VK_F2) { // Not included
-			/**
-			 * TEST ONLY FOR DEBUGGING
-			 */
-//			System.out.println("Window size: " + getSize());
-//			System.out.println("\n\nCart count: " + cartList.size());
-//			cartList.forEach((cartItem) -> System.out.println(cartItem));
-//			System.out.println("========================================");
-			
-			Utility testUtil = Utility.getInstance();
-			String message = testUtil.showImageChooser();
-			
-			if (!database.addProduct(3L, "others", "idk", message, 225, "piece", 622.95, 4112.0)) {
-				// TODO Show errror message
-				System.out.println("Please bro");
-			}
-			
-			
 		} else if (code == KeyEvent.VK_F4) {
 			clearCart();
-		} else if (code == KeyEvent.VK_F5) {
-			// TODO Remove only the last item on the cart
-			
 		}
 	}
 
@@ -974,10 +961,69 @@ public class POS extends JFrame {
 	}
 	
 	public void clearCart() {
-		// TODO: Administrator/Manager authorization checker first, before clearing.
+		int rank = Integer.parseInt(Character.toString(user[0].toString().charAt(1)));
+		boolean proceed = false;
 		
-		cartList.clear();
-		displayCart();
+		if (cartList.size() == 0) {
+			gallery.showMessage(new String[] {"The cart has no items to cancel."});
+		} else {
+			if (rank == 1) {
+				// Store Clerk
+				// Manager password request panel setup and execution
+				JPanel panel = new JPanel();
+				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+				JLabel label = new JLabel(clearCartMessage);
+				JPasswordField pass = new JPasswordField(10);
+				String[] options = new String[]{"OK", "Cancel"};
+				
+				panel.add(label);
+				panel.add(pass);
+				
+				// Manager password request dialog shows up
+				int option = 
+					JOptionPane
+						.showOptionDialog(null, panel, Utility.APP_TITLE,
+				                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+				                         null, options, pass);
+				
+				// Manager password return value
+				String managerPassword = "";
+				if(option == 0) {
+				    char[] password = pass.getPassword();
+				    managerPassword = utility.hashData(new String(password));
+					String[] hashes = database.fetchManagerHashes();
+					
+					boolean hasEqual = false;
+					for (String hash : hashes) {
+						if (managerPassword.equals(hash)) {
+							hasEqual = true;
+						}
+					}
+					
+					if (hasEqual) {
+						proceed = true;
+					} else {
+						JOptionPane.showMessageDialog(null, "Incorrect password", 
+								Utility.APP_TITLE, JOptionPane.WARNING_MESSAGE);
+					}
+				}
+			} else if (rank == 2) {
+				// Manager
+				proceed = true;
+			}
+			
+			if (proceed) {
+				StringBuilder productsIncluded = new StringBuilder();
+				cartList.forEach((item) -> productsIncluded.append(item.getName() + ", "));
+				productsIncluded.setLength(Math.max(productsIncluded.length() - 2, 0));
+				
+				logger.addLog(String.format("User %s cancelled a cart including the items: %s", 
+						user[0].toString(), productsIncluded.toString()));
+				
+				cartList.clear();
+				displayCart();
+			}
+		}
 	}
 	
 	private void scrollTable(MouseWheelEvent e) {

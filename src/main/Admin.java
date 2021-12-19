@@ -210,7 +210,6 @@ public class Admin extends JFrame {
 		logListPanel.setLayout(sl_logListPanel);
 		
 		logsScrollPane = new JScrollPane();
-		logsScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		sl_logListPanel.putConstraint(SpringLayout.NORTH, logsScrollPane, 0, SpringLayout.NORTH, logListPanel);
 		sl_logListPanel.putConstraint(SpringLayout.WEST, logsScrollPane, 0, SpringLayout.WEST, logListPanel);
 		sl_logListPanel.putConstraint(SpringLayout.SOUTH, logsScrollPane, 0, SpringLayout.SOUTH, logListPanel);
