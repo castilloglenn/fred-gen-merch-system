@@ -17,7 +17,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -28,10 +33,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import main.Main;
 import main.Portal;
 import utils.Database;
 import utils.Gallery;
@@ -39,8 +42,6 @@ import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 
 /**
@@ -55,6 +56,7 @@ public class POS extends JFrame {
 	private final String TRANSACTION_TITLE = "Transactions";
 	private final String REPORTS_TITLE = "Reports";
 
+	private String transactionMessage = "Transaction Count: ";
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
 	private String clearCartMessage = "Please let the manager put their password for verification.";
@@ -200,7 +202,7 @@ public class POS extends JFrame {
 		sl_posPanel = new SpringLayout();
 		posPanel.setLayout(sl_posPanel);
 		
-		lblTransactionNo = new JLabel("Transaction No. 1");
+		lblTransactionNo = new JLabel(transactionMessage);
 		lblTransactionNo.setFont(gallery.getFont(23f));
 		sl_posPanel.putConstraint(SpringLayout.NORTH, lblTransactionNo, 20, SpringLayout.NORTH, posPanel);
 		sl_posPanel.putConstraint(SpringLayout.WEST, lblTransactionNo, 20, SpringLayout.WEST, posPanel);
@@ -477,6 +479,7 @@ public class POS extends JFrame {
 		
 		
 		// Configure initial component state
+		setTransactionCount();
 		updatePaymentStatistics();
 		lblLeftButton.setVisible(false);
 		lblRightButton.setVisible(false);
@@ -504,6 +507,12 @@ public class POS extends JFrame {
 				resetAllPages();
 				tfSearch.requestFocus();
 			}
+		});
+		addWindowFocusListener(new WindowFocusListener() {
+			public void windowGainedFocus(WindowEvent e) {
+				setTransactionCount();
+			}
+			public void windowLostFocus(WindowEvent e) {}
 		});
 		lblDashboardNav.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblDashboardNav); }
@@ -539,8 +548,7 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCheckoutButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO: Add function for the checkout button
-				
+				checkOut();
 			}
 		});
 		lblCancelButton.addMouseListener(new MouseAdapter() {
@@ -641,7 +649,7 @@ public class POS extends JFrame {
 
 		tfQuantity.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyReleased(KeyEvent e) {
+			public void keyPressed(KeyEvent e) {
 				int code = e.getKeyCode();
 				systemKeyMappingShortcuts(code);
 				tableKeyMappingShortcuts(code);
@@ -712,8 +720,7 @@ public class POS extends JFrame {
 	 */
 	private void systemKeyMappingShortcuts(int code) {
 		if (code == KeyEvent.VK_F1) {
-			// TODO Checkout
-			
+			checkOut();
 		} else if (code == KeyEvent.VK_F4) {
 			clearCart();
 		}
@@ -758,6 +765,31 @@ public class POS extends JFrame {
 		if (previousIndex != tableSelectedIndex) {
 			selectProduct(tableSelectedIndex);
 		}
+	}
+	
+	private void setTransactionCount() {
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
+		Date start = calendar.getTime();
+		
+		calendar.add(Calendar.DAY_OF_YEAR, 1);
+		calendar.add(Calendar.MILLISECOND, -1);
+		
+		Date end = calendar.getTime();
+		
+		Object[][] transactions = database.getTransactionsByRange(start, end);
+		int count = 0;
+		
+		if (transactions != null) {
+			count = transactions.length + 1;
+		}
+		
+		lblTransactionNo.setText(transactionMessage + count);
 	}
 	
 	public void setSelectedIndex(int selectedIndex) {
@@ -1113,6 +1145,14 @@ public class POS extends JFrame {
 		lblPaymentCartQuantity.setText(String.format("Cart contents:  %,d  piece%s", totalCartQuantity,
 				(totalCartQuantity == 1) ? "" : "s"));
 		lblPaymentCartTotalPrice.setText(String.format("Total price:  P%,.2f", totalCartPrice));
+	}
+	
+	private void checkOut() {
+		if (cartList.size() == 0) {
+			gallery.showMessage(new String[] {"The cart has no items to checkout."});
+		} else {
+			new Checkout(user, cartList);
+		}
 	}
 }
 
