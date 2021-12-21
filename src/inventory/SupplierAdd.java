@@ -44,7 +44,7 @@ public class SupplierAdd extends JFrame {
 		logger = Logger.getInstance();
 
 		setIconImage(gallery.getSystemIcon());
-		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 		
 		setResizable(false);
 		setLocationRelativeTo(null);
@@ -207,7 +207,7 @@ public class SupplierAdd extends JFrame {
 						 
 						 JOptionPane.showMessageDialog(
 							null, "Successfully register the new supplier with the ID of " + id + ".", 
-							Utility.APP_TITLE, 
+							Utility.BUSINESS_TITLE, 
 							JOptionPane.INFORMATION_MESSAGE);
 						 
 						 clearFields();

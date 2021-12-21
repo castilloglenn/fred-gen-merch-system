@@ -94,7 +94,7 @@ public class Inventory extends JFrame {
 		verticalUI = new VerticalLabelUI(false);
 
 		setIconImage(gallery.getSystemIcon());
-		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 		setMinimumSize(new Dimension(990, 600));
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 1000, 600);
@@ -619,7 +619,7 @@ public class Inventory extends JFrame {
 						+ "the transactions and supplies. <br><br>"
 						+ "Make sure that only newly created products without <br>"
 						+ "any ties are to be deleted.</html>", 
-						Utility.APP_TITLE, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+						Utility.BUSINESS_TITLE, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 					if (confirmation1 == 0) {
 						if (database.deleteEntry("product", "product_id", (long) products[productTable.getSelectedRow()][0])) {
 							logger.addLog(String.format("User %s deleted a product with the ID:%s", user[0].toString(), 
@@ -627,7 +627,7 @@ public class Inventory extends JFrame {
 							 
 							JOptionPane.showMessageDialog(
 								null, "Successfully deleted the product '" + products[productTable.getSelectedRow()][2].toString() + "'", 
-								Utility.APP_TITLE, 
+								Utility.BUSINESS_TITLE, 
 								JOptionPane.INFORMATION_MESSAGE);
 						}
 					}
@@ -650,7 +650,7 @@ public class Inventory extends JFrame {
 
 					int confirmation = JOptionPane.showConfirmDialog(
 						null, "Are you sure you want to remove supplier with the ID of: " + supplierID, 
-						Utility.APP_TITLE,
+						Utility.BUSINESS_TITLE,
 						JOptionPane.YES_OPTION,
 						JOptionPane.WARNING_MESSAGE);
 					
@@ -660,7 +660,7 @@ public class Inventory extends JFrame {
 							
 							JOptionPane.showMessageDialog(
 									null, "Successfully removed the supplier with the ID of " + supplierID + ".", 
-									Utility.APP_TITLE, 
+									Utility.BUSINESS_TITLE, 
 									JOptionPane.INFORMATION_MESSAGE);
 						}
 					}

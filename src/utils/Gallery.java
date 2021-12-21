@@ -128,7 +128,7 @@ public class Gallery {
 		
 		panel.add(label);
 		
-		JOptionPane.showConfirmDialog(null, panel, Utility.APP_TITLE, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showConfirmDialog(null, panel, Utility.BUSINESS_TITLE, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
 	}
 	
 	public String constraintMessage(String message) {

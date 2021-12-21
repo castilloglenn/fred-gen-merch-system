@@ -54,7 +54,7 @@ public class ProductStock extends JDialog {
 		database = Database.getInstance();
 		logger = Logger.getInstance();
 		
-		setTitle(Utility.APP_TITLE);
+		setTitle(Utility.BUSINESS_TITLE);
 		setIconImage(gallery.getSystemIcon());
 		setResizable(false);
 		setSize(550, 250);
@@ -152,7 +152,7 @@ public class ProductStock extends JDialog {
 								 
 								JOptionPane.showMessageDialog(
 									null, "Successfully increased the stock of product '" + product[2].toString() + "'", 
-									Utility.APP_TITLE, 
+									Utility.BUSINESS_TITLE, 
 									JOptionPane.INFORMATION_MESSAGE);
 								 
 								dispose();
@@ -168,7 +168,7 @@ public class ProductStock extends JDialog {
 								 
 								JOptionPane.showMessageDialog(
 									null, "Successfully decreased the stock of product '" + product[2].toString() + "'", 
-									Utility.APP_TITLE, 
+									Utility.BUSINESS_TITLE, 
 									JOptionPane.INFORMATION_MESSAGE);
 								 
 								dispose();

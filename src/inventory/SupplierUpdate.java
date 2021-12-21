@@ -50,7 +50,7 @@ public class SupplierUpdate extends JFrame {
 		logger = Logger.getInstance();
 		
 		setIconImage(gallery.getSystemIcon());
-		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
@@ -210,7 +210,7 @@ public class SupplierUpdate extends JFrame {
 						 
 						 JOptionPane.showMessageDialog(
 							null, "Successfully updated the supplier with the ID of " + id + ".", 
-							Utility.APP_TITLE, 
+							Utility.BUSINESS_TITLE, 
 							JOptionPane.INFORMATION_MESSAGE);
 						 
 						 dispose();

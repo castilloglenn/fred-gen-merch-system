@@ -45,7 +45,7 @@ public class Logger {
 			if (!file.isFile() && !file.createNewFile()) {
 				JOptionPane.showMessageDialog(
 						null, "Logger: File creation unsuccessful.", 
-						Utility.APP_TITLE, 
+						Utility.BUSINESS_TITLE, 
 						JOptionPane.WARNING_MESSAGE);
 				
 				throw new IOException("Error creating new file: " + file.getAbsolutePath());
@@ -86,7 +86,7 @@ public class Logger {
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(
 					null, "Logger: Error handling file.", 
-					Utility.APP_TITLE, 
+					Utility.BUSINESS_TITLE, 
 					JOptionPane.WARNING_MESSAGE);
 			e.printStackTrace();
 		}

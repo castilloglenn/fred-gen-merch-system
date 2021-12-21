@@ -135,7 +135,7 @@ public class POS extends JFrame {
 		verticalUI = new VerticalLabelUI(false); 
 
 		setIconImage(gallery.getSystemIcon());
-		setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+		setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 		setMinimumSize(new Dimension(minWidth, minHeight));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -519,7 +519,7 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblDashboardNav); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+				setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 				
 				cardLayout.show(displayPanel, "pos");
 				tfSearch.requestFocus();
@@ -530,7 +530,7 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblTransactionNav); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				setTitle(TRANSACTION_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+				setTitle(TRANSACTION_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 				cardLayout.show(displayPanel, "transaction");
 			}
 		});
@@ -539,7 +539,7 @@ public class POS extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblReportNav); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				setTitle(REPORTS_TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+				setTitle(REPORTS_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 				cardLayout.show(displayPanel, "report");
 			}
 		});
@@ -1014,7 +1014,7 @@ public class POS extends JFrame {
 				// Manager password request dialog shows up
 				int option = 
 					JOptionPane
-						.showOptionDialog(null, panel, Utility.APP_TITLE,
+						.showOptionDialog(null, panel, Utility.BUSINESS_TITLE,
 				                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
 				                         null, options, pass);
 				
@@ -1036,7 +1036,7 @@ public class POS extends JFrame {
 						proceed = true;
 					} else {
 						JOptionPane.showMessageDialog(null, "Incorrect password", 
-								Utility.APP_TITLE, JOptionPane.WARNING_MESSAGE);
+								Utility.BUSINESS_TITLE, JOptionPane.WARNING_MESSAGE);
 					}
 				}
 			} else if (rank == 2) {

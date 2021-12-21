@@ -101,7 +101,7 @@ public class Main extends JFrame {
 		SpringLayout sl_titlePanel = new SpringLayout();
 		titlePanel.setLayout(sl_titlePanel);
 		
-		lblTitle = new JLabel("<html><p style='text-align: center;'>" + Utility.APP_TITLE + 
+		lblTitle = new JLabel("<html><p style='text-align: center;'>" + Utility.BUSINESS_TITLE + 
 				"<br><small>Please login your credentials</small></p></html>");
 		sl_titlePanel.putConstraint(SpringLayout.NORTH, lblTitle, 15, SpringLayout.NORTH, titlePanel);
 		sl_titlePanel.putConstraint(SpringLayout.WEST, lblTitle, 15, SpringLayout.WEST, titlePanel);
@@ -216,7 +216,7 @@ public class Main extends JFrame {
 				// Manager password request dialog shows up
 				int option = 
 					JOptionPane
-						.showOptionDialog(null, panel, Utility.APP_TITLE,
+						.showOptionDialog(null, panel, Utility.BUSINESS_TITLE,
 				                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
 				                         null, options, options[0]);
 				
@@ -258,7 +258,7 @@ public class Main extends JFrame {
 						// Manager password request dialog shows up
 						int option2 = 
 							JOptionPane
-								.showOptionDialog(null, panel2, Utility.APP_TITLE,
+								.showOptionDialog(null, panel2, Utility.BUSINESS_TITLE,
 						                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
 						                         null, options2, options2[0]);
 						if (option2 == 0) {
@@ -298,7 +298,7 @@ public class Main extends JFrame {
 										fetchedUserDetail[6].toString(), hashedNewPassword)) {
 									JOptionPane.showMessageDialog(
 										null, "Successfully updated the password.", 
-										Utility.APP_TITLE, 
+										Utility.BUSINESS_TITLE, 
 										JOptionPane.INFORMATION_MESSAGE);
 								}
 							}

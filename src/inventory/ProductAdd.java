@@ -60,7 +60,7 @@ public class ProductAdd extends JFrame {
 		logger = Logger.getInstance();
 		database = Database.getInstance();
 		setIconImage(gallery.getSystemIcon());
-		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
@@ -311,7 +311,7 @@ public class ProductAdd extends JFrame {
 							 
 							 JOptionPane.showMessageDialog(
 								null, "Successfully added new product '" + name + "'", 
-								Utility.APP_TITLE, 
+								Utility.BUSINESS_TITLE, 
 								JOptionPane.INFORMATION_MESSAGE);
 							 
 							 clearFields();

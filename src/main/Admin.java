@@ -107,7 +107,7 @@ public class Admin extends JFrame {
 		this.user = user;
 		
 		setIconImage(gallery.getSystemIcon());
-		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.APP_TITLE);
+		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 		setMinimumSize(new Dimension(minWidth, minHeight));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -614,7 +614,7 @@ public class Admin extends JFrame {
 							user[0], tfUserID.getText()));
 					JOptionPane.showMessageDialog(
 						null, "Successfully updated the user " + tfFirstName.getText() + ".", 
-						Utility.APP_TITLE, 
+						Utility.BUSINESS_TITLE, 
 						JOptionPane.INFORMATION_MESSAGE);
 					clearForm();
 					refreshTable();
@@ -632,7 +632,7 @@ public class Admin extends JFrame {
 					// Confirmation message
 					int result = JOptionPane.showConfirmDialog(
 						null, "Are you sure you want to delete ID:" + selectedID + "?", 
-						Utility.APP_TITLE, 
+						Utility.BUSINESS_TITLE, 
 						JOptionPane.OK_CANCEL_OPTION, 
 						JOptionPane.WARNING_MESSAGE);
 					
@@ -646,7 +646,7 @@ public class Admin extends JFrame {
 							
 							JOptionPane.showMessageDialog(
 									null, "Successfully deleted the user with the ID:" + selectedID + ".", 
-									Utility.APP_TITLE, 
+									Utility.BUSINESS_TITLE, 
 									JOptionPane.INFORMATION_MESSAGE);
 							clearForm();
 							refreshTable();
@@ -679,7 +679,7 @@ public class Admin extends JFrame {
 							user[0], tfUserID.getText()));
 					JOptionPane.showMessageDialog(
 						null, "Successfully registered new user.", 
-						Utility.APP_TITLE, 
+						Utility.BUSINESS_TITLE, 
 						JOptionPane.INFORMATION_MESSAGE);
 					clearForm();
 					refreshTable();
