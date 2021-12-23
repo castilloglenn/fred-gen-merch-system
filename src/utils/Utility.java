@@ -120,6 +120,28 @@ public class Utility {
         return null;
     }
 	
+    public boolean containsIgnoreCase(String source, String search) {
+        // Source: https://stackoverflow.com/questions/86780/how-to-check-if-a-string-contains-another-string-in-a-case-insensitive-manner-in
+        final int length = search.length();
+        if (length == 0)
+            return true; // Empty string is contained
+    
+        final char firstLo = Character.toLowerCase(search.charAt(0));
+        final char firstUp = Character.toUpperCase(search.charAt(0));
+    
+        for (int i = source.length() - length; i >= 0; i--) {
+            // Quick check before calling the more expensive regionMatches() method:
+            final char ch = source.charAt(i);
+            if (ch != firstLo && ch != firstUp)
+                continue;
+    
+            if (source.regionMatches(true, i, search, 0, length))
+                return true;
+        }
+    
+        return false;
+    }
+	
 	public void copyToClipboard(String text) {
 		StringSelection ss = new StringSelection(text);
 		Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();

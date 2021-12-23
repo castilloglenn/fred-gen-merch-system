@@ -40,6 +40,8 @@ import utils.RoundedPanel;
 import utils.Utility;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 @SuppressWarnings("serial")
 public class Admin extends JFrame {
@@ -98,6 +100,8 @@ public class Admin extends JFrame {
 	private JTextArea taLogs;
 	private JLabel lblClearButton;
 	private JLabel lblLogEmptyMessage;
+	private JLabel lblKeyword;
+	private JTextField tfKeyword;
 
 	public Admin(Object[] user) {
 		database = Database.getInstance();
@@ -188,10 +192,10 @@ public class Admin extends JFrame {
 		systemLogPanel.add(datePicker);
 		
 		lblSearchButton = new JLabel("Search");
+		sl_systemLogPanel.putConstraint(SpringLayout.EAST, lblSearchButton, 0, SpringLayout.EAST, systemLogPanel);
 		lblSearchButton.setName("primary");
 		gallery.styleLabelToButton(lblSearchButton, 15f, 10, 4);
 		sl_systemLogPanel.putConstraint(SpringLayout.NORTH, lblSearchButton, -5, SpringLayout.NORTH, lblDate);
-		sl_systemLogPanel.putConstraint(SpringLayout.WEST, lblSearchButton, 225, SpringLayout.EAST, lblDate);
 		systemLogPanel.add(lblSearchButton);
 		
 		logCardPanel = new JPanel();
@@ -236,6 +240,21 @@ public class Admin extends JFrame {
 		sl_logEmptyPanel.putConstraint(SpringLayout.SOUTH, lblLogEmptyMessage, 0, SpringLayout.SOUTH, logEmptyPanel);
 		sl_logEmptyPanel.putConstraint(SpringLayout.EAST, lblLogEmptyMessage, 0, SpringLayout.EAST, logEmptyPanel);
 		logEmptyPanel.add(lblLogEmptyMessage);
+		
+		lblKeyword = new JLabel("Keyword: ");
+		lblKeyword.setFont(gallery.getFont(15f));
+		sl_systemLogPanel.putConstraint(SpringLayout.NORTH, lblKeyword, 0, SpringLayout.NORTH, lblDate);
+		sl_systemLogPanel.putConstraint(SpringLayout.WEST, lblKeyword, 225, SpringLayout.EAST, lblDate);
+		systemLogPanel.add(lblKeyword);
+		
+		tfKeyword = new JTextField();
+		sl_systemLogPanel.putConstraint(SpringLayout.WEST, tfKeyword, 6, SpringLayout.EAST, lblKeyword);
+		tfKeyword.setFont(gallery.getFont(15f));
+		sl_systemLogPanel.putConstraint(SpringLayout.NORTH, tfKeyword, -2, SpringLayout.NORTH, lblDate);
+		sl_systemLogPanel.putConstraint(SpringLayout.SOUTH, tfKeyword, 2, SpringLayout.SOUTH, lblDate);
+		sl_systemLogPanel.putConstraint(SpringLayout.EAST, tfKeyword, -15, SpringLayout.WEST, lblSearchButton);
+		systemLogPanel.add(tfKeyword);
+		tfKeyword.setColumns(10);
 		
 		userPanel = new JPanel();
 		userPanel.setBackground(Gallery.WHITE);
@@ -518,51 +537,53 @@ public class Admin extends JFrame {
 		usersTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				int selectedRow = usersTable.getSelectedRow();
-				
-				String selectedID = usersTable.getValueAt(selectedRow, 0).toString();
-				String selectedFname = usersTable.getValueAt(selectedRow, 1).toString();
-				String selectedMname = usersTable.getValueAt(selectedRow, 2).toString();
-				String selectedLname = usersTable.getValueAt(selectedRow, 3).toString();
-				String selectedPosition = usersTable.getValueAt(selectedRow, 4).toString();
-				String selectedContact = usersTable.getValueAt(selectedRow, 5).toString();
-				String selectedUsername = usersTable.getValueAt(selectedRow, 6).toString();
-				
-				tfFirstName.setText(selectedFname);
-				tfMiddleName.setText(selectedMname);
-				tfLastName.setText(selectedLname);
-				
-				if (selectedPosition.equals(positionsList[0])) {
-					cbPosition.setSelectedIndex(0);
-				} else if (selectedPosition.equals(positionsList[1])) {
-					cbPosition.setSelectedIndex(1);
-				} else if (selectedPosition.equals(positionsList[2])) {
-					cbPosition.setSelectedIndex(2);
-				}
-				
-				tfContact.setText(selectedContact);
-				tfUsername.setText(selectedUsername);
-				pfPassword.setText("");
-				
-				if (selectedID.equals("10000000000")) {
-					tfFirstName.setEditable(false);
-					tfMiddleName.setEditable(false);
-					tfLastName.setEditable(false);
-					cbPosition.setEnabled(false);
-					tfContact.setEditable(false);
-					tfUsername.setEditable(false);
-				} else {
-					tfFirstName.setEditable(true);
-					tfMiddleName.setEditable(true);
-					tfLastName.setEditable(true);
-					cbPosition.setEnabled(true);
-					tfContact.setEditable(true);
-					tfUsername.setEditable(true);
-				}
+				if (e.getButton() == 1) {
+					int selectedRow = usersTable.getSelectedRow();
+					
+					String selectedID = usersTable.getValueAt(selectedRow, 0).toString();
+					String selectedFname = usersTable.getValueAt(selectedRow, 1).toString();
+					String selectedMname = usersTable.getValueAt(selectedRow, 2).toString();
+					String selectedLname = usersTable.getValueAt(selectedRow, 3).toString();
+					String selectedPosition = usersTable.getValueAt(selectedRow, 4).toString();
+					String selectedContact = usersTable.getValueAt(selectedRow, 5).toString();
+					String selectedUsername = usersTable.getValueAt(selectedRow, 6).toString();
+					
+					tfFirstName.setText(selectedFname);
+					tfMiddleName.setText(selectedMname);
+					tfLastName.setText(selectedLname);
+					
+					if (selectedPosition.equals(positionsList[0])) {
+						cbPosition.setSelectedIndex(0);
+					} else if (selectedPosition.equals(positionsList[1])) {
+						cbPosition.setSelectedIndex(1);
+					} else if (selectedPosition.equals(positionsList[2])) {
+						cbPosition.setSelectedIndex(2);
+					}
+					
+					tfContact.setText(selectedContact);
+					tfUsername.setText(selectedUsername);
+					pfPassword.setText("");
+					
+					if (selectedID.equals("10000000000")) {
+						tfFirstName.setEditable(false);
+						tfMiddleName.setEditable(false);
+						tfLastName.setEditable(false);
+						cbPosition.setEnabled(false);
+						tfContact.setEditable(false);
+						tfUsername.setEditable(false);
+					} else {
+						tfFirstName.setEditable(true);
+						tfMiddleName.setEditable(true);
+						tfLastName.setEditable(true);
+						cbPosition.setEnabled(true);
+						tfContact.setEditable(true);
+						tfUsername.setEditable(true);
+					}
 
-				tfUserID.setText(selectedID);
-				updateUsername = selectedUsername;
-				currentTask = "update";
+					tfUserID.setText(selectedID);
+					updateUsername = selectedUsername;
+					currentTask = "update";
+				}
 			}
 		});
 		lblUpdateButton.addMouseListener(new MouseAdapter() {
@@ -692,6 +713,12 @@ public class Admin extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				clearForm();
+			}
+		});
+		tfKeyword.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				displayLog();
 			}
 		});
 		
@@ -834,6 +861,9 @@ public class Admin extends JFrame {
 	// Methods below this is binded to the logs panel
 	
 	private void displayLog() {
+		String keyword = tfKeyword.getText();
+		boolean isSearchForKey = !keyword.isBlank();
+		
 		Date datePicked = (Date) datePicker.getModel().getValue();
 		StringBuilder logFilePath = new StringBuilder("reports/system/");
         Calendar time = Calendar.getInstance();
@@ -874,14 +904,24 @@ public class Admin extends JFrame {
         	try {
 				FileReader fr = new FileReader(filePath);
 				BufferedReader logFileReader = new BufferedReader(fr);
-				StringBuilder logMessage = new StringBuilder("Logs for the day: " + logDay.toString() + "\n\n");
+				
+				StringBuilder logMessage = new StringBuilder("Logs for the day: " + logDay.toString());
+				if (isSearchForKey) {
+					logMessage.append("\nShowing logs with the keyword: " + keyword);
+				}
+				logMessage.append("\n\n");
 				
 				String fileLine;
 				while ((fileLine = logFileReader.readLine()) != null) {
-					logMessage.append(
-						utility.decodeData(fileLine));
-					
-					logMessage.append("\n");
+					if (isSearchForKey) {
+						if (utility.containsIgnoreCase(utility.decodeData(fileLine), keyword)) {
+							logMessage.append(utility.decodeData(fileLine));
+							logMessage.append("\n");
+						}
+					} else {
+						logMessage.append(utility.decodeData(fileLine));
+						logMessage.append("\n");
+					}
 				}
 				
 				logFileReader.close();

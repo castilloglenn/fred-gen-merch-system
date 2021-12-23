@@ -685,7 +685,8 @@ public class Database {
 					+ "OR id_number LIKE ? " 
 					+ "OR fname LIKE ? " 
 					+ "OR mname LIKE ? " 
-					+ "OR lname LIKE ?;", 
+					+ "OR lname LIKE ? "
+					+ "AND customer_discount_id > 3000000000;", 
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);

@@ -182,11 +182,11 @@ public class Checkout extends JDialog {
 		discountPanel.setLayout(sl_discountPanel);
 		
 		lblDiscountTitle = new JLabel("Apply Discount Priviledges");
+		sl_discountPanel.putConstraint(SpringLayout.WEST, lblDiscountTitle, 45, SpringLayout.WEST, discountPanel);
+		sl_discountPanel.putConstraint(SpringLayout.EAST, lblDiscountTitle, -45, SpringLayout.EAST, discountPanel);
 		lblDiscountTitle.setHorizontalAlignment(SwingConstants.CENTER);
-		sl_discountPanel.putConstraint(SpringLayout.EAST, lblDiscountTitle, -15, SpringLayout.EAST, discountPanel);
 		lblDiscountTitle.setFont(gallery.getFont(19f));
 		sl_discountPanel.putConstraint(SpringLayout.NORTH, lblDiscountTitle, 15, SpringLayout.NORTH, discountPanel);
-		sl_discountPanel.putConstraint(SpringLayout.WEST, lblDiscountTitle, 15, SpringLayout.WEST, discountPanel);
 		discountPanel.add(lblDiscountTitle);
 		
 		lblSelect = new JLabel("Customer Type: ");
@@ -196,15 +196,14 @@ public class Checkout extends JDialog {
 		discountPanel.add(lblSelect);
 		
 		cbCustomerType = new JComboBox<String>();
+		sl_discountPanel.putConstraint(SpringLayout.EAST, cbCustomerType, 0, SpringLayout.EAST, lblDiscountTitle);
 		cbCustomerType.setFont(gallery.getFont(14f));
 		cbCustomerType.setModel(new DefaultComboBoxModel<String>(customerTypes));
 		sl_discountPanel.putConstraint(SpringLayout.NORTH, cbCustomerType, -2, SpringLayout.NORTH, lblSelect);
 		sl_discountPanel.putConstraint(SpringLayout.SOUTH, cbCustomerType, 2, SpringLayout.SOUTH, lblSelect);
-		sl_discountPanel.putConstraint(SpringLayout.EAST, cbCustomerType, -15, SpringLayout.EAST, discountPanel);
 		discountPanel.add(cbCustomerType);
 		
 		lblSearch = new JLabel("Search Customer: ");
-		sl_discountPanel.putConstraint(SpringLayout.WEST, cbCustomerType, 10, SpringLayout.EAST, lblSearch);
 		sl_discountPanel.putConstraint(SpringLayout.NORTH, lblSearch, 15, SpringLayout.SOUTH, lblSelect);
 		lblSearch.setFont(gallery.getFont(14f));
 		sl_discountPanel.putConstraint(SpringLayout.WEST, lblSearch, 0, SpringLayout.WEST, lblDiscountTitle);
@@ -221,9 +220,9 @@ public class Checkout extends JDialog {
 		tfSearch.setColumns(10);
 		
 		listCustomers = new JList<String>();
+		sl_discountPanel.putConstraint(SpringLayout.EAST, listCustomers, 0, SpringLayout.EAST, cbCustomerType);
 		listCustomers.setEnabled(false);
 		sl_discountPanel.putConstraint(SpringLayout.SOUTH, listCustomers, 67, SpringLayout.SOUTH, tfSearch);
-		sl_discountPanel.putConstraint(SpringLayout.EAST, listCustomers, -1, SpringLayout.EAST, cbCustomerType);
 		listCustomers.setModel(new AbstractListModel<String>() {
 			String[] values = new String[] {"sample1", "sample2", "sample3"};
 			public int getSize() {
@@ -259,6 +258,7 @@ public class Checkout extends JDialog {
 		discountPanel.add(lblNewButton);
 
 		lblSelected = new JLabel("Selected Customer: ");
+		sl_discountPanel.putConstraint(SpringLayout.WEST, cbCustomerType, 10, SpringLayout.EAST, lblSelected);
 		lblSelected.setFont(gallery.getFont(14f));
 		sl_discountPanel.putConstraint(SpringLayout.NORTH, lblSelected, 10, SpringLayout.SOUTH, lblUpdateButton);
 		sl_discountPanel.putConstraint(SpringLayout.WEST, lblSelected, 0, SpringLayout.WEST, lblDiscountTitle);
@@ -497,8 +497,7 @@ public class Checkout extends JDialog {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblNewButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println(listCustomers.getSelectedValue());
-				
+				new RegisterCustomer(user);
 			}
 		});
 		lblUpdateButton.addMouseListener(new MouseAdapter() {
@@ -506,7 +505,7 @@ public class Checkout extends JDialog {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblUpdateButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				System.out.println(listCustomers.getSelectedIndex());
+				int selectedIndex = listCustomers.getSelectedIndex();
 				
 			}
 		});
