@@ -31,6 +31,10 @@ import javax.swing.JTextField;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
+
 import java.awt.Color;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingConstants;
@@ -43,6 +47,7 @@ import java.awt.event.WindowEvent;
 @SuppressWarnings("serial")
 public class Checkout extends JDialog {
 
+	private final double VAT_RATE = 0.12;
 	private final String TITLE = "Checkout";
 	private final String[] customerTypes = {
 		"Regular Customer", 
@@ -57,57 +62,6 @@ public class Checkout extends JDialog {
 	private Database database;
 	private Gallery gallery;
 	private Utility utility;
-	
-	private Object[] user;
-	private ArrayList<CartItem> cartList;
-	private Object[][] customers;
-	
-	private String sampleTextDeleteThisAfter = 
-			  "            PRIME BUSINESS SUPERMARKET\r\n"
-			+ "   Primordial Retail & Sales Management System\r\n"
-			+ "      Cavite State University - Imus Campus\r\n"
-			+ "                 123-456-789-000\r\n"
-			+ "==================================================\r\n"
-			+ "  Date: 2021/05/17 14:52:09 PM\r\n"
-			+ "  Transaction No: 1011621234329907\r\n"
-			+ "  Cashier: ALLEN GLENN C.\r\n"
-			+ "  Customer: ELON BOI MUSK\r\n"
-			+ "==================================================\r\n"
-			+ "\r\n"
-			+ "  001: 5.0 Powerbank\r\n"
-			+ "    @ Php 100.00 ................... Php 500.00\r\n"
-			+ "  002: 7.0 Bag\r\n"
-			+ "    @ Php 550.50 ................. Php 3,853.50\r\n\r\n"
-			+ "  002: 7.0 Bag\r\n"
-			+ "    @ Php 550.50 ................. Php 3,853.50\r\n"
-			+ "  002: 7.0 Bag\r\n"
-			+ "    @ Php 550.50 ................. Php 3,853.50\r\n"
-			+ "  002: 7.0 Bag\r\n"
-			+ "    @ Php 550.50 ................. Php 3,853.50\r\n"
-			+ "  002: 7.0 Bag\r\n"
-			+ "    @ Php 550.50 ................. Php 3,853.50"
-			+ "\r\n"
-			+ "  TOTAL ITEMS                              12.00\r\n"
-			+ "\r\n"
-			+ "  SUB-TOTAL                         Php 3,831.08\r\n"
-			+ "  TAX                                 Php 522.42\r\n"
-			+ "  TOTAL                             Php 4,353.50\r\n"
-			+ "\r\n"
-			+ "  AMOUNT TENDERED                   Php 5,000.00\r\n"
-			+ "  CHANGE                              Php 646.50\r\n"
-			+ "\r\n"
-			+ "==================================================\r\n"
-			+ "  Thank you for visiting our store, you can cont\r\n"
-			+ "  act us via email castilloglenn@ymail.com and v\r\n"
-			+ "  ia our social media facebook.com/ccastilloglen\r\n"
-			+ "  n or our landline 0956-899-0812. Please come a\r\n"
-			+ "                gain to our store.\r\n"
-			+ "\r\n"
-			+ "  This receipt is valid up to five (5) years sin\r\n"
-			+ "  ce the date it has been printed. Items purchas\r\n"
-			+ "  ed can be returned and exchange for goods but \r\n"
-			+ "               cannot be refunded.\r\n"
-			+ "";
 	
 	private JPanel receiptPanel;
 	private JPanel discountPanel;
@@ -143,7 +97,18 @@ public class Checkout extends JDialog {
 	private JLabel lblChangeValue;
 	private JLabel lblEnterAmountTendered;
 	private JLabel lblFinishButton;
+
+	private Object[] user;
+	private ArrayList<CartItem> cartList;
+	private Object[][] customers;
 	
+	private double totalItems = 0.0;
+	private double subTotal = 0.0;
+	private double vat = 0.0;
+	private double scPwdDiscount = 0.0;
+	private double total = 0.0;
+	private double amountTendered = 0.0;
+	private double change = 0.0;
 
 	public Checkout(Object[] user, ArrayList<CartItem> cartList) {
 		database = Database.getInstance();
@@ -153,6 +118,15 @@ public class Checkout extends JDialog {
 		
 		this.user = user;
 		this.cartList = cartList;
+		
+		for (CartItem cartItem : cartList) {
+			Object[] product = cartItem.getProduct();
+			
+			totalItems += cartItem.getQuantity();
+			subTotal += ((double) product[7] * cartItem.getQuantity());
+		}
+		vat = subTotal * VAT_RATE;
+		total = subTotal;
 		
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
@@ -223,11 +197,11 @@ public class Checkout extends JDialog {
 		tfSearch.setColumns(10);
 		
 		listCustomers = new JList<String>();
+		sl_discountPanel.putConstraint(SpringLayout.NORTH, listCustomers, 0, SpringLayout.SOUTH, tfSearch);
 		sl_discountPanel.putConstraint(SpringLayout.EAST, listCustomers, 0, SpringLayout.EAST, cbCustomerType);
 		listCustomers.setEnabled(false);
 		sl_discountPanel.putConstraint(SpringLayout.SOUTH, listCustomers, 67, SpringLayout.SOUTH, tfSearch);
 		listCustomers.setFont(gallery.getFont(14f));
-		sl_discountPanel.putConstraint(SpringLayout.NORTH, listCustomers, -1, SpringLayout.SOUTH, tfSearch);
 		listCustomers.setBorder(new LineBorder(new Color(0, 0, 0)));
 		listCustomers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		sl_discountPanel.putConstraint(SpringLayout.WEST, listCustomers, 0, SpringLayout.WEST, cbCustomerType);
@@ -258,7 +232,7 @@ public class Checkout extends JDialog {
 		sl_discountPanel.putConstraint(SpringLayout.WEST, lblSelected, 0, SpringLayout.WEST, lblDiscountTitle);
 		discountPanel.add(lblSelected);
 		
-		lblCustomerID = new JLabel("Customer ID: ");
+		lblCustomerID = new JLabel("Customer Card ID: ");
 		lblCustomerID.setFont(gallery.getFont(14f));
 		sl_discountPanel.putConstraint(SpringLayout.NORTH, lblCustomerID, 5, SpringLayout.SOUTH, lblSelected);
 		sl_discountPanel.putConstraint(SpringLayout.WEST, lblCustomerID, 0, SpringLayout.WEST, lblDiscountTitle);
@@ -290,7 +264,7 @@ public class Checkout extends JDialog {
 		sl_receiptPanel.putConstraint(SpringLayout.EAST, spReceipt, -15, SpringLayout.EAST, receiptPanel);
 		receiptPanel.add(spReceipt);
 		
-		taReceipt = new JTextArea(sampleTextDeleteThisAfter);
+		taReceipt = new JTextArea();
 		taReceipt.setEditable(false);
 		taReceipt.setFont(gallery.getMonospacedFont(14f));
 		spReceipt.setViewportView(taReceipt);
@@ -312,7 +286,7 @@ public class Checkout extends JDialog {
 		lblTotalItems.setFont(gallery.getFont(17f));
 		checkoutPanel.add(lblTotalItems);
 		
-		lblTotalItemsValue = new JLabel("15.00");
+		lblTotalItemsValue = new JLabel(Double.toString(totalItems));
 		sl_checkoutPanel.putConstraint(SpringLayout.EAST, lblTotalItemsValue, 0, SpringLayout.EAST, lblPaymentTitle);
 		lblTotalItemsValue.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblTotalItemsValue.setFont(gallery.getFont(17f));
@@ -326,7 +300,7 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblSubTotal, 0, SpringLayout.WEST, lblTotalItems);
 		checkoutPanel.add(lblSubTotal);
 		
-		lblSubTotalValue = new JLabel("P100.00");
+		lblSubTotalValue = new JLabel(utility.formatCurrency(subTotal));
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblSubTotalValue, 5, SpringLayout.EAST, lblSubTotal);
 		lblSubTotalValue.setFont(gallery.getFont(17f));
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, lblSubTotalValue, 0, SpringLayout.NORTH, lblSubTotal);
@@ -340,7 +314,7 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblVAT, 0, SpringLayout.WEST, lblTotalItems);
 		checkoutPanel.add(lblVAT);
 		
-		lblVATValue = new JLabel("P12.00");
+		lblVATValue = new JLabel(utility.formatCurrency(vat));
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblVATValue, 5, SpringLayout.EAST, lblVAT);
 		lblVATValue.setFont(gallery.getFont(17f));
 		sl_checkoutPanel.putConstraint(SpringLayout.EAST, lblVATValue, 0, SpringLayout.EAST, lblSubTotalValue);
@@ -354,7 +328,7 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblDiscount, 0, SpringLayout.WEST, lblTotalItems);
 		checkoutPanel.add(lblDiscount);
 		
-		lblDiscountValue = new JLabel("P17.60");
+		lblDiscountValue = new JLabel(utility.formatCurrency(scPwdDiscount));
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblDiscountValue, 5, SpringLayout.EAST, lblDiscount);
 		lblDiscountValue.setFont(gallery.getFont(17f));
 		lblDiscountValue.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -368,7 +342,7 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblTotal, 0, SpringLayout.WEST, lblTotalItems);
 		checkoutPanel.add(lblTotal);
 		
-		lblTotalValue = new JLabel("P100.00");
+		lblTotalValue = new JLabel(utility.formatCurrency(total));
 		lblTotalValue.setFont(gallery.getFont(17f));
 		lblTotalValue.setHorizontalAlignment(SwingConstants.RIGHT);
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, lblTotalValue, 0, SpringLayout.NORTH, lblTotal);
@@ -381,7 +355,7 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblAmountTendered, 0, SpringLayout.WEST, lblPaymentTitle);
 		checkoutPanel.add(lblAmountTendered);
 		
-		lblAmountTenderedValue = new JLabel("P0.00");
+		lblAmountTenderedValue = new JLabel(utility.formatCurrency(amountTendered));
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, lblAmountTenderedValue, 0, SpringLayout.NORTH, lblAmountTendered);
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblAmountTenderedValue, 5, SpringLayout.EAST, lblAmountTendered);
 		sl_checkoutPanel.putConstraint(SpringLayout.EAST, lblAmountTenderedValue, 0, SpringLayout.EAST, lblTotalValue);
@@ -395,7 +369,7 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblChange, 0, SpringLayout.WEST, lblPaymentTitle);
 		checkoutPanel.add(lblChange);
 		
-		lblChangeValue = new JLabel("<html><p style=\"color: red\">P0.00</p></html>");
+		lblChangeValue = new JLabel("<html><p style=\"color: red\">" + utility.formatCurrency(change) + "</p></html>");
 		lblChangeValue.setFont(gallery.getFont(17f));
 		lblChangeValue.setHorizontalAlignment(SwingConstants.RIGHT);
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, lblChangeValue, 0, SpringLayout.NORTH, lblChange);
@@ -409,6 +383,7 @@ public class Checkout extends JDialog {
 		checkoutPanel.add(lblEnterAmountTendered);
 
 		tfAmountTendered = new JTextField();
+		tfAmountTendered.setDocument(utility.new LengthRestrictedDocument(9));
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, tfAmountTendered, -2, SpringLayout.NORTH, lblEnterAmountTendered);
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, tfAmountTendered, 15, SpringLayout.EAST, lblEnterAmountTendered);
 		sl_checkoutPanel.putConstraint(SpringLayout.SOUTH, tfAmountTendered, 2, SpringLayout.SOUTH, lblEnterAmountTendered);
@@ -479,7 +454,9 @@ public class Checkout extends JDialog {
 					tfSearch.setEditable(false);
 					listCustomers.clearSelection();
 					listCustomers.setEnabled(false);
-					
+
+					lblSelectedValue.setText("None");
+					lblCustomerIDValue.setText("None");
 				} else if (selectedCustomerType == 1) {
 					// PWD/Senior Citizen (Medical) (20%)
 					tfSearch.setEditable(true);
@@ -489,7 +466,7 @@ public class Checkout extends JDialog {
 					// PWD/Senior Citizen (Grocery) (5%)
 					tfSearch.setEditable(true);
 					listCustomers.setEnabled(true);
-					
+
 				}
 			}
 		});
@@ -528,9 +505,17 @@ public class Checkout extends JDialog {
 					try {
 						double amount = Double.parseDouble(tfAmountTendered.getText());
 						lblAmountTenderedValue.setText(utility.formatCurrency(amount));
+						
+						amountTendered = amount;
+						change = amountTendered - total;
 					} catch (NullPointerException | NumberFormatException ex) {
-						lblAmountTenderedValue.setText("P0.00");
+						amountTendered = 0.0;
+						change = amountTendered;
+
+						lblAmountTenderedValue.setText(utility.formatCurrency(amountTendered));
 					}
+					
+					lblChangeValue.setText("<html><p style=\"color: red\">" + utility.formatCurrency(change) + "</p></html>");
 				}
 			}
 		});
@@ -547,6 +532,20 @@ public class Checkout extends JDialog {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				updateListCustomers();
+			}
+		});
+		listCustomers.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				int selectedIndex = listCustomers.getSelectedIndex();
+				if (selectedIndex != -1) {
+					Object[] customerSelected = customers[selectedIndex];
+					
+					lblSelectedValue.setText(customerSelected[3].toString() + " " 
+							+ customerSelected[4].toString() + " " 
+							+ customerSelected[5].toString());
+					lblCustomerIDValue.setText(customerSelected[2].toString());
+				}
 			}
 		});
 		

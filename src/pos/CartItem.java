@@ -178,6 +178,10 @@ public class CartItem extends JPanel {
 		return product;
 	}
 	
+	public double getQuantity() {
+		return quantity;
+	}
+	
 	/**
 	 * Size 7 object list that will get from the cart item.
 	 * 

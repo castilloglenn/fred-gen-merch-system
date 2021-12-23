@@ -23,6 +23,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -84,6 +87,27 @@ public class Utility {
 
 	        return dateFormatter.format(Calendar.getInstance().getTime());
 	    }
+	}
+	
+	@SuppressWarnings("serial")
+	public final class LengthRestrictedDocument extends PlainDocument {
+
+		private final int limit;
+
+		public LengthRestrictedDocument(int limit) {
+			this.limit = limit;
+		}
+
+		@Override
+		public void insertString(int offs, String str, AttributeSet a)
+				throws BadLocationException {
+			if (str == null)
+				return;
+
+			if ((getLength() + str.length()) <= limit) {
+				super.insertString(offs, str, a);
+			}
+		}
 	}
 	
 	public static Utility getInstance() {
