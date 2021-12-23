@@ -223,7 +223,7 @@ public class Admin extends JFrame {
 		taLogs = new JTextArea();
 		taLogs.setWrapStyleWord(true);
 		taLogs.setEditable(false);
-		taLogs.setFont(gallery.getFont(15f));
+		taLogs.setFont(gallery.getMonospacedFont(15f));
 		logsScrollPane.setViewportView(taLogs);
 		
 		logEmptyPanel = new JPanel();

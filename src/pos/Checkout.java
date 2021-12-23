@@ -37,6 +37,8 @@ import javax.swing.SwingConstants;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.JSeparator;
+import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowEvent;
 
 @SuppressWarnings("serial")
 public class Checkout extends JDialog {
@@ -58,6 +60,7 @@ public class Checkout extends JDialog {
 	
 	private Object[] user;
 	private ArrayList<CartItem> cartList;
+	private Object[][] customers;
 	
 	private String sampleTextDeleteThisAfter = 
 			  "            PRIME BUSINESS SUPERMARKET\r\n"
@@ -223,15 +226,6 @@ public class Checkout extends JDialog {
 		sl_discountPanel.putConstraint(SpringLayout.EAST, listCustomers, 0, SpringLayout.EAST, cbCustomerType);
 		listCustomers.setEnabled(false);
 		sl_discountPanel.putConstraint(SpringLayout.SOUTH, listCustomers, 67, SpringLayout.SOUTH, tfSearch);
-		listCustomers.setModel(new AbstractListModel<String>() {
-			String[] values = new String[] {"sample1", "sample2", "sample3"};
-			public int getSize() {
-				return values.length;
-			}
-			public String getElementAt(int index) {
-				return values[index];
-			}
-		});
 		listCustomers.setFont(gallery.getFont(14f));
 		sl_discountPanel.putConstraint(SpringLayout.NORTH, listCustomers, -1, SpringLayout.SOUTH, tfSearch);
 		listCustomers.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -468,6 +462,13 @@ public class Checkout extends JDialog {
 		
 
 
+		addWindowFocusListener(new WindowFocusListener() {
+			public void windowGainedFocus(WindowEvent e) {
+				updateListCustomers();
+			}
+			
+			public void windowLostFocus(WindowEvent e) {}
+		});
 		cbCustomerType.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int selectedCustomerType = cbCustomerType.getSelectedIndex();
@@ -505,8 +506,17 @@ public class Checkout extends JDialog {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblUpdateButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				int selectedIndex = listCustomers.getSelectedIndex();
-				
+				if (cbCustomerType.getSelectedIndex() == 0) {
+					gallery.showMessage(new String[] {"- Please unselect the 'Regular Customer' to update a customer."});
+				} else {
+					int selectedIndex = listCustomers.getSelectedIndex();
+					
+					if (selectedIndex == -1) {
+						gallery.showMessage(new String[] {"- Please select a customer to update."});
+					} else {
+						new UpdateCustomer(user, customers[selectedIndex]);
+					}
+				}
 			}
 		});
 		tfAmountTendered.addKeyListener(new KeyAdapter() {
@@ -533,6 +543,14 @@ public class Checkout extends JDialog {
 				finishTransaction();
 			}
 		});
+		tfSearch.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				updateListCustomers();
+			}
+		});
+		
+		updateListCustomers();
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -541,5 +559,43 @@ public class Checkout extends JDialog {
 	
 	private void finishTransaction() {
 		System.out.println("gegege");
+	}
+	
+	private void updateListCustomers() {
+		Object[][] fetchedCustomers = database.getCustomerDiscountsByKeyword(tfSearch.getText());
+		ArrayList<Object[]> finalCustomers = new ArrayList<>();
+		
+		for (Object[] fetched : fetchedCustomers) {
+			if (!fetched[0].toString().equals("3000000000")) {
+				finalCustomers.add(fetched);
+			}
+		}
+		
+		customers = new Object[finalCustomers.size()][6];
+		for (int customerIndex = 0; customerIndex < finalCustomers.size(); customerIndex++) {
+			customers[customerIndex] = finalCustomers.get(customerIndex);
+		}
+		
+		
+		if (customers.length > 0) {
+			ArrayList<String> customerNames = new ArrayList<>();
+			
+			for (Object[] customer : customers) {
+				String fullname = customer[3].toString() + " " + customer[4].toString() + " " + customer[5].toString();
+				customerNames.add(fullname);
+			}
+			
+			listCustomers.setModel(new AbstractListModel<String>() {
+				String[] values = customerNames.toArray(new String[0]);
+				
+				public int getSize() {
+					return values.length;
+				}
+				
+				public String getElementAt(int index) {
+					return values[index];
+				}
+			});
+		}
 	}
 }
