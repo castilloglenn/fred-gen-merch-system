@@ -4,10 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
-import utils.Database;
-import utils.Gallery;
 import utils.Utility;
 
 
@@ -35,9 +32,10 @@ public class Receipt {
 	private long transactionNo;
 	
 	private Object[] cashier;
-	private String cashierName;
 	private Object[] customer;
-	private String customerName;
+	
+	private String cashierName;
+	private String customerName = "REGULAR";
 
 	private ArrayList<CartItem> cartList;
 	
@@ -47,27 +45,19 @@ public class Receipt {
 	
 	private Utility utility;
 
-	private Receipt(Object[] user, Object[] customer, ArrayList<CartItem> cartList) {
+	private Receipt(Object[] user, ArrayList<CartItem> cartList) {
 		setHorizontalLine();
 		this.utility = Utility.getInstance();
 		
 		cashier = user;
-		this.customer = customer;
 		this.cartList = cartList;
 		
 		cashierName = cashier[1] + " " + cashier[3].toString().substring(0, 1) + ".";
-		if (customer != null) {
-			customerName = customer[3].toString() + " " 
-					+ customer[4].toString() + " " 
-					+ customer[5].toString();
-		}
-		
-		
 	}
 	
-	public static Receipt getInstance(Object[] user, Object[] customer, ArrayList<CartItem> cartList) {
+	public static Receipt getInstance(Object[] user, ArrayList<CartItem> cartList) {
 		if (singletonInstance == null) {
-			singletonInstance = new Receipt(user, customer, cartList);
+			singletonInstance = new Receipt(user, cartList);
 		}
 		
 		return singletonInstance;
@@ -100,6 +90,18 @@ public class Receipt {
 
     public long getTransaction() {
     	return transactionNo;
+    }
+    
+    public void setCustomer(Object[] customer) {
+    	this.customer = customer;
+    	
+    	if (customer != null) {
+			customerName = customer[3].toString() + " " 
+					+ customer[4].toString() + " " 
+					+ customer[5].toString();
+		} else {
+			customerName = "REGULAR";
+		}
     }
     
     public void setTotalItems(double totalItems) {
@@ -207,6 +209,15 @@ public class Receipt {
         String totalFormat = String.format("Php %,.2f", total);
         String amountTenderedFormat = String.format("Php %,.2f", amountTendered);
         String changeFormat = String.format("Php %,.2f", change);
+        
+        String discountType = "     ";
+        if (customer != null) {
+        	if (customer[1].toString().charAt(0) == 'S') {
+        		discountType = "(SC) ";
+        	} else {
+        		discountType = "(PWD)";
+        	}
+        }
 
         purchaseList.append(
     		String.format("\n  TOTAL ITEMS %," + (WIDTH - 16) + ".2f\n", 
@@ -218,7 +229,7 @@ public class Receipt {
         	String.format("  VAT %" + (WIDTH - 8) + "s\n",
         		taxFormat));
         purchaseList.append(
-        	String.format("  DISCOUNT %" + (WIDTH - 13) + "s\n",
+        	String.format("  DISCOUNT " + discountType + "%" + (WIDTH - 18) + "s\n",
     			discountFormat));
         purchaseList.append(
     		String.format("  TOTAL %" + (WIDTH - 10) + "s\n\n", 

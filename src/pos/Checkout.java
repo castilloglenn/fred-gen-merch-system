@@ -1,50 +1,39 @@
 package pos;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.util.ArrayList;
 
-import javax.swing.JButton;
+import javax.swing.AbstractListModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 
 import utils.Database;
 import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
-
-import java.awt.Dialog.ModalityType;
-import java.util.ArrayList;
-import javax.swing.SpringLayout;
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
-import javax.swing.JTextField;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.LineBorder;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
-
-import java.awt.Color;
-import javax.swing.AbstractListModel;
-import javax.swing.SwingConstants;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.JSeparator;
-import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowEvent;
 
 @SuppressWarnings("serial")
 public class Checkout extends JDialog {
@@ -116,13 +105,15 @@ public class Checkout extends JDialog {
 	private double total = 0.0;
 	private double amountTendered = 0.0;
 	private double change = 0.0;
+	private JPanel receiptTitlePanel;
+	private JLabel lblReceiptTitle;
 
 	public Checkout(Object[] user, ArrayList<CartItem> cartList) {
 		database = Database.getInstance();
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
 		utility = Utility.getInstance();
-		receipt = Receipt.getInstance(user, null, cartList);
+		receipt = Receipt.getInstance(user, cartList);
 		
 		this.user = user;
 		this.cartList = cartList;
@@ -145,6 +136,24 @@ public class Checkout extends JDialog {
 		getContentPane().setBackground(Gallery.GRAY);
 		SpringLayout springLayout = new SpringLayout();
 		getContentPane().setLayout(springLayout);
+		
+		receiptTitlePanel = new RoundedPanel(Gallery.BLUE);
+		springLayout.putConstraint(SpringLayout.NORTH, receiptTitlePanel, -15, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.WEST, receiptTitlePanel, -385, SpringLayout.EAST, getContentPane());
+		springLayout.putConstraint(SpringLayout.SOUTH, receiptTitlePanel, 45, SpringLayout.NORTH, getContentPane());
+		springLayout.putConstraint(SpringLayout.EAST, receiptTitlePanel, -45, SpringLayout.EAST, getContentPane());
+		getContentPane().add(receiptTitlePanel);
+		SpringLayout sl_receiptTitlePanel = new SpringLayout();
+		receiptTitlePanel.setLayout(sl_receiptTitlePanel);
+		
+		lblReceiptTitle = new JLabel("Receipt Preview");
+		lblReceiptTitle.setFont(gallery.getFont(17f));
+		lblReceiptTitle.setForeground(Gallery.WHITE);
+		lblReceiptTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		sl_receiptTitlePanel.putConstraint(SpringLayout.WEST, lblReceiptTitle, 30, SpringLayout.WEST, receiptTitlePanel);
+		sl_receiptTitlePanel.putConstraint(SpringLayout.SOUTH, lblReceiptTitle, -12, SpringLayout.SOUTH, receiptTitlePanel);
+		sl_receiptTitlePanel.putConstraint(SpringLayout.EAST, lblReceiptTitle, -30, SpringLayout.EAST, receiptTitlePanel);
+		receiptTitlePanel.add(lblReceiptTitle);
 		
 		receiptPanel = new RoundedPanel(Gallery.WHITE);
 		springLayout.putConstraint(SpringLayout.NORTH, receiptPanel, 15, SpringLayout.NORTH, getContentPane());
@@ -265,9 +274,9 @@ public class Checkout extends JDialog {
 		springLayout.putConstraint(SpringLayout.EAST, checkoutPanel, -15, SpringLayout.WEST, receiptPanel);
 		
 		JScrollPane spReceipt = new JScrollPane();
+		sl_receiptPanel.putConstraint(SpringLayout.NORTH, spReceipt, 45, SpringLayout.NORTH, receiptPanel);
 		spReceipt.setBorder(null);
 		spReceipt.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		sl_receiptPanel.putConstraint(SpringLayout.NORTH, spReceipt, 15, SpringLayout.NORTH, receiptPanel);
 		sl_receiptPanel.putConstraint(SpringLayout.WEST, spReceipt, 15, SpringLayout.WEST, receiptPanel);
 		sl_receiptPanel.putConstraint(SpringLayout.SOUTH, spReceipt, -15, SpringLayout.SOUTH, receiptPanel);
 		sl_receiptPanel.putConstraint(SpringLayout.EAST, spReceipt, -15, SpringLayout.EAST, receiptPanel);
@@ -630,6 +639,7 @@ public class Checkout extends JDialog {
 					+ customerSelected[5].toString());
 			lblCustomerIDValue.setText(customerSelected[2].toString());
 		}
+		updateReceiptPayment();
 	}
 	
 	private void updateChange() {
@@ -651,6 +661,13 @@ public class Checkout extends JDialog {
 	}
 	
 	private void updateReceiptPayment() {
+		int selectedIndex = listCustomers.getSelectedIndex();
+		if (selectedIndex != -1) {
+			receipt.setCustomer(customers[selectedIndex]);
+		} else {
+			receipt.setCustomer(null);
+		}
+		
 		receipt.setTotalItems(totalItems);
 		receipt.setSubTotal(subTotal);
 		receipt.setTax(vat);

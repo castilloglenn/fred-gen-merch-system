@@ -51,7 +51,7 @@ public class Utility {
 	public static final String SYSTEM_TITLE = "PRIMORDIAL SYSTEM SOLUTIONS";
 	public static final String BUSINESS_TITLE = "Fred's General Merchandise Store";
 	public static final String BUSINESS_ADDRESS = "Queens Row, Bacoor City, Cavite";
-	public static final String BUSINESS_TIN = "159-354-182-248";
+	public static final String BUSINESS_TIN = "TIN: 159-354-182-248";
 	
 	public static final String RECEIPT_FOOTER = 
 			"Thank you for visiting our store, you can contact us via email "
