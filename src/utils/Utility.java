@@ -48,16 +48,19 @@ public class Utility {
 	 * System default values
 	 */
 	public static final String TITLE_SEPARATOR = " | ";
-	public static final String SYSTEM_TITLE = "CCG SYSTEMS SOLUTIONS";
+	public static final String SYSTEM_TITLE = "PRIMORDIAL SYSTEM SOLUTIONS";
 	public static final String BUSINESS_TITLE = "Fred's General Merchandise Store";
 	public static final String BUSINESS_ADDRESS = "Queens Row, Bacoor City, Cavite";
-	public static final String BUSINESS_TIN = "000-111-222-333";
-	public static final String RECEIPT_FOOTER = "Thank you for visiting our store, you can contact us via email "
-			+ "castilloglenn@ymail.com and via our social media facebook.com/ccastilloglenn "
-			+ "or our landline 0956-899-0812. Please come again to our store.";
-	public static final String RECEIPT_LEGAL_NOTICE = "This receipt is valid up to five (5) years since the date "
-			+ "it has been printed. Items purchased can be returned and exchange for goods "
-			+ "but cannot be refunded.";
+	public static final String BUSINESS_TIN = "159-354-182-248";
+	
+	public static final String RECEIPT_FOOTER = 
+			"Thank you for visiting our store, you can contact us via email "
+			+ "fredgenmerch@gmail.com and/or via our social media facebook.com/fredgenmerch "
+			+ "or our landline 0942-815-2652. Please come  again to our store soon.";
+	
+	public static final String RECEIPT_LEGAL_NOTICE = 
+			"THIS INVOICE/RECEIPT SHALL BE VALID FOR FIVE  (5) YEARS FROM THE DATE OF THE PERMIT TO USE. "
+			+ "ITEMS PURCHASED CAN BE RETURNED AND EXCHANGE  FOR GOODS BUT CANNOT BE REFUNDED.";
 
 	private File file;
 	private JFileChooser chooser;

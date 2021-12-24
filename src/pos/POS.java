@@ -980,71 +980,82 @@ public class POS extends JFrame {
 		tfSearch.selectAll();
 	}
 	
-	public void removeToCart(int cartIndex) {
-		cartList.remove(cartIndex);
-		
-		for (int adjustmentIndex = cartIndex; 
-				adjustmentIndex < cartList.size(); 
-				adjustmentIndex++) {
-			cartList.get(adjustmentIndex).rearrangeOrder(adjustmentIndex);
-		}
-		
-		displayCart();
-	}
-	
-	public void clearCart() {
+	private boolean requestManagerPermission() {
 		int rank = Integer.parseInt(Character.toString(user[0].toString().charAt(1)));
 		boolean proceed = false;
 		
+		if (rank == 1) {
+			// Store Clerk
+			// Manager password request panel setup and execution
+			JPanel panel = new JPanel();
+			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+			JLabel label = new JLabel(clearCartMessage);
+			JPasswordField pass = new JPasswordField(10);
+			String[] options = new String[]{"OK", "Cancel"};
+			
+			panel.add(label);
+			panel.add(pass);
+			
+			// Manager password request dialog shows up
+			int option = 
+				JOptionPane
+					.showOptionDialog(null, panel, Utility.BUSINESS_TITLE,
+			                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+			                         null, options, pass);
+			
+			// Manager password return value
+			String managerPassword = "";
+			if(option == 0) {
+			    char[] password = pass.getPassword();
+			    managerPassword = utility.hashData(new String(password));
+				String[] hashes = database.fetchManagerHashes();
+				
+				boolean hasEqual = false;
+				for (String hash : hashes) {
+					if (managerPassword.equals(hash)) {
+						hasEqual = true;
+					}
+				}
+				
+				if (hasEqual) {
+					proceed = true;
+				} else {
+					JOptionPane.showMessageDialog(null, "Incorrect password", 
+							Utility.BUSINESS_TITLE, JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		} else if (rank == 2) {
+			// Manager
+			proceed = true;
+		}
+		
+		if (proceed) {
+			return true;
+		}
+		
+		
+		return false;
+	}
+	
+	public void removeToCart(int cartIndex) {
+		if (requestManagerPermission()) {
+			cartList.remove(cartIndex);
+			
+			for (int adjustmentIndex = cartIndex; 
+					adjustmentIndex < cartList.size(); 
+					adjustmentIndex++) {
+				cartList.get(adjustmentIndex).rearrangeOrder(adjustmentIndex);
+			}
+			
+			displayCart();
+		}
+	}
+	
+	public void clearCart() {
 		if (cartList.size() == 0) {
 			gallery.showMessage(new String[] {"The cart has no items to cancel."});
 		} else {
-			if (rank == 1) {
-				// Store Clerk
-				// Manager password request panel setup and execution
-				JPanel panel = new JPanel();
-				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-				JLabel label = new JLabel(clearCartMessage);
-				JPasswordField pass = new JPasswordField(10);
-				String[] options = new String[]{"OK", "Cancel"};
-				
-				panel.add(label);
-				panel.add(pass);
-				
-				// Manager password request dialog shows up
-				int option = 
-					JOptionPane
-						.showOptionDialog(null, panel, Utility.BUSINESS_TITLE,
-				                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
-				                         null, options, pass);
-				
-				// Manager password return value
-				String managerPassword = "";
-				if(option == 0) {
-				    char[] password = pass.getPassword();
-				    managerPassword = utility.hashData(new String(password));
-					String[] hashes = database.fetchManagerHashes();
-					
-					boolean hasEqual = false;
-					for (String hash : hashes) {
-						if (managerPassword.equals(hash)) {
-							hasEqual = true;
-						}
-					}
-					
-					if (hasEqual) {
-						proceed = true;
-					} else {
-						JOptionPane.showMessageDialog(null, "Incorrect password", 
-								Utility.BUSINESS_TITLE, JOptionPane.WARNING_MESSAGE);
-					}
-				}
-			} else if (rank == 2) {
-				// Manager
-				proceed = true;
-			}
-			
-			if (proceed) {
+			if (requestManagerPermission()) {
 				StringBuilder productsIncluded = new StringBuilder();
 				cartList.forEach((item) -> productsIncluded.append(item.getName() + ", "));
 				productsIncluded.setLength(Math.max(productsIncluded.length() - 2, 0));

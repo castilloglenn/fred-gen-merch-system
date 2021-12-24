@@ -149,15 +149,15 @@ public class CartItem extends JPanel {
 	 * @param adjustment amount to be changed from its quantity.
 	 */
 	public void adjustQuantity(int adjustment) {
-		if (quantity + adjustment <= 999)
-			quantity += adjustment;
 		
-		if (quantity == 0) {
+		if (quantity + adjustment == 0) {
 			pos.removeToCart(index);
-		} else {
-			lblCartQuantity.setText(Integer.toString(quantity));
-			pos.updatePaymentStatistics();
+		} else if (quantity + adjustment <= 999) {
+			quantity += adjustment;
 		}
+		
+		lblCartQuantity.setText(Integer.toString(quantity));
+		pos.updatePaymentStatistics();
 	}
 	
 	/**

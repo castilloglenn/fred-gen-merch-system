@@ -67,6 +67,7 @@ public class Checkout extends JDialog {
 	private Database database;
 	private Gallery gallery;
 	private Utility utility;
+	private Receipt receipt;
 	
 	private JPanel receiptPanel;
 	private JPanel discountPanel;
@@ -109,6 +110,7 @@ public class Checkout extends JDialog {
 	
 	private double totalItems = 0.0;
 	private double subTotal = 0.0;
+	private double grossTotal = 0.0;
 	private double vat = 0.0;
 	private double scPwdDiscount = 0.0;
 	private double total = 0.0;
@@ -120,6 +122,7 @@ public class Checkout extends JDialog {
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
 		utility = Utility.getInstance();
+		receipt = Receipt.getInstance(user, null, cartList);
 		
 		this.user = user;
 		this.cartList = cartList;
@@ -128,10 +131,11 @@ public class Checkout extends JDialog {
 			Object[] product = cartItem.getProduct();
 			
 			totalItems += cartItem.getQuantity();
-			subTotal += ((double) product[7] * cartItem.getQuantity());
+			grossTotal += ((double) product[7] * cartItem.getQuantity());
 		}
-		vat = subTotal * VAT_RATE;
-		total = subTotal;
+		vat = grossTotal * VAT_RATE;
+		subTotal = grossTotal - vat;
+		total = grossTotal;
 		
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
@@ -269,7 +273,7 @@ public class Checkout extends JDialog {
 		sl_receiptPanel.putConstraint(SpringLayout.EAST, spReceipt, -15, SpringLayout.EAST, receiptPanel);
 		receiptPanel.add(spReceipt);
 		
-		taReceipt = new JTextArea();
+		taReceipt = new JTextArea(receipt.get(true));
 		taReceipt.setEditable(false);
 		taReceipt.setFont(gallery.getMonospacedFont(14f));
 		spReceipt.setViewportView(taReceipt);
@@ -305,7 +309,7 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblSubTotal, 0, SpringLayout.WEST, lblTotalItems);
 		checkoutPanel.add(lblSubTotal);
 		
-		lblSubTotalValue = new JLabel(utility.formatCurrency(subTotal));
+		lblSubTotalValue = new JLabel(utility.formatCurrency(grossTotal - vat));
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblSubTotalValue, 5, SpringLayout.EAST, lblSubTotal);
 		lblSubTotalValue.setFont(gallery.getFont(17f));
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, lblSubTotalValue, 0, SpringLayout.NORTH, lblSubTotal);
@@ -421,26 +425,6 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.EAST, lblFinishButton, 0, SpringLayout.EAST, lblPaymentTitle);
 		checkoutPanel.add(lblFinishButton);
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
 
 		addWindowFocusListener(new WindowFocusListener() {
 			public void windowGainedFocus(WindowEvent e) {
@@ -452,7 +436,7 @@ public class Checkout extends JDialog {
 		cbCustomerType.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int selectedCustomerType = cbCustomerType.getSelectedIndex();
-				double customerDiscount = 0.0;
+				scPwdDiscount = 0.0;
 				
 				if (selectedCustomerType == 0) {
 					// Regular customer
@@ -467,10 +451,11 @@ public class Checkout extends JDialog {
 					lblSelectedValue.setText("None");
 					lblCustomerIDValue.setText("None");
 					
-					total = subTotal;
+					total = grossTotal;
+					subTotal = grossTotal - vat;
 
 					lblVATValue.setText(utility.formatCurrency(vat));
-					lblDiscountValue.setText(utility.formatCurrency(customerDiscount));
+					lblDiscountValue.setText(utility.formatCurrency(scPwdDiscount));
 					
 				} else if (selectedCustomerType == 1) {
 					// PWD/Senior Citizen (Medical) (20%)
@@ -480,20 +465,21 @@ public class Checkout extends JDialog {
 					lblVAT.setText("VAT (12%) (Exempted): ");
 					lblDiscount.setText("Discount (20%): ");
 					
-					customerDiscount = (subTotal - vat) * MEDICINE_RATE;
-					total = subTotal - (customerDiscount + vat);
+					scPwdDiscount = (grossTotal - vat) * MEDICINE_RATE;
+					total = grossTotal - (scPwdDiscount + vat);
+					subTotal = grossTotal;
 
 					lblVATValue.setText(utility.formatCurrency(-vat));
-					lblDiscountValue.setText(utility.formatCurrency(-customerDiscount));
+					lblDiscountValue.setText(utility.formatCurrency(-scPwdDiscount));
 					
 				} else if (selectedCustomerType == 2) {
 					// PWD/Senior Citizen (Grocery) (5%)
-					if (subTotal > GROCERY_LIMIT) {
+					if (grossTotal > GROCERY_LIMIT) {
 						gallery.showMessage(
 							new String[] {
 								"According to the Joint DTI-DA-DOE Administrative Order No.17-01 to No.17-02, "
 								+ "The weekly limit for grocery discount for both senior citizen and PWD is P1,300.00 "
-								+ "per calendar week (Current: " + utility.formatCurrency(subTotal) + "). "
+								+ "per calendar week (Current: " + utility.formatCurrency(grossTotal) + "). "
 								+ "Please decrease some products or inform the customer."});
 						dispose();
 						
@@ -504,15 +490,17 @@ public class Checkout extends JDialog {
 						lblVAT.setText("VAT (12%) (Included): ");
 						lblDiscount.setText("Discount (5%): ");
 
-						customerDiscount = subTotal * GROCERY_RATE;
-						total = subTotal - customerDiscount;
+						scPwdDiscount = grossTotal * GROCERY_RATE;
+						total = grossTotal - scPwdDiscount;
+						subTotal = grossTotal - vat;
 
 						lblVATValue.setText(utility.formatCurrency(vat));
-						lblDiscountValue.setText(utility.formatCurrency(-customerDiscount));
+						lblDiscountValue.setText(utility.formatCurrency(-scPwdDiscount));
 						
 					}
 				}
 
+				lblSubTotalValue.setText(utility.formatCurrency(subTotal));
 				lblTotalValue.setText(utility.formatCurrency(total));
 				updateChange();
 			}
@@ -582,6 +570,7 @@ public class Checkout extends JDialog {
 		});
 		
 		updateListCustomers();
+		updateReceiptPayment();
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -658,6 +647,18 @@ public class Checkout extends JDialog {
 		}
 		
 		lblChangeValue.setText("<html><p style=\"color: red\">" + utility.formatCurrency(change) + "</p></html>");
+		updateReceiptPayment();
+	}
+	
+	private void updateReceiptPayment() {
+		receipt.setTotalItems(totalItems);
+		receipt.setSubTotal(subTotal);
+		receipt.setTax(vat);
+		receipt.setDiscount(scPwdDiscount);
+		receipt.setTotal(total);
+		receipt.setAmountTendered(amountTendered);
+		
+		taReceipt.setText(receipt.get(true));
 	}
 	
 	private void finishTransaction() {
