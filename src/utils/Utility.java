@@ -186,7 +186,11 @@ public class Utility {
 	}
 	
 	public String formatCurrency(double value) {
-		DecimalFormat formatter = new DecimalFormat("#,###.00");
+		if (value == 0.0) {
+			return "P0.00";
+		}
+		
+		DecimalFormat formatter = new DecimalFormat("#,##0.00");
         String currency = formatter.format((value * 100.0) / 100.0 );
         
         return "P" + currency;

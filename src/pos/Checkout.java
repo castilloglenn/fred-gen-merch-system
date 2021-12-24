@@ -23,6 +23,8 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -46,17 +48,20 @@ import java.awt.event.WindowEvent;
 
 @SuppressWarnings("serial")
 public class Checkout extends JDialog {
-
+	
 	private final double VAT_RATE = 0.12;
+	private final double MEDICINE_RATE = 0.20;
+	private final double GROCERY_RATE = 0.05;
+	private final double GROCERY_LIMIT = 1300.0;
+	
 	private final String TITLE = "Checkout";
 	private final String[] customerTypes = {
 		"Regular Customer", 
 		"PWD/Senior (Medical, 20%, Non-VAT)", 
 		"PWD/Senior (Grocery, 5%, VAT, Limit: P1,300/week)"};
-	private final double[] customerDiscounts = {
-		0.2, 0.05
-	};
-	private final double groceryLimit = 1300;
+	
+	private String defaultVATMessage = "VAT (12%): ";
+	private String defaultDiscountMessage = "Discount: ";
 	
 	private Logger logger;
 	private Database database;
@@ -308,7 +313,7 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.EAST, lblSubTotalValue, 0, SpringLayout.EAST, lblTotalItemsValue);
 		checkoutPanel.add(lblSubTotalValue);
 		
-		lblVAT = new JLabel("VAT (12%): ");
+		lblVAT = new JLabel(defaultVATMessage);
 		lblVAT.setFont(gallery.getFont(17f));
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, lblVAT, 2, SpringLayout.SOUTH, lblSubTotal);
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblVAT, 0, SpringLayout.WEST, lblTotalItems);
@@ -322,7 +327,7 @@ public class Checkout extends JDialog {
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, lblVATValue, 0, SpringLayout.NORTH, lblVAT);
 		checkoutPanel.add(lblVATValue);
 		
-		lblDiscount = new JLabel("Discount: ");
+		lblDiscount = new JLabel(defaultDiscountMessage);
 		lblDiscount.setFont(gallery.getFont(17f));
 		sl_checkoutPanel.putConstraint(SpringLayout.NORTH, lblDiscount, 2, SpringLayout.SOUTH, lblVAT);
 		sl_checkoutPanel.putConstraint(SpringLayout.WEST, lblDiscount, 0, SpringLayout.WEST, lblTotalItems);
@@ -447,6 +452,7 @@ public class Checkout extends JDialog {
 		cbCustomerType.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int selectedCustomerType = cbCustomerType.getSelectedIndex();
+				double customerDiscount = 0.0;
 				
 				if (selectedCustomerType == 0) {
 					// Regular customer
@@ -454,20 +460,61 @@ public class Checkout extends JDialog {
 					tfSearch.setEditable(false);
 					listCustomers.clearSelection();
 					listCustomers.setEnabled(false);
+					
+					lblVAT.setText(defaultVATMessage);
+					lblDiscount.setText(defaultDiscountMessage);
 
 					lblSelectedValue.setText("None");
 					lblCustomerIDValue.setText("None");
+					
+					total = subTotal;
+
+					lblVATValue.setText(utility.formatCurrency(vat));
+					lblDiscountValue.setText(utility.formatCurrency(customerDiscount));
+					
 				} else if (selectedCustomerType == 1) {
 					// PWD/Senior Citizen (Medical) (20%)
 					tfSearch.setEditable(true);
 					listCustomers.setEnabled(true);
+
+					lblVAT.setText("VAT (12%) (Exempted): ");
+					lblDiscount.setText("Discount (20%): ");
+					
+					customerDiscount = (subTotal - vat) * MEDICINE_RATE;
+					total = subTotal - (customerDiscount + vat);
+
+					lblVATValue.setText(utility.formatCurrency(-vat));
+					lblDiscountValue.setText(utility.formatCurrency(-customerDiscount));
 					
 				} else if (selectedCustomerType == 2) {
 					// PWD/Senior Citizen (Grocery) (5%)
-					tfSearch.setEditable(true);
-					listCustomers.setEnabled(true);
+					if (subTotal > GROCERY_LIMIT) {
+						gallery.showMessage(
+							new String[] {
+								"According to the Joint DTI-DA-DOE Administrative Order No.17-01 to No.17-02, "
+								+ "The weekly limit for grocery discount for both senior citizen and PWD is P1,300.00 "
+								+ "per calendar week (Current: " + utility.formatCurrency(subTotal) + "). "
+								+ "Please decrease some products or inform the customer."});
+						dispose();
+						
+					} else {
+						tfSearch.setEditable(true);
+						listCustomers.setEnabled(true);
 
+						lblVAT.setText("VAT (12%) (Included): ");
+						lblDiscount.setText("Discount (5%): ");
+
+						customerDiscount = subTotal * GROCERY_RATE;
+						total = subTotal - customerDiscount;
+
+						lblVATValue.setText(utility.formatCurrency(vat));
+						lblDiscountValue.setText(utility.formatCurrency(-customerDiscount));
+						
+					}
 				}
+
+				lblTotalValue.setText(utility.formatCurrency(total));
+				updateChange();
 			}
 		});
 		lblNewButton.addMouseListener(new MouseAdapter() {
@@ -502,20 +549,7 @@ public class Checkout extends JDialog {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					finishTransaction();
 				} else {
-					try {
-						double amount = Double.parseDouble(tfAmountTendered.getText());
-						lblAmountTenderedValue.setText(utility.formatCurrency(amount));
-						
-						amountTendered = amount;
-						change = amountTendered - total;
-					} catch (NullPointerException | NumberFormatException ex) {
-						amountTendered = 0.0;
-						change = amountTendered;
-
-						lblAmountTenderedValue.setText(utility.formatCurrency(amountTendered));
-					}
-					
-					lblChangeValue.setText("<html><p style=\"color: red\">" + utility.formatCurrency(change) + "</p></html>");
+					updateChange();
 				}
 			}
 		});
@@ -536,16 +570,14 @@ public class Checkout extends JDialog {
 		});
 		listCustomers.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mousePressed(MouseEvent e) {
-				int selectedIndex = listCustomers.getSelectedIndex();
-				if (selectedIndex != -1) {
-					Object[] customerSelected = customers[selectedIndex];
-					
-					lblSelectedValue.setText(customerSelected[3].toString() + " " 
-							+ customerSelected[4].toString() + " " 
-							+ customerSelected[5].toString());
-					lblCustomerIDValue.setText(customerSelected[2].toString());
-				}
+			public void mouseReleased(MouseEvent e) {
+				updateSelectedCustomer();
+			}
+		});
+		listCustomers.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				updateSelectedCustomer();
 			}
 		});
 		
@@ -554,10 +586,6 @@ public class Checkout extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setVisible(true);
-	}
-	
-	private void finishTransaction() {
-		System.out.println("gegege");
 	}
 	
 	private void updateListCustomers() {
@@ -595,6 +623,44 @@ public class Checkout extends JDialog {
 					return values[index];
 				}
 			});
+		} else {
+			DefaultListModel<String> model = new DefaultListModel<>();
+			model.clear();
+			
+			listCustomers.setModel(model);
 		}
+	}
+	
+	private void updateSelectedCustomer() {
+		int selectedIndex = listCustomers.getSelectedIndex();
+		if (selectedIndex != -1) {
+			Object[] customerSelected = customers[selectedIndex];
+			
+			lblSelectedValue.setText(customerSelected[3].toString() + " " 
+					+ customerSelected[4].toString() + " " 
+					+ customerSelected[5].toString());
+			lblCustomerIDValue.setText(customerSelected[2].toString());
+		}
+	}
+	
+	private void updateChange() {
+		try {
+			double amount = Double.parseDouble(tfAmountTendered.getText());
+			lblAmountTenderedValue.setText(utility.formatCurrency(amount));
+			
+			amountTendered = amount;
+			change = amountTendered - total;
+		} catch (NullPointerException | NumberFormatException ex) {
+			amountTendered = 0.0;
+			change = amountTendered;
+
+			lblAmountTenderedValue.setText(utility.formatCurrency(amountTendered));
+		}
+		
+		lblChangeValue.setText("<html><p style=\"color: red\">" + utility.formatCurrency(change) + "</p></html>");
+	}
+	
+	private void finishTransaction() {
+		System.out.println("gegege");
 	}
 }
