@@ -18,6 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -92,10 +93,13 @@ public class Checkout extends JDialog {
 	private JLabel lblChangeValue;
 	private JLabel lblEnterAmountTendered;
 	private JLabel lblFinishButton;
+	private JPanel receiptTitlePanel;
+	private JLabel lblReceiptTitle;
 
 	private Object[] user;
 	private ArrayList<CartItem> cartList;
 	private Object[][] customers;
+	private POS pos;
 	
 	private double totalItems = 0.0;
 	private double subTotal = 0.0;
@@ -105,10 +109,8 @@ public class Checkout extends JDialog {
 	private double total = 0.0;
 	private double amountTendered = 0.0;
 	private double change = 0.0;
-	private JPanel receiptTitlePanel;
-	private JLabel lblReceiptTitle;
 
-	public Checkout(Object[] user, ArrayList<CartItem> cartList) {
+	public Checkout(Object[] user, ArrayList<CartItem> cartList, POS pos) {
 		database = Database.getInstance();
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
@@ -117,6 +119,7 @@ public class Checkout extends JDialog {
 		
 		this.user = user;
 		this.cartList = cartList;
+		this.pos = pos;
 		
 		for (CartItem cartItem : cartList) {
 			Object[] product = cartItem.getProduct();
@@ -555,8 +558,6 @@ public class Checkout extends JDialog {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblFinishButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO atleast a joptionpane success
-				// TODO transaction insertion to the database
 				finishTransaction();
 			}
 		});
@@ -681,6 +682,55 @@ public class Checkout extends JDialog {
 	}
 	
 	private void finishTransaction() {
-		System.out.println("gegege");
+		// Field checking
+		ArrayList<String> errorMessages = new ArrayList<>();
+		int customerTypeIndex = cbCustomerType.getSelectedIndex();
+		int customerNameIndex = listCustomers.getSelectedIndex();
+		
+		if (customerTypeIndex != 0) {
+			if (customerNameIndex == -1) {
+				errorMessages.add("- Please select a customer to receive the discount.");
+			}
+		}
+		
+		if (amountTendered < total) {
+			errorMessages.add("- Customer payment is insufficient.");
+		}
+		
+		if (errorMessages.size() > 0) {
+			gallery.showMessage(errorMessages.toArray(new String[0]));
+		} else {
+			// Database insertion
+			long transactionID = receipt.getTransactionID();
+			long userID = (long) user[0];
+			long customerDiscountID = 3000000000l;
+			
+			if (customerTypeIndex != 0) {
+				customerDiscountID = (long) customers[customerNameIndex][0];
+			}
+			
+			double totalPrice = total;
+			
+			if (database.addTransaction(transactionID, userID, customerDiscountID, totalPrice)) {
+				cartList.forEach(
+					(product) ->
+						database.
+							addContains(
+								transactionID, 
+								product.getProductID(), 
+								product.getQuantity())
+				);
+				
+				logger.addLog(Logger.LEVEL_2, String.format("User %s created transaction #%s", user[0].toString(), transactionID));
+				
+				JOptionPane.showMessageDialog(
+					null, "Successfully completed transaction #" + transactionID, 
+					Utility.BUSINESS_TITLE, 
+					JOptionPane.INFORMATION_MESSAGE);
+				
+				pos.clearCart(true);
+				dispose();
+			}
+		}
 	}
 }

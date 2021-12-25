@@ -280,7 +280,7 @@ public class ProductUpdate extends JFrame {
 					}
 					
 					if (successfulExecution) {
-						logger.addLog(String.format("User %s edited a product with the ID:%s", user[0].toString(), productID));
+						logger.addLog(Logger.LEVEL_3, String.format("User %s edited a product with the ID:%s", user[0].toString(), productID));
 						 
 						 JOptionPane.showMessageDialog(
 							null, "Successfully edited product '" + productName + "'", 

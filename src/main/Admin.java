@@ -27,7 +27,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
@@ -454,7 +453,7 @@ public class Admin extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				logger.addLog(
+				logger.addLog(Logger.LEVEL_3, 
 					String.format(
 						"User %s closed the administrator mode.", 
 						user[0]));
@@ -477,7 +476,7 @@ public class Admin extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblUsersButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				logger.addLog(
+				logger.addLog(Logger.LEVEL_3, 
 					String.format(
 						"User %s opened the user management panel.", 
 						user[0]));
@@ -629,7 +628,7 @@ public class Admin extends JFrame {
 							passwordChanged);
 					}
 
-					logger.addLog(
+					logger.addLog(Logger.LEVEL_3, 
 						String.format(
 							"User %s updated the user %s's details.", 
 							user[0], tfUserID.getText()));
@@ -660,7 +659,7 @@ public class Admin extends JFrame {
 					// Execution
 					if (result == 0) {
 						if (database.deleteEntry("user", "user_id", selectedID)) {
-							logger.addLog(
+							logger.addLog(Logger.LEVEL_3, 
 								String.format(
 									"User %s deleted user %s.", 
 									user[0], tfUserID.getText()));
@@ -694,7 +693,7 @@ public class Admin extends JFrame {
 							utility.hashData(
 								new String(
 									pfPassword.getPassword())));
-					logger.addLog(
+					logger.addLog(Logger.LEVEL_3, 
 						String.format(
 							"User %s added the user %s to the database.", 
 							user[0], tfUserID.getText()));
@@ -888,7 +887,7 @@ public class Admin extends JFrame {
 		logDay.append("/");
 		logDay.append(String.format("%02d", time.get(Calendar.DAY_OF_MONTH)));
 		
-		logger.addLog(
+		logger.addLog(Logger.LEVEL_3, 
 			String.format(
 				"User %s searched the logs for the day of %s.", 
 				user[0], logDay.toString()));

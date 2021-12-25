@@ -203,7 +203,7 @@ public class SupplierAdd extends JFrame {
 					 String address = txtAddress.getText();
 					 
 					 if (database.addSupplier(id, name, contactNum, address)) {
-						 logger.addLog(String.format("User %s added a new supplier with the ID:%s", user[0].toString(), id));
+						 logger.addLog(Logger.LEVEL_1, String.format("User %s added a new supplier with the ID:%s", user[0].toString(), id));
 						 
 						 JOptionPane.showMessageDialog(
 							null, "Successfully register the new supplier with the ID of " + id + ".", 

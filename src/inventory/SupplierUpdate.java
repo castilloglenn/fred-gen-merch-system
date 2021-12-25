@@ -206,7 +206,7 @@ public class SupplierUpdate extends JFrame {
 					String address = txtAddress.getText();
 					
 					if (database.setSupplier(id, name, contactNum, address)) {
-						 logger.addLog(String.format("User %s updated a supplier with the ID:%s", user[0].toString(), id));
+						 logger.addLog(Logger.LEVEL_2, String.format("User %s updated a supplier with the ID:%s", user[0].toString(), id));
 						 
 						 JOptionPane.showMessageDialog(
 							null, "Successfully updated the supplier with the ID of " + id + ".", 

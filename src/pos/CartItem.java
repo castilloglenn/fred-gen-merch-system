@@ -53,7 +53,7 @@ public class CartItem extends JPanel {
 	 */
 	public CartItem(int indexOrder, Object[] product, int quantity, POS pos) {
 		logger = Logger.getInstance();
-		logger.addLog(String.format("User added product '%s' on the cartlist.", product[2].toString()));
+		logger.addLog(Logger.LEVEL_2, String.format("User added product '%s' on the cartlist.", product[2].toString()));
 		
 		index = indexOrder;
 		
@@ -181,6 +181,10 @@ public class CartItem extends JPanel {
 	
 	public Object[] getProduct() {
 		return product;
+	}
+	
+	public long getProductID() {
+		return (long) product[0];
 	}
 	
 	public double getQuantity() {

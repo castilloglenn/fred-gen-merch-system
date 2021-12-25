@@ -458,7 +458,7 @@ public class Inventory extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				logger.addLog(String.format("User %s closed the Inventory System.", user[0].toString()));
+				logger.addLog(Logger.LEVEL_1, String.format("User %s closed the Inventory System.", user[0].toString()));
 
 				dispose();
 				new Portal(user);
@@ -622,7 +622,7 @@ public class Inventory extends JFrame {
 						Utility.BUSINESS_TITLE, JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 					if (confirmation1 == 0) {
 						if (database.deleteEntry("product", "product_id", (long) products[productTable.getSelectedRow()][0])) {
-							logger.addLog(String.format("User %s deleted a product with the ID:%s", user[0].toString(), 
+							logger.addLog(Logger.LEVEL_2, String.format("User %s deleted a product with the ID:%s", user[0].toString(), 
 								products[productTable.getSelectedRow()][0].toString()));
 							 
 							JOptionPane.showMessageDialog(
@@ -656,7 +656,7 @@ public class Inventory extends JFrame {
 					
 					if (confirmation == 0) {
 						if (database.deleteEntry("supplier", "supplier_id", Long.parseLong(supplierID))) {
-							logger.addLog(String.format("User %s removed a new supplier with the ID:%s", user[0].toString(), supplierID));
+							logger.addLog(Logger.LEVEL_2, String.format("User %s removed a supplier with the ID:%s", user[0].toString(), supplierID));
 							
 							JOptionPane.showMessageDialog(
 									null, "Successfully removed the supplier with the ID of " + supplierID + ".", 

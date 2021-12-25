@@ -307,7 +307,7 @@ public class ProductAdd extends JFrame {
 					
 					if (database.addProduct(productID, category, name, iconPath, stock, unitofMeasurement, priceBought, sellingPrice)) {
 						if (database.addSupplies(supplier, productID, userID, priceBought, priceBought * stock)) {
-							logger.addLog(String.format("User %s added a new product with the ID:%s", user[0].toString(), productID));
+							logger.addLog(Logger.LEVEL_1, String.format("User %s added a new product with the ID:%s", user[0].toString(), productID));
 							 
 							 JOptionPane.showMessageDialog(
 								null, "Successfully added new product '" + name + "'", 

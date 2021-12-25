@@ -107,7 +107,7 @@ public class Portal extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				logger.addLog(String.format("User %s closed the portal.", user[0].toString()));
+				logger.addLog(Logger.LEVEL_1, String.format("User %s closed the portal.", user[0].toString()));
 
 				new Main();
 				dispose();
@@ -118,7 +118,7 @@ public class Portal extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblPosButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				logger.addLog(String.format("User %s opened the Point of Sales.", user[0].toString()));
+				logger.addLog(Logger.LEVEL_2, String.format("User %s opened the Point of Sales.", user[0].toString()));
 
 				new POS(user);
 				dispose();
@@ -129,7 +129,7 @@ public class Portal extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblInventoryButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				logger.addLog(String.format("User %s opened the Inventory System.", user[0].toString()));
+				logger.addLog(Logger.LEVEL_2, String.format("User %s opened the Inventory System.", user[0].toString()));
 
 				new Inventory(user);
 				dispose();

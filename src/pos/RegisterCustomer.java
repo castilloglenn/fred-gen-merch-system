@@ -226,7 +226,7 @@ public class RegisterCustomer extends JDialog {
 					String lname = tfLastName.getText();
 					
 					if (database.addCustomerDiscount(id, type, cardID, fname, mname, lname)) {
-						logger.addLog(
+						logger.addLog(Logger.LEVEL_2, 
 							String.format(
 								"User %s created customer with the ID: %s.", 
 								user[0], Long.toString(id)));
@@ -266,7 +266,7 @@ public class RegisterCustomer extends JDialog {
 						duplicatedIDCustomer[4].toString() + " " + 
 						duplicatedIDCustomer[5].toString();
 				
-				logger.addLog(
+				logger.addLog(Logger.LEVEL_3, 
 					String.format(
 						"User %s encoded a new customer with a card id binded to %s. The system prevented the process.", 
 						user[0], customerFullName));

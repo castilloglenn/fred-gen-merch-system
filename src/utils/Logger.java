@@ -14,6 +14,10 @@ public class Logger {
 	 * Singleton instance
 	 */
 	private static Logger singletonInstance = null;
+	
+	public static final String LEVEL_1 = "LOW";
+	public static final String LEVEL_2 = "MODERATE";
+	public static final String LEVEL_3 = "HIGH";
 
     private String formattedFileName;
 
@@ -38,7 +42,7 @@ public class Logger {
         return singletonInstance;
     }
 
-    public void addLog(String message) {
+    public void addLog(String level, String message) {
         try {
             File file = new File(formattedFileName);
             
@@ -63,11 +67,11 @@ public class Logger {
 	            timestamp.append(String.format("%02d", time.get(Calendar.MINUTE)));
 	            timestamp.append(":");
 	            timestamp.append(String.format("%02d", time.get(Calendar.SECOND)));
-	            timestamp.append("]");
+	            timestamp.append("] " + level);
 	            
 	            String fullLog = 
 	            	String.format(
-            			"%s %s",
+            			"%s: %s",
             			timestamp.toString(),
             			message);
 	            

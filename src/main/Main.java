@@ -69,7 +69,7 @@ public class Main extends JFrame {
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
 		
-		logger.addLog("Login window opened.");
+		logger.addLog(Logger.LEVEL_1, "Login window opened.");
 
 		setIconImage(gallery.getSystemIcon());
 		setTitle(TITLE);
@@ -197,7 +197,7 @@ public class Main extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				logger.addLog("System closed.");
+				logger.addLog(Logger.LEVEL_1, "System closed.");
 			}
 		});
 		lblForgotPasswordButton.addMouseListener(new MouseAdapter() {
@@ -386,17 +386,17 @@ public class Main extends JFrame {
 		String[] inputs = getInput();
 		Object[] userDetails = checkAndGetUserDetails(inputs);
 		
-		logger.addLog(String.format("Username '%s' has been attempted to sign in.", inputs[0]));
+		logger.addLog(Logger.LEVEL_2, String.format("Username '%s' has been attempted to sign in.", inputs[0]));
 			
 		if (userDetails != null) {
 			int rank = Integer.parseInt(Character.toString(userDetails[0].toString().charAt(1)));
 			
 			if (rank == 0 || rank == 3) {
-				logger.addLog("An admin account has been attempted to use for business transactions.");
+				logger.addLog(Logger.LEVEL_2, "An admin account has been attempted to use for business transactions.");
 				gallery.showMessage(new String[] {"- You cannot use the administrator account for business transactions."});
 			} else {
 				user = userDetails;
-				logger.addLog(String.format("Username '%s' has been logged on and opened the portal.", inputs[0]));
+				logger.addLog(Logger.LEVEL_2, String.format("Username '%s' has been logged on and opened the portal.", inputs[0]));
 				
 				new Portal(user);
 				dispose();
@@ -407,7 +407,7 @@ public class Main extends JFrame {
 	
 	private void checkAdminLogin() {
 		String[] inputs = getInput();
-		logger.addLog(String.format("The admin account has been attempted to sign in.", inputs[0]));
+		logger.addLog(Logger.LEVEL_3, String.format("The admin account has been attempted to sign in.", inputs[0]));
 		
 		if (inputs[0].equals("admin")) {
 			Object[] fetch = database.getUserLogin("admin");
@@ -415,7 +415,7 @@ public class Main extends JFrame {
 
 			if (Arrays.equals(inputs, result)) {
 				user = fetch;
-				logger.addLog(String.format("The admin account has been logged on and opened Administrator Mode.", user[0]));
+				logger.addLog(Logger.LEVEL_3, String.format("The admin account has been logged on and opened Administrator Mode.", user[0]));
 				openAdmin();
 			}
 		} else {
@@ -424,7 +424,7 @@ public class Main extends JFrame {
 				char level = userDetails[0].toString().charAt(1);
 				if (level == '2' || level == '3') {
 					user = userDetails;
-					logger.addLog(String.format("User %s has logged on and opened Administrator Mode.", user[0]));
+					logger.addLog(Logger.LEVEL_3, String.format("User %s has logged on and opened Administrator Mode.", user[0]));
 					openAdmin();
 				}
 			}

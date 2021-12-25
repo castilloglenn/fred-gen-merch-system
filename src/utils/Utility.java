@@ -48,7 +48,7 @@ public class Utility {
 	 * System default values
 	 */
 	public static final String TITLE_SEPARATOR = " | ";
-	public static final String SYSTEM_TITLE = "AGIK SYSTEM SOLUTIONS";
+	public static final String SYSTEM_TITLE = "AGIK SOFTWARE SOLUTIONS";
 	public static final String BUSINESS_TITLE = "Fred's General Merchandise Store";
 	public static final String BUSINESS_ADDRESS = "Queens Row, Bacoor City, Cavite";
 	public static final String BUSINESS_TIN = "TIN: 159-354-182-248";
@@ -56,7 +56,7 @@ public class Utility {
 	public static final String RECEIPT_FOOTER = 
 			"Thank you for visiting our store, you can contact us via email "
 			+ "fredgenmerch@gmail.com and/orvia our social media facebook.com/fredgenmerch "
-			+ "or our landline 0942-815-2652. Please come again to our store soon.";
+			+ " or our landline 0942-815-2652. Please come  again to our store soon.";
 	
 	public static final String RECEIPT_LEGAL_NOTICE = 
 			"THIS INVOICE/RECEIPT SHALL BE VALID FOR FIVE  (5) YEARS FROM THE DATE OF THE PERMIT TO USE. "

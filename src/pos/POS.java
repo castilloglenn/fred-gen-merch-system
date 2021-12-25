@@ -491,12 +491,12 @@ public class POS extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				if (cartList.isEmpty()) {
-					logger.addLog(String.format("User %s closed the Point of Sales.", user[0].toString()));
+					logger.addLog(Logger.LEVEL_2, String.format("User %s closed the Point of Sales.", user[0].toString()));
 					
 					new Portal(user);
 					dispose();
 				} else {
-					logger.addLog(String.format("User %s tried to close Point of Sales whilst the cart list is not empty.", user[0].toString()));
+					logger.addLog(Logger.LEVEL_3, String.format("User %s tried to close Point of Sales whilst the cart list is not empty.", user[0].toString()));
 					gallery.showMessage(new String[] {"You cannot close the window without finishing the transaction."});
 				}
 			}
@@ -560,7 +560,7 @@ public class POS extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblCancelButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCancelButton); }
 			
-			@Override public void mouseClicked(MouseEvent e) { clearCart(); }
+			@Override public void mouseClicked(MouseEvent e) { clearCart(false); }
 		});
 		lblAddToCart.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblAddToCart); }
@@ -727,7 +727,7 @@ public class POS extends JFrame {
 		if (code == KeyEvent.VK_F1) {
 			checkOut();
 		} else if (code == KeyEvent.VK_F4) {
-			clearCart();
+			clearCart(false);
 		}
 	}
 
@@ -1058,16 +1058,23 @@ public class POS extends JFrame {
 		}
 	}
 	
-	public void clearCart() {
+	public void clearCart(boolean bypass) {
 		if (cartList.size() == 0) {
 			gallery.showMessage(new String[] {"The cart has no items to cancel."});
 		} else {
-			if (requestManagerPermission()) {
+			boolean proceed = false;
+			if (!bypass) {
+				proceed = requestManagerPermission();
+			} else {
+				proceed = true;
+			}
+			
+			if (proceed) {
 				StringBuilder productsIncluded = new StringBuilder();
 				cartList.forEach((item) -> productsIncluded.append(item.getName() + ", "));
 				productsIncluded.setLength(Math.max(productsIncluded.length() - 2, 0));
 				
-				logger.addLog(String.format("User %s cancelled a cart including the items: %s", 
+				logger.addLog(Logger.LEVEL_3, String.format("User %s cancelled a cart including the items: %s", 
 						user[0].toString(), productsIncluded.toString()));
 				
 				cartList.clear();
@@ -1169,7 +1176,7 @@ public class POS extends JFrame {
 		if (cartList.size() == 0) {
 			gallery.showMessage(new String[] {"The cart has no items to checkout."});
 		} else {
-			new Checkout(user, cartList);
+			new Checkout(user, cartList, this);
 		}
 	}
 }

@@ -88,7 +88,7 @@ public class Receipt {
     	return receipt.toString();
     }
 
-    public long getTransaction() {
+    public long getTransactionID() {
     	return transactionNo;
     }
     

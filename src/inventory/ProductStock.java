@@ -147,7 +147,7 @@ public class ProductStock extends JDialog {
 						if (database.addSupplies(supplierID, productID, userID, quantity, totalPrice)) {
 							if (database.setProduct((long) product[0], product[1].toString(), product[2].toString(), 
 									newStock, product[5].toString(), (double) product[7])) {
-								logger.addLog(String.format("User %s increased the stock of product with the ID:%s by %s", 
+								logger.addLog(Logger.LEVEL_1, String.format("User %s increased the stock of product with the ID:%s by %s", 
 										user[0].toString(), productID, Double.toString(quantity)));
 								 
 								JOptionPane.showMessageDialog(
@@ -163,7 +163,7 @@ public class ProductStock extends JDialog {
 						if (database.addSupplies(supplierID, productID, userID, -quantity, totalPrice)) {
 							if (database.setProduct((long) product[0], product[1].toString(), product[2].toString(), 
 									newStock, product[5].toString(), (double) product[7])) {
-								logger.addLog(String.format("User %s decreased the stock of product with the ID:%s by %s", 
+								logger.addLog(Logger.LEVEL_2, String.format("User %s decreased the stock of product with the ID:%s by %s", 
 										user[0].toString(), productID, Double.toString(quantity)));
 								 
 								JOptionPane.showMessageDialog(

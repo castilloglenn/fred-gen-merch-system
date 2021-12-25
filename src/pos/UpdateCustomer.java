@@ -212,7 +212,7 @@ public class UpdateCustomer extends JDialog {
 					String lname = tfLastName.getText();
 					
 					if (database.setCustomerDiscount(id, type, cardID, fname, mname, lname)) {
-						logger.addLog(
+						logger.addLog(Logger.LEVEL_3, 
 							String.format(
 								"User %s update the customer with the ID: %s.", 
 								user[0], Long.toString(id)));
@@ -254,7 +254,7 @@ public class UpdateCustomer extends JDialog {
 							duplicatedIDCustomer[4].toString() + " " + 
 							duplicatedIDCustomer[5].toString();
 					
-					logger.addLog(
+					logger.addLog(Logger.LEVEL_3, 
 						String.format(
 							"User %s encoded a new customer while updating with a card id binded to %s. The system prevented the process.", 
 							user[0], customerFullName));
