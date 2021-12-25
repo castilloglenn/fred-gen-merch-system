@@ -26,7 +26,7 @@ public class Receipt {
 	private String footer = Utility.RECEIPT_FOOTER;
 	private String legalNotice = Utility.RECEIPT_LEGAL_NOTICE;
 	
-	private DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss aa");
+	private DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss aa");
 	private String dateTime;
 	
 	private long transactionNo;
@@ -79,8 +79,8 @@ public class Receipt {
     	receipt.append(leftAlign("Transaction No: " + transactionNo) + BR);
     	receipt.append(leftAlign("Cashier: " + cashierName) + BR);
     	receipt.append(leftAlign("Customer: " + customerName) + BR);
-    	receipt.append(horizontalLine + BR + BR);
-    	receipt.append(center(cartList) + BR);
+    	receipt.append(horizontalLine + BR);
+    	receipt.append(center(cartList));
     	receipt.append(horizontalLine + BR);
     	receipt.append(center(footer) + BR + BR);
     	receipt.append(center(legalNotice) + BR);

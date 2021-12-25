@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import utils.Gallery;
+import utils.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -35,6 +36,7 @@ public class CartItem extends JPanel {
 	private int oneLineColumnLimit = 15;
 	private int twoLineColumnLimit = 30;
 	
+	private Logger logger;
 	private Gallery gallery;
 	private POS pos;
 	
@@ -50,6 +52,9 @@ public class CartItem extends JPanel {
 	 * 
 	 */
 	public CartItem(int indexOrder, Object[] product, int quantity, POS pos) {
+		logger = Logger.getInstance();
+		logger.addLog(String.format("User added product '%s' on the cartlist.", product[2].toString()));
+		
 		index = indexOrder;
 		
 		this.product = product;

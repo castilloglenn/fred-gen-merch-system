@@ -137,7 +137,7 @@ public class POS extends JFrame {
 		setIconImage(gallery.getSystemIcon());
 		setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 		setMinimumSize(new Dimension(minWidth, minHeight));
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		Dimension selfDisplay = Toolkit.getDefaultToolkit().getScreenSize();
 		if (defaultWidth >= selfDisplay.getWidth() || defaultHeight >= selfDisplay.getHeight()) {
@@ -490,10 +490,15 @@ public class POS extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				logger.addLog(String.format("User %s has been close the Point of Sales.", user[0].toString()));
-				
-				new Portal(user);
-				dispose();
+				if (cartList.isEmpty()) {
+					logger.addLog(String.format("User %s closed the Point of Sales.", user[0].toString()));
+					
+					new Portal(user);
+					dispose();
+				} else {
+					logger.addLog(String.format("User %s tried to close Point of Sales whilst the cart list is not empty.", user[0].toString()));
+					gallery.showMessage(new String[] {"You cannot close the window without finishing the transaction."});
+				}
 			}
 		});
 		addComponentListener(new ComponentAdapter() {
@@ -951,14 +956,16 @@ public class POS extends JFrame {
 		// Condition statement to check if there are one or more errors.
 		if (errorMessages.size() > 0) { // REQUIRED
 			gallery.showMessage(errorMessages.toArray(new String[0])); // REQUIRED
-		} else { // REQUIRED the code under this will be the only correct path
+		} else { 
+			// REQUIRED the code under this will be the only correct path
 			cartListPanel.removeAll();
 			
-			long selectedID = (long) queryResult[tableSelectedIndex][0];
+			long selectedID = (long) queryResult[tableSelectedIndex + (tableMaxPerPage * (tableCurrentPage - 1))][0];
 			
 			boolean cartItemExisting = false;
 			for (CartItem cartItem : cartList) {
 				if ((long) cartItem.getTransactionDetail()[0] == selectedID) {
+					
 					cartItem.adjustQuantity(quantity);
 					cartItemExisting = true;
 				}

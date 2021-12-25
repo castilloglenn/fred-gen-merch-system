@@ -556,6 +556,7 @@ public class Checkout extends JDialog {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				// TODO atleast a joptionpane success
+				// TODO transaction insertion to the database
 				finishTransaction();
 			}
 		});
@@ -676,6 +677,7 @@ public class Checkout extends JDialog {
 		receipt.setAmountTendered(amountTendered);
 		
 		taReceipt.setText(receipt.get(true));
+		taReceipt.setCaretPosition(0);
 	}
 	
 	private void finishTransaction() {

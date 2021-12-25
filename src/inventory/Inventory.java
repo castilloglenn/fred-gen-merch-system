@@ -458,7 +458,7 @@ public class Inventory extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				logger.addLog(String.format("User %s has been close the Inventory System.", user[0].toString()));
+				logger.addLog(String.format("User %s closed the Inventory System.", user[0].toString()));
 
 				dispose();
 				new Portal(user);

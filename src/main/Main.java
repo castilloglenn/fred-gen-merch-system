@@ -141,6 +141,7 @@ public class Main extends JFrame {
 		loginPanel.add(lblPassword);
 		
 		tfUsername = new JTextField();
+		tfUsername.setFont(gallery.getFont(15f));
 		sl_loginPanel.putConstraint(SpringLayout.NORTH, tfUsername, -2, SpringLayout.NORTH, lblUsername);
 		sl_loginPanel.putConstraint(SpringLayout.WEST, tfUsername, 10, SpringLayout.EAST, lblUsername);
 		sl_loginPanel.putConstraint(SpringLayout.SOUTH, tfUsername, 2, SpringLayout.SOUTH, lblUsername);
@@ -149,6 +150,7 @@ public class Main extends JFrame {
 		tfUsername.setColumns(10);
 		
 		tfPassword = new JPasswordField();
+		tfPassword.setFont(gallery.getFont(15f));
 		sl_loginPanel.putConstraint(SpringLayout.NORTH, tfPassword, -2, SpringLayout.NORTH, lblPassword);
 		sl_loginPanel.putConstraint(SpringLayout.WEST, tfPassword, 0, SpringLayout.WEST, tfUsername);
 		sl_loginPanel.putConstraint(SpringLayout.SOUTH, tfPassword, 2, SpringLayout.SOUTH, lblPassword);
