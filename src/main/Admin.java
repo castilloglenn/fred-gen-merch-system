@@ -489,7 +489,7 @@ public class Admin extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblSearchButton); }
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				displayLog();
+				displayLog(true);
 			}
 		});
 		
@@ -717,11 +717,11 @@ public class Admin extends JFrame {
 		tfKeyword.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				displayLog();
+				displayLog(false);
 			}
 		});
 		
-		displayLog();
+		displayLog(true);
 		setVisible(true);
 	}
 	
@@ -859,7 +859,7 @@ public class Admin extends JFrame {
 	
 	// Methods below this is binded to the logs panel
 	
-	private void displayLog() {
+	private void displayLog(boolean toLog) {
 		String keyword = tfKeyword.getText();
 		boolean isSearchForKey = !keyword.isBlank();
 		
@@ -886,11 +886,13 @@ public class Admin extends JFrame {
 		logDay.append(String.format("%02d", time.get(Calendar.MONTH) + 1));
 		logDay.append("/");
 		logDay.append(String.format("%02d", time.get(Calendar.DAY_OF_MONTH)));
-		
-		logger.addLog(Logger.LEVEL_3, 
-			String.format(
-				"User %s searched the logs for the day of %s.", 
-				user[0], logDay.toString()));
+
+        if (toLog) {
+        	logger.addLog(Logger.LEVEL_3, 
+				String.format(
+					"User %s searched the logs for the day of %s.", 
+					user[0], logDay.toString()));
+        }
         
         if (!logFile.isFile()) {
     		logDay.insert(0, logEmptyMessage);
