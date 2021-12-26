@@ -7,6 +7,8 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -14,10 +16,10 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Properties;
+import java.util.Scanner;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField.AbstractFormatter;
@@ -119,6 +121,51 @@ public class Utility {
 		}
 		
 		return singletonInstance;
+	}
+	
+	/**
+	 * 
+	 * @param directory either of the 2; business or transaction
+	 * @param title file name excluding the text tag
+	 * @return the contents of the file
+	 */
+	public String readFile(String directory, String title) {
+		try {
+			File f = 
+				new File(
+					String.format("./reports/%s/%s.txt", directory, title));
+			
+			Scanner myReader = new Scanner(f);
+			
+			StringBuilder sb = new StringBuilder();
+			while (myReader.hasNextLine()) {
+				sb.append(myReader.nextLine());
+				sb.append("\n");
+			}
+			myReader.close();
+			return sb.toString();
+	    } catch (FileNotFoundException e) {
+			return null;
+	    }
+	}
+	
+	/**
+	 * 
+	 * @param directory directory either of the 2; business or transaction
+	 * @param title title file name excluding the text tag
+	 * @param message the contents to be inserted to the file
+	 */
+	public void writeFile(String directory, String title, String message) {
+		File f = 
+			new File(
+				String.format("./reports/%s/%s.txt", directory, title));
+        try {
+            FileOutputStream fos = new FileOutputStream(f);
+            fos.write(message.getBytes());
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	public String encodeData(String data) {

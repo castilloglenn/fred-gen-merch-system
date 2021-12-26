@@ -42,6 +42,8 @@ import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
 import utils.VerticalLabelUI;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 
 /**
@@ -56,10 +58,18 @@ public class POS extends JFrame {
 	private final String TRANSACTION_TITLE = "Transactions";
 	private final String REPORTS_TITLE = "Reports";
 
-	private String transactionMessage = "Transaction Count: ";
+	private String transactionMessage = "Today's Transaction #";
 	private String defaultSearchMessage = "Search for products...";
 	private String defaultQuantityMessage = "How many?";
 	private String clearCartMessage = "Please let the manager put their password for verification.";
+	
+	private String transactionTutorial = "<h2>How to search for a transaction?</h2>"
+			+ "You can get the receipt's transaction number by looking at the upper "
+			+ "side of the receipt and see the numbers written after the 'Transaction No:' "
+			+ "part. Copy the numbers written and type it in the text field above and make sure "
+			+ "that all numbers are correct, then click the search button to search the soft "
+			+ "copy directory, if it has been deleted or moved or simply just did not exists, "
+			+ "a message will pop up.";
 	
 	private int defaultHeight = 710; // 600
 	private int defaultWidth = 990; // 1000
@@ -121,6 +131,17 @@ public class POS extends JFrame {
 	private SpringLayout sl_mainPanel, sl_posPanel;
 	
 	private CardLayout cardLayout, queryCardLayout, cartListCardLayout;
+	private JPanel transactionSearchPanel;
+	private JPanel transactionStatisticPanel;
+	private JPanel transactionReceiptPanel;
+	private JLabel lblTransactionTitle;
+	private JLabel lblTransactionSearch;
+	private JLabel lblTransactionSearchButton;
+	private JTextField tfTransactionSearch;
+	private JLabel lblTransactionTutorial;
+	private JLabel lblTransactionStatistics;
+	private JLabel lblTransactionReceiptTitle;
+	private JTextArea taReceiptPreview;
 
 	public POS(Object[] user) {
 		database = Database.getInstance();
@@ -458,15 +479,97 @@ public class POS extends JFrame {
 		lblPageIndicator.setFont(gallery.getFont(15f));
 		tableContainerPanel.add(lblPageIndicator);
 		
-		transactionPanel = new RoundedPanel(Color.BLUE); // Gallery.GRAY
+		transactionPanel = new RoundedPanel(Gallery.GRAY);
 		displayPanel.add(transactionPanel, "transaction");
-		transactionPanel.setLayout(new SpringLayout());
+		SpringLayout sl_transactionPanel = new SpringLayout();
+		transactionPanel.setLayout(sl_transactionPanel);
 		
+		transactionSearchPanel = new RoundedPanel(Gallery.WHITE);
+		sl_transactionPanel.putConstraint(SpringLayout.NORTH, transactionSearchPanel, 20, SpringLayout.NORTH, transactionPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.WEST, transactionSearchPanel, 20, SpringLayout.WEST, transactionPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.SOUTH, transactionSearchPanel, 170, SpringLayout.NORTH, transactionPanel);
+		transactionPanel.add(transactionSearchPanel);
 		
+		transactionStatisticPanel = new RoundedPanel(Gallery.WHITE);
+		sl_transactionPanel.putConstraint(SpringLayout.NORTH, transactionStatisticPanel, 15, SpringLayout.SOUTH, transactionSearchPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.WEST, transactionStatisticPanel, 0, SpringLayout.WEST, transactionSearchPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.SOUTH, transactionStatisticPanel, -20, SpringLayout.SOUTH, transactionPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.EAST, transactionStatisticPanel, 0, SpringLayout.EAST, transactionSearchPanel);
+		transactionPanel.add(transactionStatisticPanel);
 		
+		transactionReceiptPanel = new RoundedPanel(Gallery.WHITE);
+		sl_transactionPanel.putConstraint(SpringLayout.EAST, transactionSearchPanel, -15, SpringLayout.WEST, transactionReceiptPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.NORTH, transactionReceiptPanel, 0, SpringLayout.NORTH, transactionSearchPanel);
+		SpringLayout sl_transactionSearchPanel = new SpringLayout();
+		transactionSearchPanel.setLayout(sl_transactionSearchPanel);
 		
+		lblTransactionTitle = new JLabel("View Transaction History");
+		sl_transactionSearchPanel.putConstraint(SpringLayout.NORTH, lblTransactionTitle, 15, SpringLayout.NORTH, transactionSearchPanel);
+		lblTransactionTitle.setFont(gallery.getFont(23f));
+		sl_transactionSearchPanel.putConstraint(SpringLayout.WEST, lblTransactionTitle, 15, SpringLayout.WEST, transactionSearchPanel);
+		transactionSearchPanel.add(lblTransactionTitle);
 		
+		lblTransactionSearch = new JLabel("Enter Transaction Number");
+		sl_transactionSearchPanel.putConstraint(SpringLayout.NORTH, lblTransactionSearch, 65, SpringLayout.NORTH, lblTransactionTitle);
+		lblTransactionSearch.setFont(gallery.getFont(15f));
+		sl_transactionSearchPanel.putConstraint(SpringLayout.WEST, lblTransactionSearch, 0, SpringLayout.WEST, lblTransactionTitle);
+		transactionSearchPanel.add(lblTransactionSearch);
 		
+		lblTransactionSearchButton = new JLabel("Search");
+		sl_transactionSearchPanel.putConstraint(SpringLayout.NORTH, lblTransactionSearchButton, 3, SpringLayout.SOUTH, lblTransactionSearch);
+		lblTransactionSearchButton.setName("primary");
+		gallery.styleLabelToButton(lblTransactionSearchButton, 15f, 5, 5);
+		sl_transactionSearchPanel.putConstraint(SpringLayout.EAST, lblTransactionSearchButton, -15, SpringLayout.EAST, transactionSearchPanel);
+		transactionSearchPanel.add(lblTransactionSearchButton);
+		
+		tfTransactionSearch = new JTextField();
+		sl_transactionSearchPanel.putConstraint(SpringLayout.NORTH, tfTransactionSearch, 2, SpringLayout.NORTH, lblTransactionSearchButton);
+		sl_transactionSearchPanel.putConstraint(SpringLayout.SOUTH, tfTransactionSearch, -2, SpringLayout.SOUTH, lblTransactionSearchButton);
+		tfTransactionSearch.setFont(gallery.getFont(15f));
+		sl_transactionSearchPanel.putConstraint(SpringLayout.WEST, tfTransactionSearch, 0, SpringLayout.WEST, lblTransactionTitle);
+		sl_transactionSearchPanel.putConstraint(SpringLayout.EAST, tfTransactionSearch, -10, SpringLayout.WEST, lblTransactionSearchButton);
+		transactionSearchPanel.add(tfTransactionSearch);
+		tfTransactionSearch.setColumns(10);
+		sl_transactionPanel.putConstraint(SpringLayout.WEST, transactionReceiptPanel, -420, SpringLayout.EAST, transactionPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.SOUTH, transactionReceiptPanel, 0, SpringLayout.SOUTH, transactionStatisticPanel);
+		SpringLayout sl_transactionStatisticPanel = new SpringLayout();
+		transactionStatisticPanel.setLayout(sl_transactionStatisticPanel);
+		
+		lblTransactionTutorial = new JLabel("<html>" + transactionTutorial + "</html>");
+		sl_transactionStatisticPanel.putConstraint(SpringLayout.EAST, lblTransactionTutorial, -15, SpringLayout.EAST, transactionStatisticPanel);
+		lblTransactionTutorial.setFont(gallery.getFont(15f));
+		sl_transactionStatisticPanel.putConstraint(SpringLayout.NORTH, lblTransactionTutorial, 15, SpringLayout.NORTH, transactionStatisticPanel);
+		sl_transactionStatisticPanel.putConstraint(SpringLayout.WEST, lblTransactionTutorial, 15, SpringLayout.WEST, transactionStatisticPanel);
+		transactionStatisticPanel.add(lblTransactionTutorial);
+		
+		lblTransactionStatistics = new JLabel(getTransactionStatistics());
+		sl_transactionStatisticPanel.putConstraint(SpringLayout.NORTH, lblTransactionStatistics, 0, SpringLayout.SOUTH, lblTransactionTutorial);
+		lblTransactionStatistics.setFont(gallery.getFont(15f));
+		sl_transactionStatisticPanel.putConstraint(SpringLayout.WEST, lblTransactionStatistics, 0, SpringLayout.WEST, lblTransactionTutorial);
+		transactionStatisticPanel.add(lblTransactionStatistics);
+		sl_transactionPanel.putConstraint(SpringLayout.EAST, transactionReceiptPanel, -20, SpringLayout.EAST, transactionPanel);
+		transactionPanel.add(transactionReceiptPanel);
+		SpringLayout sl_transactionReceiptPanel = new SpringLayout();
+		transactionReceiptPanel.setLayout(sl_transactionReceiptPanel);
+		
+		lblTransactionReceiptTitle = new JLabel("Receipt Preview");
+		lblTransactionReceiptTitle.setFont(gallery.getFont(23f));
+		sl_transactionReceiptPanel.putConstraint(SpringLayout.NORTH, lblTransactionReceiptTitle, 15, SpringLayout.NORTH, transactionReceiptPanel);
+		sl_transactionReceiptPanel.putConstraint(SpringLayout.WEST, lblTransactionReceiptTitle, 15, SpringLayout.WEST, transactionReceiptPanel);
+		transactionReceiptPanel.add(lblTransactionReceiptTitle);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(null);
+		sl_transactionReceiptPanel.putConstraint(SpringLayout.NORTH, scrollPane, 15, SpringLayout.SOUTH, lblTransactionReceiptTitle);
+		sl_transactionReceiptPanel.putConstraint(SpringLayout.WEST, scrollPane, 0, SpringLayout.WEST, lblTransactionReceiptTitle);
+		sl_transactionReceiptPanel.putConstraint(SpringLayout.SOUTH, scrollPane, -15, SpringLayout.SOUTH, transactionReceiptPanel);
+		sl_transactionReceiptPanel.putConstraint(SpringLayout.EAST, scrollPane, -15, SpringLayout.EAST, transactionReceiptPanel);
+		transactionReceiptPanel.add(scrollPane);
+		
+		taReceiptPreview = new JTextArea();
+		taReceiptPreview.setFont(gallery.getMonospacedFont(14f));
+		taReceiptPreview.setEditable(false);
+		scrollPane.setViewportView(taReceiptPreview);
 		
 		reportPanel = new RoundedPanel(Color.GREEN); // Gallery.GRAY
 		displayPanel.add(reportPanel, "report");
@@ -536,6 +639,7 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				setTitle(TRANSACTION_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
+				lblTransactionStatistics.setText(getTransactionStatistics());
 				cardLayout.show(displayPanel, "transaction");
 			}
 		});
@@ -698,6 +802,36 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				cartNextPage();
+			}
+		});
+		lblTransactionSearchButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				gallery.buttonHovered(lblTransactionSearchButton);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				gallery.buttonNormalized(lblTransactionSearchButton);
+			}
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				String inputTransactionID = tfTransactionSearch.getText();
+				
+				String contents = utility.readFile("transaction", inputTransactionID);
+				if (contents != null) {
+					logger.addLog(
+						Logger.LEVEL_2, 
+						String.format(
+							"User %s viewed the transaction receipt with the ID: %s", 
+							user[0].toString(), inputTransactionID));
+					
+					taReceiptPreview.setText(contents);
+					taReceiptPreview.setCaretPosition(0);
+				} else {
+					taReceiptPreview.setText("");
+					gallery.showMessage(new String[] {"No file found for specific ID."});
+				}
 			}
 		});
 		
@@ -1074,8 +1208,10 @@ public class POS extends JFrame {
 				cartList.forEach((item) -> productsIncluded.append(item.getName() + ", "));
 				productsIncluded.setLength(Math.max(productsIncluded.length() - 2, 0));
 				
-				logger.addLog(Logger.LEVEL_3, String.format("User %s cancelled a cart including the items: %s", 
-						user[0].toString(), productsIncluded.toString()));
+				if (!bypass) {
+					logger.addLog(Logger.LEVEL_3, String.format("User %s cancelled a cart including the items: %s", 
+							user[0].toString(), productsIncluded.toString()));
+				}
 				
 				cartList.clear();
 				displayCart();
@@ -1178,6 +1314,90 @@ public class POS extends JFrame {
 		} else {
 			new Checkout(user, cartList, this);
 		}
+	}
+	
+	private String getTransactionStatistics() {
+		int totalCount = 0;
+		int dayCount = 0;
+		int weekCount = 0;
+		int monthCount = 0;
+		
+		// TOTAL
+		Object[][] transactionsTotal = database.getTransactionsByKeyword("");
+		if (transactionsTotal != null) {
+			totalCount = transactionsTotal.length;
+		}
+		// TOTAL
+		
+		Calendar calendar = Calendar.getInstance();
+		
+		// Reseting day
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);		
+		Date dayStart = calendar.getTime();
+		
+		// Saving todays date
+		int currentDayOfMonth = calendar.get(Calendar.DAY_OF_YEAR);
+		int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+		
+		// Resetting week
+		calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+		Date weekStart = calendar.getTime();
+		
+		// Resetting month
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		Date monthStart = calendar.getTime();
+		
+		// Roll back to current date
+		calendar.set(Calendar.DAY_OF_YEAR, currentDayOfMonth);
+		
+		// Adding 1 day
+		calendar.add(Calendar.DAY_OF_YEAR, 1);
+		calendar.add(Calendar.MILLISECOND, -1);
+		Date dayEnd = calendar.getTime();
+		
+		// Roll back to current date
+		calendar.set(Calendar.DAY_OF_YEAR, currentDayOfMonth);
+		
+		// Going to Saturday for week
+		calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+		Date weekEnd = calendar.getTime();
+		
+		// Roll back to current date
+		calendar.add(Calendar.DAY_OF_YEAR, -1);
+		calendar.set(Calendar.DAY_OF_WEEK, currentDayOfWeek);
+		calendar.set(Calendar.DAY_OF_YEAR, currentDayOfMonth);
+		
+		// Getting the last day of month
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+		Date monthEnd = calendar.getTime();
+		
+		Object[][] dayTransactions = database.getTransactionsByRange(dayStart, dayEnd);
+		if (dayTransactions != null) {
+			dayCount = dayTransactions.length;
+		}
+		
+		Object[][] weekTransactions = database.getTransactionsByRange(weekStart, weekEnd);
+		if (weekTransactions != null) {
+			weekCount = weekTransactions.length;
+		}
+		
+		Object[][] monthTransactions = database.getTransactionsByRange(monthStart, monthEnd);
+		if (monthTransactions != null) {
+			monthCount = monthTransactions.length;
+		}
+
+		StringBuilder stats = new StringBuilder("<html><h2>Transaction Statistics</h2>");
+		stats.append("This day:  " + dayCount + " transaction(s)");
+		stats.append("<br>This week:  " + weekCount + " transaction(s)");
+		stats.append("<br>This month:  " + monthCount + " transaction(s)");
+		stats.append("<br>All time: "  + totalCount + " transaction(s)");
+		stats.append("</html>");
+		
+		
+		return stats.toString();
 	}
 }
 

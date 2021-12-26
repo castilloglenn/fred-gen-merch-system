@@ -721,6 +721,18 @@ public class Checkout extends JDialog {
 								product.getQuantity())
 				);
 				
+				for (CartItem productObject : cartList) {
+					Object[] product = productObject.getProduct();
+					double updatedStock = ((double) product[4]) - productObject.getQuantity();
+					
+					database.setProduct((long) product[0], product[1].toString(), product[2].toString(), updatedStock, product[5].toString(), (double) product[7]);
+					database.addContains(transactionID, 
+							productObject.getProductID(), 
+							productObject.getQuantity());
+				};
+				
+				utility.writeFile("transaction", Long.toString(receipt.getTransactionID()), receipt.get(false));
+				
 				logger.addLog(Logger.LEVEL_2, String.format("User %s created transaction #%s", user[0].toString(), transactionID));
 				
 				JOptionPane.showMessageDialog(
