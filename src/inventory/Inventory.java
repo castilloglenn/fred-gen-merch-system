@@ -84,6 +84,10 @@ public class Inventory extends JFrame {
 	private JLabel lblPriceBought;
 	private JLabel lblSellingPrice;
 	private JLabel lblStocks;
+	private JPanel mostPoroductPanel;
+	private JPanel leastProductPanel;
+	private JPanel stockPerCategoryPanel;
+	private JPanel productPerCategoryPanel;
 
 	public Inventory(Object[] user) {
 		database = Database.getInstance();
@@ -108,8 +112,8 @@ public class Inventory extends JFrame {
 		navigationalPanel = new RoundedPanel(Gallery.BLUE);
 		sl_mainPanel.putConstraint(SpringLayout.NORTH, navigationalPanel, 15, SpringLayout.NORTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.WEST, navigationalPanel, -15, SpringLayout.WEST, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationalPanel, 390, SpringLayout.NORTH, mainPanel);
-		sl_mainPanel.putConstraint(SpringLayout.EAST, navigationalPanel, 75, SpringLayout.WEST, mainPanel);;	
+		sl_mainPanel.putConstraint(SpringLayout.SOUTH, navigationalPanel, 510, SpringLayout.NORTH, mainPanel);
+		sl_mainPanel.putConstraint(SpringLayout.EAST, navigationalPanel, 60, SpringLayout.WEST, mainPanel);;	
 		navigationalPanel.setBackground(Gallery.BLUE);
 		mainPanel.add(navigationalPanel);
 		
@@ -121,8 +125,8 @@ public class Inventory extends JFrame {
 		navigationalPanel.setLayout(sl_navigationalPanel);
 		cardLayout = new CardLayout(0, 0);
 		
-		btnDashboard = new JLabel("Dashboard");
-		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnDashboard, 20, SpringLayout.NORTH, navigationalPanel);
+		btnDashboard = new JLabel("Product Statistics");
+		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnDashboard, 15, SpringLayout.NORTH, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnDashboard, 25, SpringLayout.WEST, navigationalPanel);
 		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnDashboard, -10, SpringLayout.EAST, navigationalPanel);
 		btnDashboard.setName("primary");
@@ -130,19 +134,19 @@ public class Inventory extends JFrame {
 		btnDashboard.setUI(verticalUI);
 		navigationalPanel.add(btnDashboard);
 		
-		btnSupplier = new JLabel("Supplier");
+		btnSupplier = new JLabel("Suppliers");
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnSupplier, 10, SpringLayout.SOUTH, btnDashboard);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnSupplier, 25, SpringLayout.WEST, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnSupplier, -10, SpringLayout.EAST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnSupplier, 0, SpringLayout.WEST, btnDashboard);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnSupplier, 0, SpringLayout.EAST, btnDashboard);
 		btnSupplier.setName("primary");
 		gallery.styleLabelToButton(btnSupplier, 15f, "supplier.png", 15, 10, 10);
 		btnSupplier.setUI(verticalUI);
 		navigationalPanel.add(btnSupplier);
 		
-		btnProduct = new JLabel("Product");
+		btnProduct = new JLabel("Manage Inventory");
 		sl_navigationalPanel.putConstraint(SpringLayout.NORTH, btnProduct, 10, SpringLayout.SOUTH, btnSupplier);
-		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnProduct, 25, SpringLayout.WEST, navigationalPanel);
-		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnProduct, -10, SpringLayout.EAST, navigationalPanel);
+		sl_navigationalPanel.putConstraint(SpringLayout.WEST, btnProduct, 0, SpringLayout.WEST, btnSupplier);
+		sl_navigationalPanel.putConstraint(SpringLayout.EAST, btnProduct, 0, SpringLayout.EAST, btnSupplier);
 		sl_mainPanel.putConstraint(SpringLayout.SOUTH, displayPanel, -15, SpringLayout.SOUTH, mainPanel);
 		sl_mainPanel.putConstraint(SpringLayout.EAST, displayPanel, -15, SpringLayout.EAST, mainPanel);
 		btnProduct.setName("primary");
@@ -152,9 +156,39 @@ public class Inventory extends JFrame {
 		mainPanel.add(displayPanel);
 		displayPanel.setLayout(cardLayout);
 		
-		dashboardPanel = new RoundedPanel(Gallery.BLUE);
+		dashboardPanel = new RoundedPanel(Gallery.GRAY);
 		dashboardPanel.setBackground(Color.BLUE);
 		displayPanel.add(dashboardPanel, "dashboard");
+		SpringLayout sl_dashboardPanel = new SpringLayout();
+		dashboardPanel.setLayout(sl_dashboardPanel);
+		
+		mostPoroductPanel = new RoundedPanel(Gallery.WHITE);
+		sl_dashboardPanel.putConstraint(SpringLayout.NORTH, mostPoroductPanel, 15, SpringLayout.NORTH, dashboardPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.WEST, mostPoroductPanel, 15, SpringLayout.WEST, dashboardPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.SOUTH, mostPoroductPanel, 215, SpringLayout.NORTH, dashboardPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.EAST, mostPoroductPanel, 439, SpringLayout.WEST, dashboardPanel);
+		dashboardPanel.add(mostPoroductPanel);
+		
+		leastProductPanel = new RoundedPanel(Gallery.WHITE);
+		sl_dashboardPanel.putConstraint(SpringLayout.NORTH, leastProductPanel, 0, SpringLayout.NORTH, mostPoroductPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.WEST, leastProductPanel, 16, SpringLayout.EAST, mostPoroductPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.SOUTH, leastProductPanel, 0, SpringLayout.SOUTH, mostPoroductPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.EAST, leastProductPanel, 441, SpringLayout.EAST, mostPoroductPanel);
+		dashboardPanel.add(leastProductPanel);
+		
+		stockPerCategoryPanel = new RoundedPanel(Gallery.WHITE);
+		sl_dashboardPanel.putConstraint(SpringLayout.NORTH, stockPerCategoryPanel, 15, SpringLayout.SOUTH, mostPoroductPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.WEST, stockPerCategoryPanel, 0, SpringLayout.WEST, mostPoroductPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.SOUTH, stockPerCategoryPanel, 301, SpringLayout.SOUTH, mostPoroductPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.EAST, stockPerCategoryPanel, 0, SpringLayout.EAST, mostPoroductPanel);
+		dashboardPanel.add(stockPerCategoryPanel);
+		
+		productPerCategoryPanel = new RoundedPanel(Gallery.WHITE);
+		sl_dashboardPanel.putConstraint(SpringLayout.NORTH, productPerCategoryPanel, 0, SpringLayout.NORTH, stockPerCategoryPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.WEST, productPerCategoryPanel, 0, SpringLayout.WEST, leastProductPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.SOUTH, productPerCategoryPanel, 0, SpringLayout.SOUTH, stockPerCategoryPanel);
+		sl_dashboardPanel.putConstraint(SpringLayout.EAST, productPerCategoryPanel, 0, SpringLayout.EAST, leastProductPanel);
+		dashboardPanel.add(productPerCategoryPanel);
 		
 		supplierPanel = new RoundedPanel(Gallery.GRAY);
 		displayPanel.add(supplierPanel, "supplier");
