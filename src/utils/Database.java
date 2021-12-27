@@ -89,6 +89,10 @@ public class Database {
 		return singletonInstance;
 	}
 	
+	public Connection getConnection() {
+		return con;
+	}
+	
 	public void createDatabase() throws SQLException {
 		stmt.execute(String.format("CREATE DATABASE IF NOT EXISTS %s;", db_name));
 		stmt.execute(String.format("USE %s;", db_name));
