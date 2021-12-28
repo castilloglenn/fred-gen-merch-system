@@ -40,6 +40,7 @@ import utils.Database;
 import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
+import utils.Statistic;
 import utils.Utility;
 import utils.VerticalLabelUI;
 import javax.swing.JScrollPane;
@@ -64,12 +65,22 @@ public class POS extends JFrame {
 	private String clearCartMessage = "Please let the manager put their password for verification.";
 	
 	private String transactionTutorial = "<h2>How to search for a transaction?</h2>"
-			+ "You can get the receipt's transaction number by looking at the upper "
+			+ "<i>You can get the receipt's transaction number by looking at the upper "
 			+ "side of the receipt and see the numbers written after the 'Transaction No:' "
 			+ "part. Copy the numbers written and type it in the text field above and make sure "
 			+ "that all numbers are correct, then click the search button to search the soft "
 			+ "copy directory, if it has been deleted or moved or simply just did not exists, "
-			+ "a message will pop up.";
+			+ "a message will pop up.</i>";
+	
+	private String productMostSalesTitle = "<html><p>Top 5 Most Sold Products<br><small>in descending order</small></p></html>";
+	private String productLeastSalesTitle = "<html><p>Top 5 Least Sold Products<br><small>in descending order</small></p></html>";
+	private String categorySalesTitle = "<html><p>Sales Per Category</p></html>";
+	private String userSalesTitle = "<html><p>Top 5 Sellers<br><small>In descending order</small></p></html>";
+	
+	private String userSalesNotice = "<html><p><b>Note:</b> <i>The span of records calculated in this list is at all time range. "
+			+ "Which means that the total amount here are the sales from the beginning of the system since it started up to latest "
+			+ "or up to this moment.</i></p><html>";
+	private String reportGeneratorTitle = "Generate Report";
 	
 	private int defaultHeight = 710; // 600
 	private int defaultWidth = 990; // 1000
@@ -99,14 +110,22 @@ public class POS extends JFrame {
 	private double totalCartPrice = 0.0;
 	
 	// User details
-	private String cashierName; // TEST ONLY, REMOVE THIS AFTER MAKING THE USER SYSTEM
+	private String cashierName; 
+	
+	// Statistics
+	private Object[][] productMostSales;
+	private Object[][] productLeastSales;
+	private Object[][] categorySales;
+	private Object[][] userSales;
 	
 	private Database database; 
-	private Gallery gallery;
-	private Logger logger;
+	private Statistic statistic;
 	private Utility utility;
-	private VerticalLabelUI verticalUI;
+	private Report report;
+	private Logger logger;
 	private Object[] user;
+	private Gallery gallery;
+	private VerticalLabelUI verticalUI;
 	
 	private JPanel mainPanel, cardLayoutPanel, queryEmptyPanel,
 		queryResultPanel, cartListCardPanel, cartListPanel,
@@ -142,14 +161,32 @@ public class POS extends JFrame {
 	private JLabel lblTransactionStatistics;
 	private JLabel lblTransactionReceiptTitle;
 	private JTextArea taReceiptPreview;
+	private JPanel productMostSalePanel;
+	private JPanel generateReportPanel;
+	private JPanel userSalePanel;
+	private JPanel productLeastSalePanel;
+	private JPanel categorySalePanel;
+	private JLabel lblProductMostSale;
+	private JLabel lblProductMostSaleList;
+	private JLabel lblProductLeastSale;
+	private JLabel lblProductLeastSaleList;
+	private JLabel lblCategorySale;
+	private JLabel lblCategorySaleList;
+	private JLabel lblUserSale;
+	private JLabel lblUserSaleList;
+	private JLabel lblUserSalesNotice;
+	private JLabel lblGenerateReport;
+	private JLabel lblDailyReportButton;
 
 	public POS(Object[] user) {
 		database = Database.getInstance();
+		statistic = Statistic.getInstance();
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
 		utility = Utility.getInstance();
 		this.user = user;
 		
+		report = Report.getInstance(user);
 		cashierName = user[3].toString();
 		
 		// rotated 90 degrees counter-clockwise
@@ -543,7 +580,7 @@ public class POS extends JFrame {
 		transactionStatisticPanel.add(lblTransactionTutorial);
 		
 		lblTransactionStatistics = new JLabel(getTransactionStatistics());
-		sl_transactionStatisticPanel.putConstraint(SpringLayout.NORTH, lblTransactionStatistics, 0, SpringLayout.SOUTH, lblTransactionTutorial);
+		sl_transactionStatisticPanel.putConstraint(SpringLayout.NORTH, lblTransactionStatistics, 15, SpringLayout.SOUTH, lblTransactionTutorial);
 		lblTransactionStatistics.setFont(gallery.getFont(15f));
 		sl_transactionStatisticPanel.putConstraint(SpringLayout.WEST, lblTransactionStatistics, 0, SpringLayout.WEST, lblTransactionTutorial);
 		transactionStatisticPanel.add(lblTransactionStatistics);
@@ -571,9 +608,142 @@ public class POS extends JFrame {
 		taReceiptPreview.setEditable(false);
 		scrollPane.setViewportView(taReceiptPreview);
 		
-		reportPanel = new RoundedPanel(Color.GREEN); // Gallery.GRAY
+		reportPanel = new RoundedPanel(Gallery.GRAY);
 		displayPanel.add(reportPanel, "report");
-		reportPanel.setLayout(new SpringLayout());
+		SpringLayout sl_reportPanel = new SpringLayout();
+		reportPanel.setLayout(sl_reportPanel);
+		
+		generateReportPanel = new RoundedPanel(Gallery.WHITE);
+		sl_reportPanel.putConstraint(SpringLayout.NORTH, generateReportPanel, -325, SpringLayout.SOUTH, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.WEST, generateReportPanel, -425, SpringLayout.EAST, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.SOUTH, generateReportPanel, -15, SpringLayout.SOUTH, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.EAST, generateReportPanel, -15, SpringLayout.EAST, reportPanel);
+		reportPanel.add(generateReportPanel);
+		
+		userSalePanel = new RoundedPanel(Gallery.WHITE);
+		sl_reportPanel.putConstraint(SpringLayout.NORTH, userSalePanel, 15, SpringLayout.NORTH, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.WEST, userSalePanel, 0, SpringLayout.WEST, generateReportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.SOUTH, userSalePanel, 300, SpringLayout.NORTH, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.EAST, userSalePanel, 0, SpringLayout.EAST, generateReportPanel);
+		SpringLayout sl_generateReportPanel = new SpringLayout();
+		generateReportPanel.setLayout(sl_generateReportPanel);
+		
+		lblGenerateReport = new JLabel(reportGeneratorTitle);
+		lblGenerateReport.setFont(gallery.getFont(22f));
+		sl_generateReportPanel.putConstraint(SpringLayout.NORTH, lblGenerateReport, 15, SpringLayout.NORTH, generateReportPanel);
+		sl_generateReportPanel.putConstraint(SpringLayout.WEST, lblGenerateReport, 30, SpringLayout.WEST, generateReportPanel);
+		sl_generateReportPanel.putConstraint(SpringLayout.EAST, lblGenerateReport, -30, SpringLayout.EAST, generateReportPanel);
+		generateReportPanel.add(lblGenerateReport);
+		
+		lblDailyReportButton = new JLabel("Generate End-of-Day Report (Once per Day)");
+		lblDailyReportButton.setName("primary");
+		gallery.styleLabelToButton(lblDailyReportButton, 14f, 5, 5);
+		sl_generateReportPanel.putConstraint(SpringLayout.NORTH, lblDailyReportButton, 15, SpringLayout.SOUTH, lblGenerateReport);
+		sl_generateReportPanel.putConstraint(SpringLayout.WEST, lblDailyReportButton, 0, SpringLayout.WEST, lblGenerateReport);
+		sl_generateReportPanel.putConstraint(SpringLayout.EAST, lblDailyReportButton, 0, SpringLayout.EAST, lblGenerateReport);
+		generateReportPanel.add(lblDailyReportButton);
+		reportPanel.add(userSalePanel);
+		SpringLayout sl_userSalePanel = new SpringLayout();
+		userSalePanel.setLayout(sl_userSalePanel);
+		
+		lblUserSale = new JLabel(userSalesTitle);
+		lblUserSale.setFont(gallery.getFont(22f));
+		sl_userSalePanel.putConstraint(SpringLayout.NORTH, lblUserSale, 15, SpringLayout.NORTH, userSalePanel);
+		sl_userSalePanel.putConstraint(SpringLayout.WEST, lblUserSale, 30, SpringLayout.WEST, userSalePanel);
+		sl_userSalePanel.putConstraint(SpringLayout.EAST, lblUserSale, -30, SpringLayout.EAST, userSalePanel);
+		userSalePanel.add(lblUserSale);
+		
+		lblUserSaleList = new JLabel();
+		lblUserSaleList.setFont(gallery.getFont(14f));
+		lblUserSaleList.setVerticalAlignment(SwingConstants.TOP);
+		sl_userSalePanel.putConstraint(SpringLayout.NORTH, lblUserSaleList, 10, SpringLayout.SOUTH, lblUserSale);
+		sl_userSalePanel.putConstraint(SpringLayout.WEST, lblUserSaleList, 0, SpringLayout.WEST, lblUserSale);
+		sl_userSalePanel.putConstraint(SpringLayout.EAST, lblUserSaleList, 0, SpringLayout.EAST, lblUserSale);
+		userSalePanel.add(lblUserSaleList);
+		
+		lblUserSalesNotice = new JLabel(userSalesNotice);
+		lblUserSalesNotice.setFont(gallery.getFont(14f));
+		lblUserSalesNotice.setVerticalAlignment(SwingConstants.TOP);
+		sl_userSalePanel.putConstraint(SpringLayout.NORTH, lblUserSalesNotice, 10, SpringLayout.SOUTH, lblUserSaleList);
+		sl_userSalePanel.putConstraint(SpringLayout.WEST, lblUserSalesNotice, 0, SpringLayout.WEST, lblUserSale);
+		sl_userSalePanel.putConstraint(SpringLayout.SOUTH, lblUserSalesNotice, -15, SpringLayout.SOUTH, userSalePanel);
+		sl_userSalePanel.putConstraint(SpringLayout.EAST, lblUserSalesNotice, 0, SpringLayout.EAST, lblUserSaleList);
+		userSalePanel.add(lblUserSalesNotice);
+		
+		productMostSalePanel = new RoundedPanel(Gallery.WHITE);
+		sl_reportPanel.putConstraint(SpringLayout.NORTH, productMostSalePanel, 15, SpringLayout.NORTH, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.WEST, productMostSalePanel, 15, SpringLayout.WEST, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.SOUTH, productMostSalePanel, 205, SpringLayout.NORTH, reportPanel);
+		sl_reportPanel.putConstraint(SpringLayout.EAST, productMostSalePanel, 440, SpringLayout.WEST, reportPanel);
+		reportPanel.add(productMostSalePanel);
+		
+		productLeastSalePanel = new RoundedPanel(Gallery.WHITE);
+		sl_reportPanel.putConstraint(SpringLayout.NORTH, productLeastSalePanel, 15, SpringLayout.SOUTH, productMostSalePanel);
+		sl_reportPanel.putConstraint(SpringLayout.WEST, productLeastSalePanel, 0, SpringLayout.WEST, productMostSalePanel);
+		sl_reportPanel.putConstraint(SpringLayout.SOUTH, productLeastSalePanel, 205, SpringLayout.SOUTH, productMostSalePanel);
+		sl_reportPanel.putConstraint(SpringLayout.EAST, productLeastSalePanel, 0, SpringLayout.EAST, productMostSalePanel);
+		reportPanel.add(productLeastSalePanel);
+		
+		categorySalePanel = new RoundedPanel(Gallery.WHITE);
+		sl_reportPanel.putConstraint(SpringLayout.NORTH, categorySalePanel, 15, SpringLayout.SOUTH, productLeastSalePanel);
+		sl_reportPanel.putConstraint(SpringLayout.WEST, categorySalePanel, 0, SpringLayout.WEST, productMostSalePanel);
+		SpringLayout sl_productMostSalePanel = new SpringLayout();
+		productMostSalePanel.setLayout(sl_productMostSalePanel);
+		
+		lblProductMostSale = new JLabel(productMostSalesTitle);
+		lblProductMostSale.setFont(gallery.getFont(22f));
+		sl_productMostSalePanel.putConstraint(SpringLayout.NORTH, lblProductMostSale, 15, SpringLayout.NORTH, productMostSalePanel);
+		sl_productMostSalePanel.putConstraint(SpringLayout.WEST, lblProductMostSale, 30, SpringLayout.WEST, productMostSalePanel);
+		sl_productMostSalePanel.putConstraint(SpringLayout.EAST, lblProductMostSale, -30, SpringLayout.EAST, productMostSalePanel);
+		productMostSalePanel.add(lblProductMostSale);
+		
+		lblProductMostSaleList = new JLabel();
+		lblProductMostSaleList.setFont(gallery.getFont(14f));
+		lblProductMostSaleList.setVerticalAlignment(SwingConstants.TOP);
+		sl_productMostSalePanel.putConstraint(SpringLayout.NORTH, lblProductMostSaleList, 10, SpringLayout.SOUTH, lblProductMostSale);
+		sl_productMostSalePanel.putConstraint(SpringLayout.WEST, lblProductMostSaleList, 0, SpringLayout.WEST, lblProductMostSale);
+		sl_productMostSalePanel.putConstraint(SpringLayout.SOUTH, lblProductMostSaleList, -15, SpringLayout.SOUTH, productMostSalePanel);
+		sl_productMostSalePanel.putConstraint(SpringLayout.EAST, lblProductMostSaleList, 0, SpringLayout.EAST, lblProductMostSale);
+		productMostSalePanel.add(lblProductMostSaleList);
+		sl_reportPanel.putConstraint(SpringLayout.SOUTH, categorySalePanel, 205, SpringLayout.SOUTH, productLeastSalePanel);
+		sl_reportPanel.putConstraint(SpringLayout.EAST, categorySalePanel, 0, SpringLayout.EAST, productLeastSalePanel);
+		SpringLayout sl_productLeastSalePanel = new SpringLayout();
+		productLeastSalePanel.setLayout(sl_productLeastSalePanel);
+		
+		lblProductLeastSale = new JLabel(productLeastSalesTitle);
+		lblProductLeastSale.setFont(gallery.getFont(22f));
+		sl_productLeastSalePanel.putConstraint(SpringLayout.NORTH, lblProductLeastSale, 15, SpringLayout.NORTH, productLeastSalePanel);
+		sl_productLeastSalePanel.putConstraint(SpringLayout.WEST, lblProductLeastSale, 30, SpringLayout.WEST, productLeastSalePanel);
+		sl_productLeastSalePanel.putConstraint(SpringLayout.EAST, lblProductLeastSale, -30, SpringLayout.EAST, productLeastSalePanel);
+		productLeastSalePanel.add(lblProductLeastSale);
+		
+		lblProductLeastSaleList = new JLabel();
+		lblProductLeastSaleList.setFont(gallery.getFont(14f));
+		lblProductLeastSaleList.setVerticalAlignment(SwingConstants.TOP);
+		sl_productLeastSalePanel.putConstraint(SpringLayout.NORTH, lblProductLeastSaleList, 10, SpringLayout.SOUTH, lblProductLeastSale);
+		sl_productLeastSalePanel.putConstraint(SpringLayout.WEST, lblProductLeastSaleList, 0, SpringLayout.WEST, lblProductLeastSale);
+		sl_productLeastSalePanel.putConstraint(SpringLayout.SOUTH, lblProductLeastSaleList, -15, SpringLayout.SOUTH, productLeastSalePanel);
+		sl_productLeastSalePanel.putConstraint(SpringLayout.EAST, lblProductLeastSaleList, 0, SpringLayout.EAST, lblProductLeastSale);
+		productLeastSalePanel.add(lblProductLeastSaleList);
+		reportPanel.add(categorySalePanel);
+		SpringLayout sl_categorySalePanel = new SpringLayout();
+		categorySalePanel.setLayout(sl_categorySalePanel);
+		
+		lblCategorySale = new JLabel(categorySalesTitle);
+		lblCategorySale.setFont(gallery.getFont(22f));
+		sl_categorySalePanel.putConstraint(SpringLayout.NORTH, lblCategorySale, 15, SpringLayout.NORTH, categorySalePanel);
+		sl_categorySalePanel.putConstraint(SpringLayout.WEST, lblCategorySale, 30, SpringLayout.WEST, categorySalePanel);
+		sl_categorySalePanel.putConstraint(SpringLayout.EAST, lblCategorySale, -30, SpringLayout.EAST, categorySalePanel);
+		categorySalePanel.add(lblCategorySale);
+		
+		lblCategorySaleList = new JLabel();
+		sl_categorySalePanel.putConstraint(SpringLayout.NORTH, lblCategorySaleList, 5, SpringLayout.SOUTH, lblCategorySale);
+		lblCategorySaleList.setFont(gallery.getFont(14f));
+		lblCategorySaleList.setVerticalAlignment(SwingConstants.TOP);
+		sl_categorySalePanel.putConstraint(SpringLayout.WEST, lblCategorySaleList, 0, SpringLayout.WEST, lblCategorySale);
+		sl_categorySalePanel.putConstraint(SpringLayout.SOUTH, lblCategorySaleList, -15, SpringLayout.SOUTH, categorySalePanel);
+		sl_categorySalePanel.putConstraint(SpringLayout.EAST, lblCategorySaleList, 0, SpringLayout.EAST, lblCategorySale);
+		categorySalePanel.add(lblCategorySaleList);
 		
 		
 		
@@ -584,6 +754,7 @@ public class POS extends JFrame {
 		// Configure initial component state
 		setTransactionCount();
 		updatePaymentStatistics();
+		updateSaleStatistics();
 		lblLeftButton.setVisible(false);
 		lblRightButton.setVisible(false);
 		lblCartIndicator.setVisible(false);
@@ -649,7 +820,14 @@ public class POS extends JFrame {
 			
 			@Override public void mouseClicked(MouseEvent e) {
 				setTitle(REPORTS_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
-				cardLayout.show(displayPanel, "report");
+				
+				if (requestManagerPermission()) {
+					logger.addLog(Logger.LEVEL_2, 
+						String.format("User %s viewed the product reports and statistics.", user[0].toString()));
+					
+					updateSaleStatistics();
+					cardLayout.show(displayPanel, "report");
+				}
 			}
 		});
 		lblCheckoutButton.addMouseListener(new MouseAdapter() {
@@ -831,6 +1009,30 @@ public class POS extends JFrame {
 				} else {
 					taReceiptPreview.setText("");
 					gallery.showMessage(new String[] {"No file found for specific ID."});
+				}
+			}
+		});
+		lblDailyReportButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				gallery.buttonHovered(lblDailyReportButton);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				gallery.buttonNormalized(lblDailyReportButton);
+			}
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				// TODO generate daily report
+				// TODO generate automatic monthly report every 1st day of each month
+
+				if (report.generateDailyReport()) {
+					// TODO create logs and successful message JOptionPane after finishing the report generation
+					
+					
+				} else {
+					gallery.showMessage(new String[] {"The report for the day has already been created."});
 				}
 			}
 		});
@@ -1398,6 +1600,104 @@ public class POS extends JFrame {
 		
 		
 		return stats.toString();
+	}
+	
+	public void updateSaleStatistics() {
+		productMostSales = statistic.getProductMostSales();
+		productLeastSales = statistic.getProductLeastSales();
+		categorySales = statistic.getCategorySale();
+		userSales = statistic.getUserMostSales();
+		
+		StringBuilder statisticMessage = new StringBuilder("<html>");
+		String contentFormatting = "%d. %s @ Php %,.2f<br>";
+		int nameLimit = 25;
+		int numbering = 1;
+		
+		if (productMostSales == null) {
+			statisticMessage.append("1. None<br>2. None<br> 3. None</html>");
+		} else {
+			numbering = 1;
+			for (Object[] product : productMostSales) {
+				String name = product[0].toString();
+				double sales = (double) product[1];
+				
+				statisticMessage.append(
+					String.format(contentFormatting, numbering,
+						(name.length() > nameLimit) ? name.substring(0, nameLimit - 2) + "..." : name,
+						sales));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		}
+		
+		lblProductMostSaleList.setText(statisticMessage.toString());
+		statisticMessage = new StringBuilder("<html>");
+		numbering = 1;
+		
+		if (productLeastSales == null) {
+			statisticMessage.append("1. None<br>2. None<br> 3. None</html>");
+		} else {
+			numbering = 1;
+			for (Object[] product : productLeastSales) {
+				String name = product[0].toString();
+				double sales = (double) product[1];
+				
+				statisticMessage.append(
+					String.format(contentFormatting, numbering,
+						(name.length() > nameLimit) ? name.substring(0, nameLimit - 2) + "..." : name,
+						sales));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		}
+		
+		lblProductLeastSaleList.setText(statisticMessage.toString());
+		statisticMessage = new StringBuilder("<html>");
+		numbering = 1;
+		
+		if (categorySales == null) {
+			statisticMessage.append("1. None<br>2. None<br> 3. None</html>");
+		} else {
+			numbering = 1;
+			for (Object[] product : categorySales) {
+				String name = product[0].toString();
+				double sales = (double) product[1];
+				
+				statisticMessage.append(
+					String.format(contentFormatting, numbering,
+						(name.length() > nameLimit) ? name.substring(0, nameLimit - 2) + "..." : name,
+						sales));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		}
+		
+		lblCategorySaleList.setText(statisticMessage.toString());
+		statisticMessage = new StringBuilder("<html>");
+		numbering = 1;
+		
+		if (userSales == null) {
+			statisticMessage.append("1. None<br>2. None<br> 3. None</html>");
+		} else {
+			numbering = 1;
+			for (Object[] product : userSales) {
+				String name = product[0].toString();
+				double sales = (double) product[1];
+				
+				statisticMessage.append(
+					String.format(contentFormatting, numbering,
+						(name.length() > nameLimit) ? name.substring(0, nameLimit - 2) + "..." : name,
+						sales));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		}
+		
+		lblUserSaleList.setText(statisticMessage.toString());
 	}
 }
 

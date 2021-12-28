@@ -879,12 +879,13 @@ public class Inventory extends JFrame {
 		StringBuilder statisticMessage = new StringBuilder("<html>");
 		String contentFormatting = "%d. %s @ %,.0f %s<br>";
 		int nameLimit = 27;
+		int numbering = 1;
 		
 		
 		if (productMostStocks == null) {
 			statisticMessage.append("1. None<br>2. None<br> 3. None</html>");
 		} else {
-			int numbering = 1;
+			numbering = 1;
 			for (Object[] product : productMostStocks) {
 				String name = product[2].toString();
 				double stocks = (double) product[4];
@@ -906,7 +907,7 @@ public class Inventory extends JFrame {
 		if (productLeastStocks == null) {
 			statisticMessage.append("1. None<br>2. None<br> 3. None</html>");
 		} else {
-			int numbering = 1;
+			numbering = 1;
 			for (Object[] product : productLeastStocks) {
 				String name = product[2].toString();
 				double stocks = (double) product[4];
@@ -925,7 +926,7 @@ public class Inventory extends JFrame {
 		lblProductLeastStockList.setText(statisticMessage.toString());
 		statisticMessage = new StringBuilder("<html>");
 
-		int numbering = 1;
+		numbering = 1;
 		if (categoryStock == null) {
 			for (String category : Database.productCategories) {
 				statisticMessage.append(

@@ -7,6 +7,11 @@ import java.sql.ResultSet;
 
 import javax.swing.ImageIcon;
 
+/**
+ * 
+ * @author Allen Glenn E. Castillo
+ *
+ */
 public class Statistic {
 	
 	/**
@@ -219,7 +224,7 @@ public class Statistic {
 					+ "WHERE p.product_id = c.product_id AND t.transaction_id = c.transaction_id "
 					+ "GROUP BY p.name "
 					+ "ORDER BY amount DESC "
-					+ "LIMIT 3;",
+					+ "LIMIT 5;",
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);
@@ -257,7 +262,7 @@ public class Statistic {
 					+ "WHERE p.product_id = c.product_id AND t.transaction_id = c.transaction_id "
 					+ "GROUP BY p.name "
 					+ "ORDER BY amount ASC "
-					+ "LIMIT 3;",
+					+ "LIMIT 5;",
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);
@@ -333,7 +338,7 @@ public class Statistic {
 					+ "WHERE u.user_id = t.user_id "
 					+ "GROUP BY `name` "
 					+ "ORDER BY sales DESC "
-					+ "LIMIT 3;",
+					+ "LIMIT 5;",
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);
