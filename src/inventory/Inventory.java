@@ -31,6 +31,7 @@ import utils.Database;
 import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
+import utils.Statistic;
 import utils.Utility;
 import utils.VerticalLabelUI;
 
@@ -44,23 +45,13 @@ public class Inventory extends JFrame {
 	private final String TITLE = "Inventory";
 	
 	private Database database;
+	private Statistic statistic;
 	private Gallery gallery;
 	private Utility utility;
 	private Logger logger;
 	
 	private Object[][] products;
 	private int productSelectedRow = -1;
-	
-	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
-	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, tablePanel, supplierTablePanel,productDescriptionPanel;
-	
-	private JLabel btnDashboard, btnSupplier, btnProduct, lblSupplierList, lblProductList, lblSearchIcon,btnNew, btnManage;
-	private JLabel btnDelete, lblProductSearchIcon, btnProductManage, btnProductRemove, btnProductNew;
-	
-	private JTextField txtSupplierSearch, txtProductSearch;
-	
-	private JTable supplierTable,productTable;
-	private JScrollPane productScrollPane,supplierScrollPane;
 	
 	private CardLayout cardLayout;
 	private VerticalLabelUI verticalUI;
@@ -71,6 +62,23 @@ public class Inventory extends JFrame {
 	private String sellingPriceDefaultText = "Selling price: ";
 	private String stocksDefaultText = "Stocks on hand: ";
 	
+	private String productMostStocksTitle = "<html><p>Top 5 Products<br><small>with the most stocks</small></p></html>";
+	private String productLeastStocksTitle = "<html><p>Top 5 Products<br><small>with the least stocks</small></p></html>";
+	private String categoryStockTitle = "<html><p>Stocks per Category<br><small>in descending order</small></p></html>";
+	private String categoryCountTitle = "<html><p>Products per Category<br><small>in descending order</small></p></html>";
+	
+	private Object[][] productMostStocks;
+	private Object[][] productLeastStocks;
+	private Object[][] categoryStock;
+	private Object[][] categoryCount;
+	
+	private JPanel mainPanel, navigationalPanel, displayPanel, supplierPanel, productPanel, dashboardPanel, buttonPanel;
+	private JPanel productSearchPanel, supplierSearchPanel, productButtonPanel, tablePanel, supplierTablePanel,productDescriptionPanel;
+	private JLabel btnDashboard, btnSupplier, btnProduct, lblSupplierList, lblProductList, lblSearchIcon,btnNew, btnManage;
+	private JLabel btnDelete, lblProductSearchIcon, btnProductManage, btnProductRemove, btnProductNew;
+	private JTextField txtSupplierSearch, txtProductSearch;
+	private JTable supplierTable,productTable;
+	private JScrollPane productScrollPane,supplierScrollPane;
 	private SpringLayout sl_descriptionDisplayPanel;
 	private CardLayout descriptionCardLayout;
 	private JPanel descriptionCardPanel;
@@ -88,12 +96,22 @@ public class Inventory extends JFrame {
 	private JPanel leastProductPanel;
 	private JPanel stockPerCategoryPanel;
 	private JPanel productPerCategoryPanel;
+	private JLabel lblProductMostStock;
+	private JLabel lblProductLeastStock;
+	private JLabel lblCategoryStock;
+	private JLabel lblCategoryCount;
+	private JLabel lblProductMostStockList;
+	private JLabel lblProductLeastStockList;
+	private JLabel lblCategoryStockList;
+	private JLabel lblCategoryCountList;
 
 	public Inventory(Object[] user) {
 		database = Database.getInstance();
+		statistic = Statistic.getInstance();
 		gallery = Gallery.getInstance();
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
+		
 		// rotated 90 degrees counter-clockwise
 		verticalUI = new VerticalLabelUI(false);
 
@@ -181,14 +199,90 @@ public class Inventory extends JFrame {
 		sl_dashboardPanel.putConstraint(SpringLayout.WEST, stockPerCategoryPanel, 0, SpringLayout.WEST, mostPoroductPanel);
 		sl_dashboardPanel.putConstraint(SpringLayout.SOUTH, stockPerCategoryPanel, 301, SpringLayout.SOUTH, mostPoroductPanel);
 		sl_dashboardPanel.putConstraint(SpringLayout.EAST, stockPerCategoryPanel, 0, SpringLayout.EAST, mostPoroductPanel);
+		SpringLayout sl_mostPoroductPanel = new SpringLayout();
+		mostPoroductPanel.setLayout(sl_mostPoroductPanel);
+		
+		lblProductMostStock = new JLabel(productMostStocksTitle);
+		sl_mostPoroductPanel.putConstraint(SpringLayout.NORTH, lblProductMostStock, 20, SpringLayout.NORTH, mostPoroductPanel);
+		lblProductMostStock.setFont(gallery.getFont(22f));
+		lblProductMostStock.setVerticalAlignment(SwingConstants.TOP);
+		sl_mostPoroductPanel.putConstraint(SpringLayout.WEST, lblProductMostStock, 45, SpringLayout.WEST, mostPoroductPanel);
+		sl_mostPoroductPanel.putConstraint(SpringLayout.EAST, lblProductMostStock, -45, SpringLayout.EAST, mostPoroductPanel);
+		mostPoroductPanel.add(lblProductMostStock);
+		
+		lblProductMostStockList = new JLabel();
+		sl_mostPoroductPanel.putConstraint(SpringLayout.SOUTH, lblProductMostStockList, -20, SpringLayout.SOUTH, mostPoroductPanel);
+		lblProductMostStockList.setVerticalAlignment(SwingConstants.TOP);
+		sl_mostPoroductPanel.putConstraint(SpringLayout.NORTH, lblProductMostStockList, 5, SpringLayout.SOUTH, lblProductMostStock);
+		lblProductMostStockList.setFont(gallery.getFont(14f));
+		sl_mostPoroductPanel.putConstraint(SpringLayout.WEST, lblProductMostStockList, 0, SpringLayout.WEST, lblProductMostStock);
+		sl_mostPoroductPanel.putConstraint(SpringLayout.EAST, lblProductMostStockList, 0, SpringLayout.EAST, lblProductMostStock);
+		mostPoroductPanel.add(lblProductMostStockList);
 		dashboardPanel.add(stockPerCategoryPanel);
 		
 		productPerCategoryPanel = new RoundedPanel(Gallery.WHITE);
 		sl_dashboardPanel.putConstraint(SpringLayout.NORTH, productPerCategoryPanel, 0, SpringLayout.NORTH, stockPerCategoryPanel);
 		sl_dashboardPanel.putConstraint(SpringLayout.WEST, productPerCategoryPanel, 0, SpringLayout.WEST, leastProductPanel);
 		sl_dashboardPanel.putConstraint(SpringLayout.SOUTH, productPerCategoryPanel, 0, SpringLayout.SOUTH, stockPerCategoryPanel);
+		SpringLayout sl_stockPerCategoryPanel = new SpringLayout();
+		stockPerCategoryPanel.setLayout(sl_stockPerCategoryPanel);
+		
+		lblCategoryStock = new JLabel(categoryStockTitle);
+		sl_stockPerCategoryPanel.putConstraint(SpringLayout.NORTH, lblCategoryStock, 20, SpringLayout.NORTH, stockPerCategoryPanel);
+		lblCategoryStock.setFont(gallery.getFont(22f));
+		lblCategoryStock.setVerticalAlignment(SwingConstants.TOP);
+		sl_stockPerCategoryPanel.putConstraint(SpringLayout.WEST, lblCategoryStock, 45, SpringLayout.WEST, stockPerCategoryPanel);
+		sl_stockPerCategoryPanel.putConstraint(SpringLayout.EAST, lblCategoryStock, -45, SpringLayout.EAST, stockPerCategoryPanel);
+		stockPerCategoryPanel.add(lblCategoryStock);
+		
+		lblCategoryStockList = new JLabel();
+		sl_stockPerCategoryPanel.putConstraint(SpringLayout.NORTH, lblCategoryStockList, 25, SpringLayout.SOUTH, lblCategoryStock);
+		lblCategoryStockList.setFont(gallery.getFont(14f));
+		sl_stockPerCategoryPanel.putConstraint(SpringLayout.EAST, lblCategoryStockList, 0, SpringLayout.EAST, lblCategoryStock);
+		lblCategoryStockList.setVerticalAlignment(SwingConstants.TOP);
+		sl_stockPerCategoryPanel.putConstraint(SpringLayout.WEST, lblCategoryStockList, 0, SpringLayout.WEST, lblCategoryStock);
+		sl_stockPerCategoryPanel.putConstraint(SpringLayout.SOUTH, lblCategoryStockList, -20, SpringLayout.SOUTH, stockPerCategoryPanel);
+		stockPerCategoryPanel.add(lblCategoryStockList);
 		sl_dashboardPanel.putConstraint(SpringLayout.EAST, productPerCategoryPanel, 0, SpringLayout.EAST, leastProductPanel);
+		SpringLayout sl_leastProductPanel = new SpringLayout();
+		leastProductPanel.setLayout(sl_leastProductPanel);
+		
+		lblProductLeastStock = new JLabel(productLeastStocksTitle);
+		sl_leastProductPanel.putConstraint(SpringLayout.NORTH, lblProductLeastStock, 20, SpringLayout.NORTH, leastProductPanel);
+		lblProductLeastStock.setFont(gallery.getFont(22f));
+		lblProductLeastStock.setVerticalAlignment(SwingConstants.TOP);
+		sl_leastProductPanel.putConstraint(SpringLayout.WEST, lblProductLeastStock, 45, SpringLayout.WEST, leastProductPanel);
+		sl_leastProductPanel.putConstraint(SpringLayout.EAST, lblProductLeastStock, -45, SpringLayout.EAST, leastProductPanel);
+		leastProductPanel.add(lblProductLeastStock);
+		
+		lblProductLeastStockList = new JLabel();
+		sl_leastProductPanel.putConstraint(SpringLayout.NORTH, lblProductLeastStockList, 5, SpringLayout.SOUTH, lblProductLeastStock);
+		sl_leastProductPanel.putConstraint(SpringLayout.SOUTH, lblProductLeastStockList, -20, SpringLayout.SOUTH, leastProductPanel);
+		lblProductLeastStockList.setFont(gallery.getFont(14f));
+		lblProductLeastStockList.setVerticalAlignment(SwingConstants.TOP);
+		sl_leastProductPanel.putConstraint(SpringLayout.WEST, lblProductLeastStockList, 0, SpringLayout.WEST, lblProductLeastStock);
+		sl_leastProductPanel.putConstraint(SpringLayout.EAST, lblProductLeastStockList, 0, SpringLayout.EAST, lblProductLeastStock);
+		leastProductPanel.add(lblProductLeastStockList);
 		dashboardPanel.add(productPerCategoryPanel);
+		SpringLayout sl_productPerCategoryPanel = new SpringLayout();
+		productPerCategoryPanel.setLayout(sl_productPerCategoryPanel);
+		
+		lblCategoryCount = new JLabel(categoryCountTitle);
+		sl_productPerCategoryPanel.putConstraint(SpringLayout.NORTH, lblCategoryCount, 20, SpringLayout.NORTH, productPerCategoryPanel);
+		lblCategoryCount.setFont(gallery.getFont(22f));
+		lblCategoryCount.setVerticalAlignment(SwingConstants.TOP);
+		sl_productPerCategoryPanel.putConstraint(SpringLayout.WEST, lblCategoryCount, 45, SpringLayout.WEST, productPerCategoryPanel);
+		sl_productPerCategoryPanel.putConstraint(SpringLayout.EAST, lblCategoryCount, -45, SpringLayout.EAST, productPerCategoryPanel);
+		productPerCategoryPanel.add(lblCategoryCount);
+		
+		lblCategoryCountList = new JLabel();
+		lblCategoryCountList.setFont(gallery.getFont(14f));
+		lblCategoryCountList.setVerticalAlignment(SwingConstants.TOP);
+		sl_productPerCategoryPanel.putConstraint(SpringLayout.NORTH, lblCategoryCountList, 15, SpringLayout.SOUTH, lblCategoryCount);
+		sl_productPerCategoryPanel.putConstraint(SpringLayout.WEST, lblCategoryCountList, 0, SpringLayout.WEST, lblCategoryCount);
+		sl_productPerCategoryPanel.putConstraint(SpringLayout.SOUTH, lblCategoryCountList, -20, SpringLayout.SOUTH, productPerCategoryPanel);
+		sl_productPerCategoryPanel.putConstraint(SpringLayout.EAST, lblCategoryCountList, 0, SpringLayout.EAST, lblCategoryCount);
+		productPerCategoryPanel.add(lblCategoryCountList);
 		
 		supplierPanel = new RoundedPanel(Gallery.GRAY);
 		displayPanel.add(supplierPanel, "supplier");
@@ -509,7 +603,10 @@ public class Inventory extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnDashboard); }
 			
 			@Override
-			public void mouseClicked(MouseEvent e) {cardLayout.show(displayPanel, "dashboard");}
+			public void mouseClicked(MouseEvent e) {
+				refreshStatistics();
+				cardLayout.show(displayPanel, "dashboard");
+			}
 
 		});
 		btnSupplier.addMouseListener(new MouseAdapter() {
@@ -740,7 +837,7 @@ public class Inventory extends JFrame {
 			}
 		});
 		
-		
+		refreshStatistics();
 		refreshTables();
 		setVisible(true);
 	}
@@ -751,6 +848,8 @@ public class Inventory extends JFrame {
 		
 		supplierTable.setModel(utility.generateTable(database.getSuppliersByKeyword(""), Database.supplierHeaders));
 		productTable.setModel(utility.generateTable(trimProductDetails(""), Database.productHeaders));
+		
+		refreshStatistics();
 	}
 	
 	private Object[][] trimProductDetails(String keyword) {
@@ -769,6 +868,119 @@ public class Inventory extends JFrame {
 		}
 		
 		return null;
+	}
+	
+	private void refreshStatistics() {
+		productMostStocks = statistic.getTopFiveMostStocks();
+		productLeastStocks = statistic.getTopFiveLeastStocks();
+		categoryStock = statistic.getCategoryStock();
+		categoryCount = statistic.getCategoryCount();
+		
+		StringBuilder statisticMessage = new StringBuilder("<html>");
+		String contentFormatting = "%d. %s @ %,.0f %s<br>";
+		int nameLimit = 27;
+		
+		
+		if (productMostStocks == null) {
+			statisticMessage.append("1. None<br>2. None<br> 3. None</html>");
+		} else {
+			int numbering = 1;
+			for (Object[] product : productMostStocks) {
+				String name = product[2].toString();
+				double stocks = (double) product[4];
+				String uom = product[5].toString();
+				
+				statisticMessage.append(
+					String.format(contentFormatting, numbering,
+						(name.length() > nameLimit) ? name.substring(0, nameLimit - 2) + "..." : name,
+						stocks, uom));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		}
+
+		lblProductMostStockList.setText(statisticMessage.toString());
+		statisticMessage = new StringBuilder("<html>");
+		
+		if (productLeastStocks == null) {
+			statisticMessage.append("1. None<br>2. None<br> 3. None</html>");
+		} else {
+			int numbering = 1;
+			for (Object[] product : productLeastStocks) {
+				String name = product[2].toString();
+				double stocks = (double) product[4];
+				String uom = product[5].toString();
+				
+				statisticMessage.append(
+					String.format(contentFormatting, numbering,
+						(name.length() > nameLimit) ? name.substring(0, nameLimit - 2) + "..." : name,
+						stocks, uom));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		}
+
+		lblProductLeastStockList.setText(statisticMessage.toString());
+		statisticMessage = new StringBuilder("<html>");
+
+		int numbering = 1;
+		if (categoryStock == null) {
+			for (String category : Database.productCategories) {
+				statisticMessage.append(
+					String.format(
+						"%d. %s @ No stock(s)<br>", 
+						numbering, category));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		} else {
+			for (Object[] category : categoryStock) {
+				String name = category[0].toString();
+				double stocks = (double) category[1];
+				
+				statisticMessage.append(
+					String.format(contentFormatting, numbering,
+						(name.length() > nameLimit) ? name.substring(0, nameLimit - 2) + "..." : name,
+						stocks, "stock(s)"));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		}
+
+		lblCategoryStockList.setText(statisticMessage.toString());
+		statisticMessage = new StringBuilder("<html>");
+		
+		numbering = 1;
+		if (categoryCount == null) {
+			for (String category : Database.productCategories) {
+				statisticMessage.append(
+					String.format(
+						"%d. %s @ No product(s)<br>", 
+						numbering, category));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		} else {
+			for (Object[] category : categoryCount) {
+				String name = category[0].toString();
+				double productCount = (double) category[1];
+				
+				statisticMessage.append(
+					String.format(contentFormatting, numbering,
+						(name.length() > nameLimit) ? name.substring(0, nameLimit - 2) + "..." : name,
+						productCount, "product(s)"));
+				
+				numbering++;
+			}
+			statisticMessage.append("</html>");
+		}
+		
+		lblCategoryCountList.setText(statisticMessage.toString());
 	}
 }
 

@@ -35,13 +35,13 @@ public class Statistic {
 		return singletonInstance;
 	}
 	
-	public Object[][] getTopThreeMostStocks() {
+	public Object[][] getTopFiveMostStocks() {
 		try {
 			ps = con.prepareStatement(
 					"SELECT * "
 					+ "FROM product "
 					+ "ORDER BY stocks DESC "
-					+ "LIMIT 3;", 
+					+ "LIMIT 5;", 
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);
@@ -87,13 +87,13 @@ public class Statistic {
         }
 	}
 	
-	public Object[][] getTopThreeLeastStocks() {
+	public Object[][] getTopFiveLeastStocks() {
 		try {
 			ps = con.prepareStatement(
 					"SELECT * "
 					+ "FROM product "
 					+ "ORDER BY stocks ASC "
-					+ "LIMIT 3;", 
+					+ "LIMIT 5;", 
 				ResultSet.TYPE_SCROLL_INSENSITIVE, 
 				ResultSet.CONCUR_READ_ONLY
 			);
