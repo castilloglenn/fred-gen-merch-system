@@ -298,6 +298,9 @@ public class Main extends JFrame {
 										fetchedUserDetail[2].toString(), fetchedUserDetail[3].toString(), 
 										fetchedUserDetail[4].toString(), fetchedUserDetail[5].toString(), 
 										fetchedUserDetail[6].toString(), hashedNewPassword)) {
+									logger.addLog(Logger.LEVEL_1, 
+										String.format("User %s has updated their forgotten password", (long) fetchedUserDetail[0]));
+									
 									JOptionPane.showMessageDialog(
 										null, "Successfully updated the password.", 
 										Utility.BUSINESS_TITLE, 

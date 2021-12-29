@@ -1024,13 +1024,18 @@ public class POS extends JFrame {
 			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO generate daily report
 				// TODO generate automatic monthly report every 1st day of each month
 
 				if (report.generateDailyReport()) {
-					// TODO create logs and successful message JOptionPane after finishing the report generation
+					logger.addLog(Logger.LEVEL_3, 
+						String.format("User %s have generated the daily sales report file for today.", user[0].toString()));
 					
-					
+					JOptionPane.showMessageDialog(
+						null, "Successfully generated the daily sales report.\n\n"
+							+ "To see the file, go to the system's path then go\n"
+							+ "to reports -> business directory respectively.", 
+						Utility.BUSINESS_TITLE, 
+						JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					gallery.showMessage(new String[] {"The report for the day has already been created."});
 				}
