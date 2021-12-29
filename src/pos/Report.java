@@ -4,6 +4,7 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -53,6 +54,7 @@ public class Report {
 	private String defaultMarginPadding = "";
 
 	private Database database;
+	private Statistic statistic;
 	private Utility utility;
 	private Logger logger;
 	private Object[] user;
@@ -76,6 +78,7 @@ public class Report {
 	
 	private Report(Object[] user) {
 		database = Database.getInstance();
+		statistic = Statistic.getInstance();
 		utility = Utility.getInstance();
 		logger = Logger.getInstance();
 		this.user = user;
@@ -122,7 +125,19 @@ public class Report {
 		
 		// NOTE: This is sorted from AM-PM conveniently 
 		Object[][] transactions = database.getTransactionsByRange(dateDayStart, dateDayEnd);
-		ArrayList<ArrayList<String>> hourlySales = parseTransactions(transactions);
+		ArrayList<String[]> hourlySales = parseTransactions(transactions);
+		
+		for (int qq = 0; qq < hourlySales.size(); qq++) {
+			String[] w = hourlySales.get(qq);
+			if (w == null) {
+				System.out.println("null");
+			} else {
+				for (Object ow: w) {
+					System.out.print(ow + " ");
+				}
+				System.out.println();
+			}
+		}
 		
 		// Actual format of the document goes here
 		// Headers
@@ -177,14 +192,51 @@ public class Report {
 		return true;
 	}
 	
-	private ArrayList<ArrayList<String>> parseTransactions(Object[][] transactions) {
+	private ArrayList<String[]> parseTransactions(Object[][] transactions) {
 		if (transactions == null) {
 			return null;
 		}
 		
-		ArrayList<ArrayList<String>> hourlySales = new ArrayList<>();
+		ArrayList<String[]> hourlySales = new ArrayList<>();
+		
+		calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(((Timestamp) transactions[0][3]).getTime());
+		int hourStart = calendar.get(Calendar.HOUR_OF_DAY);
+		calendar.setTimeInMillis(((Timestamp) transactions[transactions.length - 1][3]).getTime());
+		int hourEnd = calendar.get(Calendar.HOUR_OF_DAY);
+
+		// Reverting back to current time
+		calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		
+		for (int timeSpanStart = hourStart; timeSpanStart <= hourEnd; timeSpanStart++) {
+			calendar.set(Calendar.HOUR_OF_DAY, timeSpanStart);
+			Date hourFrom = calendar.getTime();
+			
+			calendar.add(Calendar.HOUR_OF_DAY, 1);
+			calendar.add(Calendar.MILLISECOND, -1);
+			Date hourTo = calendar.getTime();
+			
+			Object[] fetchedData = statistic.getHourlySaleStatistic(hourFrom, hourTo);
+			String[] hourStatistic = {
+				Integer.toString(timeSpanStart), 
+				Integer.toString(timeSpanStart + 1), 
+				Integer.toString((int) fetchedData[0]), 
+				Double.toString((double) fetchedData[1]), 
+				Double.toString((double) fetchedData[2]), 
+			};
+			hourlySales.add(hourStatistic);
+			
+			calendar.add(Calendar.MILLISECOND, 1);
+		}
 		
 		
+
+		// Reverting back to current time
+		calendar = Calendar.getInstance();
 		
 		return hourlySales;
 	}

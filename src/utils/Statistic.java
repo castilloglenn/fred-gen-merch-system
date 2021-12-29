@@ -4,6 +4,10 @@ import java.awt.Image;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 
@@ -27,6 +31,8 @@ public class Statistic {
 	private Image im, myImg;
 	public int imageSize = 48;
 	
+	private DateFormat sqlDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
 	private Statistic() {
 		database = Database.getInstance();
 		con = database.getConnection();
@@ -38,6 +44,36 @@ public class Statistic {
 		}
 		
 		return singletonInstance;
+	}
+	
+	public Object[] getHourlySaleStatistic(Date from, Date to) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT "
+					+ "COUNT(DISTINCT t.transaction_id) AS total_transactions, "
+					+ "SUM(c.quantity) AS total_products, "
+					+ "SUM(DISTINCT t.total_price) AS gross_sales "
+					+ "FROM transaction t, contains c "
+					+ "WHERE t.transaction_id = c.transaction_id "
+					+ "AND date BETWEEN ? AND ?;"
+			);
+			
+			ps.setString(1, sqlDateTimeFormat.format(from));
+			ps.setString(2, sqlDateTimeFormat.format(to));
+			
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+		    
+		    Object[] result = new Object[3];
+        	result[0] = rs.getInt("total_transactions");
+        	result[1] = rs.getDouble("total_products");
+        	result[2] = rs.getDouble("gross_sales");
+        	
+            return result;
+        } catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
 	}
 	
 	public Object[][] getTopFiveMostStocks() {
