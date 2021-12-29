@@ -52,7 +52,8 @@ public class Utility {
 	public static final String TITLE_SEPARATOR = " | ";
 	public static final String SYSTEM_TITLE = "AGIK SOFTWARE SOLUTIONS";
 	public static final String BUSINESS_TITLE = "Fred's General Merchandise Store";
-	public static final String BUSINESS_ADDRESS = "Queens Row, Bacoor City, Cavite";
+	public static final String BUSINESS_ADDRESS_1 = "Blk 22 Lot 3 Everlasting Street";
+	public static final String BUSINESS_ADDRESS_2 = "Queensrow West Area B, Bacoor Cavite";
 	public static final String BUSINESS_TIN = "TIN: 159-354-182-248";
 	
 	public static final String RECEIPT_FOOTER = 

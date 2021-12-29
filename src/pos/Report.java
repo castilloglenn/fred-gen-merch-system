@@ -1,6 +1,7 @@
 package pos;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,13 +26,23 @@ public class Report {
 	private static Report singletonInstance = null;
 	
 	// Paper formatting variables
-	private final int WIDTH = 40; // 107
-	private final int MARGIN = 6;
+	// Make sure that the margin is even number so both sides is equal
+	// Width must be greater than the margin
+	// Available space would be the value of WIDTH - MARGIN
+	private final int WIDTH = 73; // 107
+	private final int MARGIN = 4; 
+	
+	// Daily Report Table Column Sizes excluding the vertical characters
+	private final int daily1stColumnWidth = 9;
+	private final int daily2ndColumnWidth = 9;
+	private final int daily3rdColumnWidth = 14;
+	private final int daily4thColumnWidth = 15;
+	private final int daily5thColumnWidth = 16;
 
 	private final char SPACE_ENRYPTION_CHARACTER = '*';
 	
-	private final String HORIZONTAL_LINE_CHARACTER = "=";
-	private final String VERTICAL_LINE_CHARACTER = "|";
+	private final String HORIZONAL = "=";
+	private final String VERTICAL = "|";
 	
 	private final String SPACE = " ";
 	private final String BR = "\n";
@@ -50,6 +61,12 @@ public class Report {
 	private String dailyFilePrefix = "DAILY-REPORT-";
 	private String monthlyFilePrefix = "MONTHLY-REPORT-";
 	private String reportDate;
+	
+	private String businessName = Utility.BUSINESS_TITLE;
+	private String businessAddress1 = Utility.BUSINESS_ADDRESS_1;
+	private String businessAddress2 = Utility.BUSINESS_ADDRESS_2;
+	private String dailySalesReportTitle = "Daily Sales Report";
+	private String monthlySalesReportTitle = "Monthly Sales Report";
 	
 	private SimpleDateFormat dailyFileDateTimeFormat;
 	private SimpleDateFormat monthlyFileDateTimeFormat;
@@ -89,6 +106,10 @@ public class Report {
 			return false;
 		}
 		
+		String employeeID = Long.toString((long) user[0]);
+		String employeeName = user[1].toString() + " " + user[2].toString() + " " + user[3].toString();
+		String reportDate = reportDateTimeFormat.format(calendar.getTime());
+		
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
@@ -101,21 +122,73 @@ public class Report {
 		
 		// NOTE: This is sorted from AM-PM conveniently 
 		Object[][] transactions = database.getTransactionsByRange(dateDayStart, dateDayEnd);
+		ArrayList<ArrayList<String>> hourlySales = parseTransactions(transactions);
 		
-		String sampleText = "12345678901234567890123456789012345";
-		int sampleWidth = 10;
+		// Actual format of the document goes here
+		// Headers
+		StringBuilder dailyReport = new StringBuilder(horizontalLine + BR);
+		dailyReport.append(center("") + BR);
+		dailyReport.append(center(businessName) + BR);
+		dailyReport.append(center(businessAddress1) + BR);
+		dailyReport.append(center(businessAddress2) + BR);
+		dailyReport.append(center(dailySalesReportTitle) + BR);
+		dailyReport.append(center("") + BR);
+		dailyReport.append(
+			justify(
+				encryptSpaces("Employee ID: " + employeeID) 
+				+ SPACE 
+				+ encryptSpaces("Date: " + reportDate)) + BR);
+		dailyReport.append(leftAlign("Employee Name: " + employeeName) + BR);
 		
-		System.out.println(horizontalLine);
-		System.out.println(center(tableHorizontalLine));
-		System.out.println(center(sampleText));
+		// Report Table
+		dailyReport.append(tableHorizontalLine + BR);
+		// Table Header
+		// First Line
+		dailyReport.append(
+			center(
+				VERTICAL + center("From", daily1stColumnWidth) + 
+				VERTICAL + center("To", daily2ndColumnWidth) +
+				VERTICAL + center("Total", daily3rdColumnWidth) +
+				VERTICAL + center("Total", daily4thColumnWidth) +
+				VERTICAL + center("Gross", daily5thColumnWidth) +
+				VERTICAL
+		) + BR);
+		// Second Line
+		dailyReport.append(
+			center(
+				VERTICAL + center("", daily1stColumnWidth) + 
+				VERTICAL + center("", daily2ndColumnWidth) +
+				VERTICAL + center("Transactions", daily3rdColumnWidth) +
+				VERTICAL + center("Products Sold", daily4thColumnWidth) +
+				VERTICAL + center("Sales", daily5thColumnWidth) +
+				VERTICAL
+		) + BR);
+		// Table Contents
+		dailyReport.append(tableHorizontalLine + BR);
+		
 		
 		
 		// Reverting back to current time
 		calendar = Calendar.getInstance();
 		
+		// TODO Remove this debug after
+		System.out.println(dailyReport.toString());
+		
 		return true;
 	}
 	
+	private ArrayList<ArrayList<String>> parseTransactions(Object[][] transactions) {
+		if (transactions == null) {
+			return null;
+		}
+		
+		ArrayList<ArrayList<String>> hourlySales = new ArrayList<>();
+		
+		
+		
+		return hourlySales;
+	}
+
 	private void generateMonthlyReport() {
 		// TODO Create monthly Report
 		
@@ -124,18 +197,20 @@ public class Report {
 	
 	private void setupObjects() {
 		reportDate = reportDateTimeFormat.format(calendar.getTime());
-		
-        for (int space = 0; space < WIDTH; space++) {
-            horizontalLine += HORIZONTAL_LINE_CHARACTER;
-        }
         
-        for (int space = 0; space < WIDTH - MARGIN; space++) {
-            tableHorizontalLine += HORIZONTAL_LINE_CHARACTER;
-        }
-        
-        for (int space = 0; space < (MARGIN / 2) - 2; space++) {
+        for (int space = 0; space < (MARGIN - 2) / 2; space++) {
         	defaultMarginPadding += SPACE;
         }
+		
+        for (int space = 0; space < WIDTH; space++) {
+            horizontalLine += HORIZONAL;
+        }
+        
+        tableHorizontalLine += VERTICAL + defaultMarginPadding;
+        for (int space = 0; space < WIDTH - MARGIN; space++) {
+            tableHorizontalLine += HORIZONAL;
+        }
+        tableHorizontalLine += defaultMarginPadding + VERTICAL;
     }
 	
 	public String encryptSpaces(String message) {
@@ -156,31 +231,56 @@ public class Report {
 		return newMessage;
 	}
 	
-	private String center(String message) {
-        int length = message.length();
+	private String leftAlign(String message) {
+		int length = message.length();
         if (length == WIDTH - MARGIN) 
-        	return VERTICAL_LINE_CHARACTER + defaultMarginPadding + message + defaultMarginPadding + VERTICAL_LINE_CHARACTER;
+        	return VERTICAL + defaultMarginPadding + message + defaultMarginPadding + VERTICAL;
         
         if (length > WIDTH - MARGIN) {
-            return VERTICAL_LINE_CHARACTER + defaultMarginPadding + message.substring(0, WIDTH - MARGIN) + defaultMarginPadding + VERTICAL_LINE_CHARACTER + BR + 
-                center(message.substring(WIDTH - MARGIN));
+            return VERTICAL + defaultMarginPadding + message.substring(0, WIDTH - MARGIN) + BR + 
+                center(message.substring(WIDTH - MARGIN)) + defaultMarginPadding + VERTICAL;
         }
         
-        int padding = (WIDTH - length) / 2 - 3;
+        int rightPadding = (WIDTH - MARGIN) - length;
+        for (int paddingIndex = 0; paddingIndex < rightPadding; paddingIndex++) {
+        	message = message + SPACE;
+        }
+        
+        return VERTICAL + defaultMarginPadding + message + defaultMarginPadding + VERTICAL;
+	}
+	
+	private String center(String message) {
+        int length = message.length();
+        
+        // Condition if the length of the message is exactly the available space between the horizontal edges with margin
+        if (length == WIDTH - MARGIN) 
+        	return VERTICAL + defaultMarginPadding + message + defaultMarginPadding + VERTICAL;
+        
+        // Condition if the length of the message is greater than the available space
+        if (length > WIDTH - MARGIN) {
+            return VERTICAL + defaultMarginPadding + message.substring(0, WIDTH - MARGIN) 
+            	+ defaultMarginPadding + VERTICAL + BR 
+            	+ center(message.substring(WIDTH - MARGIN));
+        }
+        
+        // Condition if the length of the message is less than the available space
+        int padding = ((WIDTH - MARGIN) - length) / 2;
         for (int space = 0; space < padding; space++) {
             message = " " + message;
         }
-        int rightPadding = padding + ((WIDTH - length) % 2);
+        int rightPadding = padding + (((WIDTH - MARGIN) - length) % 2);
         for (int space = 0; space < rightPadding; space++) {
             message = message + " ";
         }
         
-        return VERTICAL_LINE_CHARACTER + SPACE + message + SPACE + VERTICAL_LINE_CHARACTER;
+        return VERTICAL + defaultMarginPadding + message + defaultMarginPadding + VERTICAL;
     }
 	
 	public String center(String message, long width) {
 		int length = message.length();
-		if (length == width) return message;
+		
+		if (length == width) 
+			return message;
 		
 		String newMessage = "";
 		if (length > width) {
@@ -191,9 +291,12 @@ public class Report {
 		
 		long padding = (width - length) / 2;
 		long extra = (width - length) % 2;
+		
 		for (int left = 0; left < padding + extra; left++)
 			newMessage += " ";
+		
 		newMessage += message;
+		
 		for (int right = 0; right < padding; right++)
 			newMessage += " ";
 		
@@ -201,63 +304,59 @@ public class Report {
 	}
 	
 	private String justify(String message) {
-        String newMessage = "";
-		ArrayList<Integer> spaceIndexes = new ArrayList<>();
-
-        for (int index = 0; index < message.length(); index++) {
-            if (message.charAt(index) == ' ') spaceIndexes.add(index);
-        }
-
-        if (spaceIndexes.size() == 0) return center(message);
-        int limit = WIDTH - MARGIN;
-        int totalSpaces = limit - (message.length() - spaceIndexes.size());
-        int equalSpaces = totalSpaces / spaceIndexes.size();
-        int residual = totalSpaces % spaceIndexes.size();
-
-        int previousIndex = 0;
-        for (int index = 0; index < spaceIndexes.size(); index++) {
-            for (int start = previousIndex; start < spaceIndexes.get(index); start++)
-                if (message.charAt(start) != ' ') newMessage += message.charAt(start);
-            for (int spaceIndex = 0; spaceIndex < equalSpaces; spaceIndex++)
-                newMessage += " ";
-            previousIndex = spaceIndexes.get(index);
-        }
-        for (int residualIndex = 0; residualIndex < residual; residualIndex++)
-            newMessage += " ";
-        for (int index = previousIndex; index < message.length(); index++)
-            if (message.charAt(index) != ' ') newMessage += message.charAt(index);
-        
-		return decryptSpaces(VERTICAL_LINE_CHARACTER + SPACE + newMessage + SPACE + VERTICAL_LINE_CHARACTER);
+		return justify(message, WIDTH - MARGIN, true);
 	}
 	
-	private String justify(String message, long width) {
-        String newMessage = " ";
-		ArrayList<Integer> spaceIndexes = new ArrayList<>();
-
-        for (int index = 0; index < message.length(); index++) {
-            if (message.charAt(index) == ' ') spaceIndexes.add(index);
-        }
-
-        if (spaceIndexes.size() == 0) return center(message);
-        int limit = (int) width - 2;
-        int totalSpaces = limit - (message.length() - spaceIndexes.size());
-        int equalSpaces = totalSpaces / spaceIndexes.size();
-        int residual = totalSpaces % spaceIndexes.size();
-
-        int previousIndex = 0;
-        for (int index = 0; index < spaceIndexes.size(); index++) {
-            for (int start = previousIndex; start < spaceIndexes.get(index); start++)
-                if (message.charAt(start) != ' ') newMessage += message.charAt(start);
-            for (int spaceIndex = 0; spaceIndex < equalSpaces; spaceIndex++)
-                newMessage += " ";
-            previousIndex = spaceIndexes.get(index);
-        }
-        for (int residualIndex = 0; residualIndex < residual; residualIndex++)
-            newMessage += " ";
-        for (int index = previousIndex; index < message.length(); index++)
-            if (message.charAt(index) != ' ') newMessage += message.charAt(index);
-        
-		return decryptSpaces(newMessage) + " ";
+	private String justify(String message, int width) {
+		return justify(message, width, false);
+	}
+	
+	private String justify(String message, int width, boolean withVertical) {
+		int messageLength = message.length();
+		if (messageLength > width) {
+			return VERTICAL + defaultMarginPadding 
+					+ message.substring(0, width) 
+					+ defaultMarginPadding + VERTICAL + BR 
+					+ justify(message.substring(width));
+		}
+		
+		StringBuilder newMessage = new StringBuilder();
+		ArrayList<String> spaces = new ArrayList<>();
+		
+		String[] words = message.split(" ");
+		
+		for (int messageIndex = 0; messageIndex < messageLength; messageIndex++) {
+			if (message.charAt(messageIndex) == ' ') {
+				spaces.add(" ");
+			}
+		}
+		
+		int spaceToBeDistributed = width - messageLength;
+		while (spaceToBeDistributed > 0) {
+			for (int spaceIndex = 0; spaceIndex < spaces.size(); spaceIndex++) {
+				if (spaceToBeDistributed > 0) {
+					String spaceToBeAdded = spaces.get(spaceIndex);
+					spaceToBeAdded += " ";
+					spaces.set(spaceIndex, spaceToBeAdded);
+					
+					spaceToBeDistributed--;
+				} else break;
+			}
+		}
+		
+		for (int wordIndex = 0; wordIndex < words.length; wordIndex++) {
+			newMessage.append(words[wordIndex]);
+			if (wordIndex != words.length - 1) {
+				newMessage.append(spaces.get(wordIndex));
+			}
+		}
+		
+		if (withVertical) {
+			newMessage.insert(0, VERTICAL + defaultMarginPadding);
+			newMessage.append(defaultMarginPadding + VERTICAL);
+		}
+		
+		return decryptSpaces(newMessage.toString());
 	}
 	
 	private void checkPreviousMonthReport() {

@@ -21,7 +21,8 @@ public class Receipt {
 	
 	private String businessName1 = Utility.SYSTEM_TITLE;
 	private String businessName2 = Utility.BUSINESS_TITLE;
-	private String businessAddress = Utility.BUSINESS_ADDRESS;
+	private String businessAddress1 = Utility.BUSINESS_ADDRESS_1;
+	private String businessAddress2 = Utility.BUSINESS_ADDRESS_2;
 	private String tinNo = Utility.BUSINESS_TIN;
 	private String footer = Utility.RECEIPT_FOOTER;
 	private String legalNotice = Utility.RECEIPT_LEGAL_NOTICE;
@@ -72,7 +73,8 @@ public class Receipt {
     	
     	receipt.append(center(businessName1) + BR);
     	receipt.append(center(businessName2) + BR);
-    	receipt.append(center(businessAddress) + BR);
+    	receipt.append(center(businessAddress1) + BR);
+    	receipt.append(center(businessAddress2) + BR);
     	receipt.append(center(tinNo) + BR);
     	receipt.append(horizontalLine + BR);
     	receipt.append(leftAlign("Date: " + dateTime) + BR);

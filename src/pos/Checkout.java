@@ -712,15 +712,6 @@ public class Checkout extends JDialog {
 			double totalPrice = total;
 			
 			if (database.addTransaction(transactionID, userID, customerDiscountID, totalPrice)) {
-				cartList.forEach(
-					(product) ->
-						database.
-							addContains(
-								transactionID, 
-								product.getProductID(), 
-								product.getQuantity())
-				);
-				
 				for (CartItem productObject : cartList) {
 					Object[] product = productObject.getProduct();
 					double updatedStock = ((double) product[4]) - productObject.getQuantity();
