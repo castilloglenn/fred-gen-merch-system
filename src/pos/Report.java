@@ -70,6 +70,10 @@ public class Report {
 	private String dailySalesReportTitle = "Daily Sales Report";
 	private String monthlySalesReportTitle = "Monthly Sales Report";
 	
+	private int totalTransactions = 0;
+	private int totalProductSold = 0;
+	private double grossSales = 0.0;
+	
 	private SimpleDateFormat dailyFileDateTimeFormat;
 	private SimpleDateFormat monthlyFileDateTimeFormat;
 	private SimpleDateFormat reportDateTimeFormat;
@@ -83,7 +87,7 @@ public class Report {
 		logger = Logger.getInstance();
 		this.user = user;
 		
-		dailyFileDateTimeFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+		dailyFileDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd");
 		monthlyFileDateTimeFormat = new SimpleDateFormat("yyyy-MM");
 		reportDateTimeFormat = new SimpleDateFormat("MM/dd/yyy");
 		
@@ -123,22 +127,6 @@ public class Report {
 		calendar.add(Calendar.MILLISECOND, -1);
 		Date dateDayEnd = calendar.getTime();
 		
-		// NOTE: This is sorted from AM-PM conveniently 
-		Object[][] transactions = database.getTransactionsByRange(dateDayStart, dateDayEnd);
-		ArrayList<String[]> hourlySales = parseTransactions(transactions);
-		
-		for (int qq = 0; qq < hourlySales.size(); qq++) {
-			String[] w = hourlySales.get(qq);
-			if (w == null) {
-				System.out.println("null");
-			} else {
-				for (Object ow: w) {
-					System.out.print(ow + " ");
-				}
-				System.out.println();
-			}
-		}
-		
 		// Actual format of the document goes here
 		// Headers
 		StringBuilder dailyReport = new StringBuilder(horizontalLine + BR);
@@ -148,11 +136,13 @@ public class Report {
 		dailyReport.append(center(businessAddress2) + BR);
 		dailyReport.append(center(dailySalesReportTitle) + BR);
 		dailyReport.append(center("") + BR);
+		
 		dailyReport.append(
 			justify(
 				encryptSpaces("Employee ID: " + employeeID) 
 				+ SPACE 
 				+ encryptSpaces("Date: " + reportDate)) + BR);
+		
 		dailyReport.append(leftAlign("Employee Name: " + employeeName) + BR);
 		
 		// Report Table
@@ -181,13 +171,57 @@ public class Report {
 		// Table Contents
 		dailyReport.append(tableHorizontalLine + BR);
 		
+		// NOTE: This is sorted from AM-PM conveniently 
+		Object[][] transactions = database.getTransactionsByRange(dateDayStart, dateDayEnd);
+		ArrayList<String[]> hourlySales = parseTransactions(transactions);
 		
+		hourlySales.forEach(
+			(hourlySale) ->
+				dailyReport.append(
+					center(
+						VERTICAL + center(String.format("%s:00", hourlySale[0]), daily1stColumnWidth) + 
+						VERTICAL + center(String.format("%s:00", hourlySale[1]), daily2ndColumnWidth) +
+						VERTICAL + center(hourlySale[2], daily3rdColumnWidth) +
+						VERTICAL + center(hourlySale[3], daily4thColumnWidth) +
+						VERTICAL + center(hourlySale[4], daily5thColumnWidth) +
+						VERTICAL
+					) + BR
+				)
+		);
+
+		dailyReport.append(tableHorizontalLine + BR);
+		
+		// Footer/Calculation part
+		dailyReport.append(justify(VERTICAL + SPACE + VERTICAL) + BR);
+		dailyReport.append(
+			justify(
+				encryptSpaces(VERTICAL + SPACE + "Total Transactions:") + 
+				SPACE + 
+				encryptSpaces(totalTransactions + SPACE + VERTICAL)) + BR
+		);
+		dailyReport.append(
+			justify(
+				encryptSpaces(VERTICAL + SPACE + "Total Product Sold:") + 
+				SPACE + 
+				encryptSpaces(totalProductSold + SPACE + VERTICAL)) + BR
+		);
+		dailyReport.append(
+			justify(
+				encryptSpaces(VERTICAL + SPACE + "Total Gross Sales:") + 
+				SPACE + 
+				encryptSpaces(utility.formatCurrency(grossSales) + SPACE + VERTICAL)) + BR
+		);
+		dailyReport.append(justify(VERTICAL + SPACE + VERTICAL) + BR);
+		
+		// Page closing
+		dailyReport.append(tableHorizontalLine + BR);
+		dailyReport.append(center("") + BR);
+		dailyReport.append(horizontalLine + BR);
 		
 		// Reverting back to current time
 		calendar = Calendar.getInstance();
 		
-		// TODO Remove this debug after
-		System.out.println(dailyReport.toString());
+		utility.writeFile("business", generateFileName(true), dailyReport.toString());
 		
 		return true;
 	}
@@ -221,19 +255,22 @@ public class Report {
 			Date hourTo = calendar.getTime();
 			
 			Object[] fetchedData = statistic.getHourlySaleStatistic(hourFrom, hourTo);
+			
+			totalTransactions += (int) fetchedData[0];
+			totalProductSold += (double) fetchedData[1];
+			grossSales += (double) fetchedData[2];
+			
 			String[] hourStatistic = {
 				Integer.toString(timeSpanStart), 
 				Integer.toString(timeSpanStart + 1), 
 				Integer.toString((int) fetchedData[0]), 
 				Double.toString((double) fetchedData[1]), 
-				Double.toString((double) fetchedData[2]), 
+				utility.formatCurrency((double) fetchedData[2]), 
 			};
 			hourlySales.add(hourStatistic);
 			
 			calendar.add(Calendar.MILLISECOND, 1);
 		}
-		
-		
 
 		// Reverting back to current time
 		calendar = Calendar.getInstance();

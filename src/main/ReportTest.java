@@ -26,23 +26,10 @@ public class ReportTest {
 		
 		
 		Report r = Report.getInstance(dummyUser[0]);
-		
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.HOUR, -1);
-		Date from = cal.getTime();
-		
-		cal.add(Calendar.HOUR, 3);
-		Date to = cal.getTime();
-		
-		Object[] result = stat.getHourlySaleStatistic(from, to);
-		
-		for (Object o : result) {
-			System.out.println(o.toString());
-		}
-		
-		
-		
-		r.generateDailyReport();
+		System.out.println(r.generateDailyReport());
+
+//		System.out.println(r.generateFileName(true));
+//		System.out.println(r.generateFileName(false));
 	}
 
 }
