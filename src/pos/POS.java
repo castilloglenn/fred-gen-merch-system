@@ -75,7 +75,7 @@ public class POS extends JFrame {
 	private String productMostSalesTitle = "<html><p>Top 5 Most Sold Products<br><small>in descending order</small></p></html>";
 	private String productLeastSalesTitle = "<html><p>Top 5 Least Sold Products<br><small>in descending order</small></p></html>";
 	private String categorySalesTitle = "<html><p>Sales Per Category</p></html>";
-	private String userSalesTitle = "<html><p>Top 5 Sellers<br><small>In descending order</small></p></html>";
+	private String userSalesTitle = "<html><p>Top 5 Employee Sales<br><small>In descending order</small></p></html>";
 	
 	private String userSalesNotice = "<html><p><b>Note:</b> <i>The span of records calculated in this list is at all time range. "
 			+ "Which means that the total amount here are the sales from the beginning of the system since it started up to latest "
