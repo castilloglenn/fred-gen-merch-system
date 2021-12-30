@@ -1047,7 +1047,7 @@ public class POS extends JFrame {
 			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				if (report.generateDailyReport(Report.CURRENT_DAY_REPORT)) {
+				if (report.generateDailyReport(Report.CURRENT_DAY_REPORT, false)) {
 					logger.addLog(Logger.LEVEL_3, 
 						String.format("User %s have generated the daily sales report file for today.", user[0].toString()));
 					

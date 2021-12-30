@@ -117,7 +117,7 @@ public class Report {
 		return singletonInstance;
 	}
 	
-	public boolean generateDailyReport(int reportType) {
+	public boolean generateDailyReport(int reportType, boolean isAutomated) {
 		String dailyReportFileName = generateFileName(reportType);
 		File dailyFile = new File(String.format(filePathFormat, dailyReportFileName));
 
@@ -142,21 +142,25 @@ public class Report {
 		calendar.setTime(dateDayEnd);
 		
 		if (hourlySales == null) {
-			logger.addLog(Logger.LEVEL_2, 
-				String.format("User %s tried to manually generate daily sales report without any transactions yet.", 
-					user[0].toString()));
-			
-			gallery.showMessage(new String[] {"There are no sales recorded for the day."});
+			if (!isAutomated) {
+				logger.addLog(Logger.LEVEL_2, 
+					String.format("User %s tried to manually generate daily sales report without any transactions yet.", 
+						user[0].toString()));
+				
+				gallery.showMessage(new String[] {"There are no sales recorded for the day."});
+			}
 			return false;
 		} else if (dailyFile.isFile()) {
-			int confirmOverwrite = JOptionPane.showConfirmDialog(null, 
-				"The sales report has already been generated, would you like to overwrite it?", 
-				Utility.SYSTEM_TITLE, 
-				JOptionPane.YES_NO_OPTION, 
-				JOptionPane.INFORMATION_MESSAGE);
-			if (confirmOverwrite != 0) {
-				return false;
-			}
+			if (!isAutomated) {
+				int confirmOverwrite = JOptionPane.showConfirmDialog(null, 
+					"The sales report has already been generated, would you like to overwrite it?", 
+					Utility.BUSINESS_TITLE, 
+					JOptionPane.YES_NO_OPTION, 
+					JOptionPane.INFORMATION_MESSAGE);
+				if (confirmOverwrite != 0) {
+					return false;
+				}
+			} else return false;
 		}
 		
 		String employeeID = Long.toString((long) user[0]);
@@ -277,21 +281,25 @@ public class Report {
 		String reportDate = reportDateTimeFormat.format(calendar.getTime());
 		
 		if (dailySales.size() == 0) {
-			logger.addLog(Logger.LEVEL_2, 
-				String.format("User %s tried to manually generate monthly sales report without any transactions yet.", 
-					user[0].toString()));
-			
-			gallery.showMessage(new String[] {"There are no sales recorded on the previous month."});
+			if (!isAutomated) {
+				logger.addLog(Logger.LEVEL_2, 
+					String.format("User %s tried to manually generate monthly sales report without any transactions yet.", 
+						user[0].toString()));
+				
+				gallery.showMessage(new String[] {"There are no sales recorded on the previous month."});
+			}
 			return false;
 		} else if (monthlyFile.isFile()) {
-			int confirmOverwrite = JOptionPane.showConfirmDialog(null, 
-				"The monthly sales report has already been generated, would you like to overwrite it?", 
-				Utility.SYSTEM_TITLE, 
-				JOptionPane.YES_NO_OPTION, 
-				JOptionPane.INFORMATION_MESSAGE);
-			if (confirmOverwrite != 0) {
-				return false;
-			}
+			if (!isAutomated) {
+				int confirmOverwrite = JOptionPane.showConfirmDialog(null, 
+					"The monthly sales report has already been generated, would you like to overwrite it?", 
+					Utility.BUSINESS_TITLE, 
+					JOptionPane.YES_NO_OPTION, 
+					JOptionPane.INFORMATION_MESSAGE);
+				if (confirmOverwrite != 0) {
+					return false;
+				}
+			} else return false;
 		}
 		
 		// Actual format of the document goes here
@@ -498,7 +506,7 @@ public class Report {
 					String.format("The system have detected that the previous day's sales report does not exist, "
 							+ "it will now automatically create under the User ID: %s.", user[0].toString()));
 				
-				generateDailyReport(PREVIOUS_DAY_REPORT);
+				generateDailyReport(PREVIOUS_DAY_REPORT, true);
 			}
 		};
 	}
