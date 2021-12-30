@@ -26,7 +26,7 @@ public class ReportTest {
 		
 		
 		Report r = Report.getInstance(dummyUser[0]);
-		System.out.println(r.generateDailyReport());
+//		System.out.println(r.generateDailyReport(Report.CURRENT_DAY_REPORT));
 
 //		System.out.println(r.generateFileName(true));
 //		System.out.println(r.generateFileName(false));

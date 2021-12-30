@@ -28,6 +28,10 @@ public class Report {
 	 */
 	private static Report singletonInstance = null;
 	
+	public static int MONTHLY_REPORT = 0;
+	public static int CURRENT_DAY_REPORT = 1;
+	public static int PREVIOUS_DAY_REPORT = 2;
+	
 	// Paper formatting variables
 	// Make sure that the margin is even number so both sides is equal
 	// Width must be greater than the margin
@@ -96,9 +100,9 @@ public class Report {
 		reportDateTimeFormat = new SimpleDateFormat("MM/dd/yyy");
 		
 		calendar = Calendar.getInstance();
-		
-		checkPreviousMonthReport();
+
 		setupObjects();
+		checkPreviousReports();
 	}
 
 	public static Report getInstance(Object[] user) {
@@ -109,9 +113,14 @@ public class Report {
 		return singletonInstance;
 	}
 	
-	public boolean generateDailyReport() {
-		String monthlyReportFileName = generateFileName(true);
-		File dailyFile = new File(String.format(filePathFormat, monthlyReportFileName));
+	public boolean generateDailyReport(int reportType) {
+		String dailyReportFileName = generateFileName(reportType);
+		File dailyFile = new File(String.format(filePathFormat, dailyReportFileName));
+
+		calendar = Calendar.getInstance();
+		if (reportType == PREVIOUS_DAY_REPORT) {
+			calendar.add(Calendar.DAY_OF_YEAR, -1);
+		}
 		
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
@@ -125,7 +134,8 @@ public class Report {
 		
 		// NOTE: This is sorted from AM-PM conveniently 
 		Object[][] transactions = database.getTransactionsByRange(dateDayStart, dateDayEnd);
-		ArrayList<String[]> hourlySales = parseTransactions(transactions);
+		ArrayList<String[]> hourlySales = parseDailyTransactions(reportType, transactions);
+		calendar.setTime(dateDayEnd);
 		
 		if (hourlySales == null) {
 			logger.addLog(Logger.LEVEL_2, 
@@ -235,22 +245,17 @@ public class Report {
 		dailyReport.append(center("") + BR);
 		dailyReport.append(horizontalLine + BR);
 		
-		// Reverting back to current time
-		calendar = Calendar.getInstance();
-		
-		utility.writeFile("business", generateFileName(true), dailyReport.toString());
-		
+		utility.writeFile("business", dailyReportFileName, dailyReport.toString());
 		return true;
 	}
 	
-	private ArrayList<String[]> parseTransactions(Object[][] transactions) {
+	private ArrayList<String[]> parseDailyTransactions(int reportType, Object[][] transactions) {
 		if (transactions.length == 0) {
 			return null;
 		}
 		
 		ArrayList<String[]> hourlySales = new ArrayList<>();
 		
-		calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(((Timestamp) transactions[0][3]).getTime());
 		int hourStart = calendar.get(Calendar.HOUR_OF_DAY);
 		calendar.setTimeInMillis(((Timestamp) transactions[transactions.length - 1][3]).getTime());
@@ -258,10 +263,17 @@ public class Report {
 
 		// Reverting back to current time
 		calendar = Calendar.getInstance();
+		if (reportType == PREVIOUS_DAY_REPORT) {
+			calendar.add(Calendar.DAY_OF_YEAR, -1);
+		}
 		calendar.set(Calendar.HOUR, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
+
+		totalTransactions = 0;
+		totalProductSold = 0;
+		grossSales = 0.0;
 		
 		for (int timeSpanStart = hourStart; timeSpanStart <= hourEnd; timeSpanStart++) {
 			calendar.set(Calendar.HOUR_OF_DAY, timeSpanStart);
@@ -288,17 +300,69 @@ public class Report {
 			
 			calendar.add(Calendar.MILLISECOND, 1);
 		}
-
-		// Reverting back to current time
-		calendar = Calendar.getInstance();
 		
 		return hourlySales;
 	}
 
-	private void generateMonthlyReport() {
+	public boolean generateMonthlyReport() {
 		// TODO Create monthly Report
 		
+		return true;
+	}
+	
+	private void checkPreviousReports() {
+		if (calendar.get(Calendar.DAY_OF_MONTH) == 1) {
+			// Automatic report generation
+			generateMonthlyReport();
+		} else {
+			String monthlyReportFileName = generateFileName(MONTHLY_REPORT);
+			String dailyReportFileName = generateFileName(PREVIOUS_DAY_REPORT);
+			
+			File previousMonthFile = new File(String.format(filePathFormat, monthlyReportFileName));
+			File previousDayFile = new File(String.format(filePathFormat, dailyReportFileName));
+			
+			if (!previousMonthFile.isFile()) {
+				generateMonthlyReport();
+			}
+			
+			if (!previousDayFile.isFile()) {
+				logger.addLog(Logger.LEVEL_1, 
+					String.format("The system have detected that the previous day's sales report does not exist, "
+							+ "it will now automatically create under the User ID: %s.", user[0].toString()));
+				
+				generateDailyReport(PREVIOUS_DAY_REPORT);
+			}
+		};
+	}
+	
+	private String generateFileName(int reportType) {
+		calendar = Calendar.getInstance();
+		StringBuilder fileName = new StringBuilder();
 		
+		if (reportType == CURRENT_DAY_REPORT) {
+			// For daily file name (current day)
+			fileName.append(dailyFilePrefix);
+			fileName.append(dailyFileDateTimeFormat.format(calendar.getTime()));
+		} 
+		
+		else if (reportType == PREVIOUS_DAY_REPORT) {
+			// For daily file name (previous day)
+			calendar.add(Calendar.DAY_OF_MONTH, -1);
+
+			fileName.append(dailyFilePrefix);
+			fileName.append(dailyFileDateTimeFormat.format(calendar.getTime()));
+		}
+		
+		else if (reportType == MONTHLY_REPORT){
+			// Previous month's file name 
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.add(Calendar.MONTH, -1);
+			
+			fileName.append(monthlyFilePrefix);
+			fileName.append(monthlyFileDateTimeFormat.format(calendar.getTime()));
+		}
+
+		return fileName.toString();
 	}
 	
 	private void setupObjects() {
@@ -413,15 +477,11 @@ public class Report {
 		return justify(message, WIDTH - MARGIN, true);
 	}
 	
-	private String justify(String message, int width) {
-		return justify(message, width, false);
-	}
-	
 	private String justify(String message, int width, boolean withVertical) {
 		int messageLength = message.length();
 		if (messageLength > width) {
 			return VERTICAL + defaultMarginPadding 
-					+ message.substring(0, width) 
+					+ message.substring(0, width)
 					+ defaultMarginPadding + VERTICAL + BR 
 					+ justify(message.substring(width));
 		}
@@ -463,42 +523,5 @@ public class Report {
 		}
 		
 		return decryptSpaces(newMessage.toString());
-	}
-	
-	private void checkPreviousMonthReport() {
-		if (calendar.get(Calendar.DAY_OF_MONTH) == 1) {
-			generateMonthlyReport();
-		} else {
-			String monthlyReportFileName = generateFileName(false);
-			File previousMonthFile = new File(String.format(filePathFormat, monthlyReportFileName));
-			
-			if (!previousMonthFile.isFile()) {
-				generateMonthlyReport();
-			}
-		};
-	}
-	
-	private String generateFileName(boolean isDaily) {
-		StringBuilder fileName = new StringBuilder();
-		
-		if (isDaily) {
-			// For daily file name
-			fileName.append(dailyFilePrefix);
-			fileName.append(dailyFileDateTimeFormat.format(calendar.getTime()));
-		} 
-		
-		else {
-			// Previous month's file name 
-			calendar.set(Calendar.DAY_OF_MONTH, 1);
-			calendar.add(Calendar.MONTH, -1);
-			
-			fileName.append(monthlyFilePrefix);
-			fileName.append(monthlyFileDateTimeFormat.format(calendar.getTime()));
-		}
-		
-		// Reverting back to current time
-		calendar = Calendar.getInstance();
-		
-		return fileName.toString();
 	}
 }

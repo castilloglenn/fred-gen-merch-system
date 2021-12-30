@@ -80,7 +80,12 @@ public class POS extends JFrame {
 	private String userSalesNotice = "<html><p><b>Note:</b> <i>The span of records calculated in this list is at all time range. "
 			+ "Which means that the total amount here are the sales from the beginning of the system since it started up to latest "
 			+ "or up to this moment.</i></p><html>";
+	
 	private String reportGeneratorTitle = "Generate Report";
+	private String generateDescriptionMessage = "<html><p>Reports are automatically generated the day after (for daily sales report) "
+			+ "and every 1st day of next month (for the montly sales report). To manually generate a report, press the button below that "
+			+ "corresponds to the type of report you want to manually generated. Reports can be seen under the \"Business\" directory inside "
+			+ "the \"Reports\".</p></html>";
 	
 	private int defaultHeight = 710; // 600
 	private int defaultWidth = 990; // 1000
@@ -177,6 +182,8 @@ public class POS extends JFrame {
 	private JLabel lblUserSalesNotice;
 	private JLabel lblGenerateReport;
 	private JLabel lblDailyReportButton;
+	private JLabel lblGenerateDescription;
+	private JLabel lblMonthlyReportButton;
 
 	public POS(Object[] user) {
 		database = Database.getInstance();
@@ -638,10 +645,26 @@ public class POS extends JFrame {
 		lblDailyReportButton = new JLabel("Generate End-of-Day Report (Once per Day)");
 		lblDailyReportButton.setName("primary");
 		gallery.styleLabelToButton(lblDailyReportButton, 14f, 5, 5);
-		sl_generateReportPanel.putConstraint(SpringLayout.NORTH, lblDailyReportButton, 15, SpringLayout.SOUTH, lblGenerateReport);
-		sl_generateReportPanel.putConstraint(SpringLayout.WEST, lblDailyReportButton, 0, SpringLayout.WEST, lblGenerateReport);
-		sl_generateReportPanel.putConstraint(SpringLayout.EAST, lblDailyReportButton, 0, SpringLayout.EAST, lblGenerateReport);
 		generateReportPanel.add(lblDailyReportButton);
+		
+		lblGenerateDescription = new JLabel(generateDescriptionMessage);
+		sl_generateReportPanel.putConstraint(SpringLayout.WEST, lblDailyReportButton, 0, SpringLayout.WEST, lblGenerateDescription);
+		sl_generateReportPanel.putConstraint(SpringLayout.EAST, lblDailyReportButton, 0, SpringLayout.EAST, lblGenerateDescription);
+		sl_generateReportPanel.putConstraint(SpringLayout.EAST, lblGenerateDescription, 0, SpringLayout.EAST, lblGenerateReport);
+		sl_generateReportPanel.putConstraint(SpringLayout.NORTH, lblDailyReportButton, 15, SpringLayout.SOUTH, lblGenerateDescription);
+		sl_generateReportPanel.putConstraint(SpringLayout.NORTH, lblGenerateDescription, 15, SpringLayout.SOUTH, lblGenerateReport);
+		lblGenerateDescription.setFont(gallery.getFont(14f));
+		sl_generateReportPanel.putConstraint(SpringLayout.WEST, lblGenerateDescription, 0, SpringLayout.WEST, lblGenerateReport);
+		generateReportPanel.add(lblGenerateDescription);
+		
+		lblMonthlyReportButton = new JLabel("Generate Previous Month's Sales Report");
+		lblMonthlyReportButton.setName("primary");
+		gallery.styleLabelToButton(lblMonthlyReportButton, 14f, 5, 5);
+		sl_generateReportPanel.putConstraint(SpringLayout.NORTH, lblMonthlyReportButton, 10, SpringLayout.SOUTH, lblDailyReportButton);
+		sl_generateReportPanel.putConstraint(SpringLayout.WEST, lblMonthlyReportButton, 0, SpringLayout.WEST, lblDailyReportButton);
+		sl_generateReportPanel.putConstraint(SpringLayout.EAST, lblMonthlyReportButton, 0, SpringLayout.EAST, lblDailyReportButton);
+		lblMonthlyReportButton.setName("primary");
+		generateReportPanel.add(lblMonthlyReportButton);
 		reportPanel.add(userSalePanel);
 		SpringLayout sl_userSalePanel = new SpringLayout();
 		userSalePanel.setLayout(sl_userSalePanel);
@@ -1024,9 +1047,7 @@ public class POS extends JFrame {
 			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				// TODO generate automatic monthly report every 1st day of each month
-
-				if (report.generateDailyReport()) {
+				if (report.generateDailyReport(Report.CURRENT_DAY_REPORT)) {
 					logger.addLog(Logger.LEVEL_3, 
 						String.format("User %s have generated the daily sales report file for today.", user[0].toString()));
 					
@@ -1036,6 +1057,31 @@ public class POS extends JFrame {
 							+ "to reports -> business directory respectively.", 
 						Utility.BUSINESS_TITLE, 
 						JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+		});
+		lblMonthlyReportButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				gallery.buttonHovered(lblDailyReportButton);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				gallery.buttonNormalized(lblDailyReportButton);
+			}
+			
+			@Override public void mouseClicked(MouseEvent e) {
+				if (report.generateMonthlyReport()) {
+//					logger.addLog(Logger.LEVEL_3, 
+//						String.format("User %s have generated the daily sales report file for today.", user[0].toString()));
+//					
+//					JOptionPane.showMessageDialog(
+//						null, "Successfully generated the daily sales report.\n\n"
+//							+ "To see the file, go to the system's path then go\n"
+//							+ "to reports -> business directory respectively.", 
+//						Utility.BUSINESS_TITLE, 
+//						JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});
