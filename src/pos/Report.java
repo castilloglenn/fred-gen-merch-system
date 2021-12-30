@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import utils.Database;
 import utils.Gallery;
 import utils.Logger;
@@ -56,6 +58,7 @@ public class Report {
 	private Database database;
 	private Statistic statistic;
 	private Utility utility;
+	private Gallery gallery;
 	private Logger logger;
 	private Object[] user;
 	
@@ -84,6 +87,7 @@ public class Report {
 		database = Database.getInstance();
 		statistic = Statistic.getInstance();
 		utility = Utility.getInstance();
+		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
 		this.user = user;
 		
@@ -109,14 +113,6 @@ public class Report {
 		String monthlyReportFileName = generateFileName(true);
 		File dailyFile = new File(String.format(filePathFormat, monthlyReportFileName));
 		
-		if (dailyFile.isFile()) {
-			return false;
-		}
-		
-		String employeeID = Long.toString((long) user[0]);
-		String employeeName = user[1].toString() + " " + user[2].toString() + " " + user[3].toString();
-		String reportDate = reportDateTimeFormat.format(calendar.getTime());
-		
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
@@ -126,6 +122,32 @@ public class Report {
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		calendar.add(Calendar.MILLISECOND, -1);
 		Date dateDayEnd = calendar.getTime();
+		
+		// NOTE: This is sorted from AM-PM conveniently 
+		Object[][] transactions = database.getTransactionsByRange(dateDayStart, dateDayEnd);
+		ArrayList<String[]> hourlySales = parseTransactions(transactions);
+		
+		if (hourlySales == null) {
+			logger.addLog(Logger.LEVEL_2, 
+				String.format("User %s tried to manually generate daily sales report without any transactions yet.", 
+					user[0].toString()));
+			
+			gallery.showMessage(new String[] {"There are no sales recorded for the day."});
+			return false;
+		} else if (dailyFile.isFile()) {
+			int confirmOverwrite = JOptionPane.showConfirmDialog(null, 
+				"The sales report has already been generated, would you like to overwrite it?", 
+				Utility.SYSTEM_TITLE, 
+				JOptionPane.YES_NO_OPTION, 
+				JOptionPane.INFORMATION_MESSAGE);
+			if (confirmOverwrite != 0) {
+				return false;
+			}
+		}
+		
+		String employeeID = Long.toString((long) user[0]);
+		String employeeName = user[1].toString() + " " + user[2].toString() + " " + user[3].toString();
+		String reportDate = reportDateTimeFormat.format(calendar.getTime());
 		
 		// Actual format of the document goes here
 		// Headers
@@ -171,10 +193,6 @@ public class Report {
 		// Table Contents
 		dailyReport.append(tableHorizontalLine + BR);
 		
-		// NOTE: This is sorted from AM-PM conveniently 
-		Object[][] transactions = database.getTransactionsByRange(dateDayStart, dateDayEnd);
-		ArrayList<String[]> hourlySales = parseTransactions(transactions);
-		
 		hourlySales.forEach(
 			(hourlySale) ->
 				dailyReport.append(
@@ -185,8 +203,7 @@ public class Report {
 						VERTICAL + center(hourlySale[3], daily4thColumnWidth) +
 						VERTICAL + center(hourlySale[4], daily5thColumnWidth) +
 						VERTICAL
-					) + BR
-				)
+					) + BR)
 		);
 
 		dailyReport.append(tableHorizontalLine + BR);
@@ -227,7 +244,7 @@ public class Report {
 	}
 	
 	private ArrayList<String[]> parseTransactions(Object[][] transactions) {
-		if (transactions == null) {
+		if (transactions.length == 0) {
 			return null;
 		}
 		

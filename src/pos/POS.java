@@ -1036,8 +1036,6 @@ public class POS extends JFrame {
 							+ "to reports -> business directory respectively.", 
 						Utility.BUSINESS_TITLE, 
 						JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					gallery.showMessage(new String[] {"The report for the day has already been created."});
 				}
 			}
 		});
