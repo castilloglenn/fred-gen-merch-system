@@ -1063,25 +1063,25 @@ public class POS extends JFrame {
 		lblMonthlyReportButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				gallery.buttonHovered(lblDailyReportButton);
+				gallery.buttonHovered(lblMonthlyReportButton);
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				gallery.buttonNormalized(lblDailyReportButton);
+				gallery.buttonNormalized(lblMonthlyReportButton);
 			}
 			
 			@Override public void mouseClicked(MouseEvent e) {
-				if (report.generateMonthlyReport()) {
-//					logger.addLog(Logger.LEVEL_3, 
-//						String.format("User %s have generated the daily sales report file for today.", user[0].toString()));
-//					
-//					JOptionPane.showMessageDialog(
-//						null, "Successfully generated the daily sales report.\n\n"
-//							+ "To see the file, go to the system's path then go\n"
-//							+ "to reports -> business directory respectively.", 
-//						Utility.BUSINESS_TITLE, 
-//						JOptionPane.INFORMATION_MESSAGE);
+				if (report.generateMonthlyReport(false)) {
+					logger.addLog(Logger.LEVEL_3, 
+						String.format("User %s have generated the monthly sales report file for the previous month.", user[0].toString()));
+					
+					JOptionPane.showMessageDialog(
+						null, "Successfully generated the monthly sales report.\n\n"
+							+ "To see the file, go to the system's path then go\n"
+							+ "to reports -> business directory respectively.", 
+						Utility.BUSINESS_TITLE, 
+						JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		});

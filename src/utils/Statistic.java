@@ -46,7 +46,7 @@ public class Statistic {
 		return singletonInstance;
 	}
 	
-	public Object[] getHourlySaleStatistic(Date from, Date to) {
+	public Object[] getSaleStatistic(Date from, Date to) {
 		try {
 			ps = con.prepareStatement(
 					"SELECT "
@@ -393,6 +393,49 @@ public class Statistic {
             	
             	productRow[0] = rs.getString("name");
                 productRow[1] = rs.getDouble("sales");
+                
+                result[index] = productRow;
+                index++;
+            }
+            return result;
+        } catch(Exception ex){
+            ex.printStackTrace();
+    		return null;
+        }
+	}
+	
+	public Object[][] getUserMostSales(Date from, Date to) {
+		try {
+			ps = con.prepareStatement(
+					"SELECT CONCAT(u.fname, \" \", u.mname , \" \", u.lname) AS `name`, "
+					+ "SUM(t.total_price) AS sales "
+					+ "FROM user u, transaction t "
+					+ "WHERE u.user_id = t.user_id "
+					+ "AND t.date BETWEEN ? AND ? "
+					+ "GROUP BY `name` "
+					+ "ORDER BY sales DESC;",
+				ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_READ_ONLY
+			);
+			
+			ps.setString(1, sqlDateTimeFormat.format(from));
+			ps.setString(2, sqlDateTimeFormat.format(to));
+			
+			ResultSet rs = ps.executeQuery();
+			
+			int size = 0;
+		    rs.last();
+		    size = rs.getRow();
+		    rs.beforeFirst();
+		    
+		    Object[][] result = new Object[size][2];
+
+		    int index = 0;
+            while (rs.next()){
+            	Object[] productRow = new Object[2];
+            	
+            	productRow[0] = rs.getString("name");
+                productRow[1] = String.format("P%,.2f", rs.getDouble("sales"));
                 
                 result[index] = productRow;
                 index++;

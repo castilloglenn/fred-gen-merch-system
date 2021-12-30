@@ -4,7 +4,6 @@ import java.io.File;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -45,6 +44,12 @@ public class Report {
 	private final int daily3rdColumnWidth = 14;
 	private final int daily4thColumnWidth = 15;
 	private final int daily5thColumnWidth = 16;
+	
+	// Monthly Report Table Column Sizes excluding the vertical characters
+	private final int monthly1stColumnWidth = 15;
+	private final int monthly2ndColumnWidth = 15;
+	private final int monthly3rdColumnWidth = 15;
+	private final int monthly4thColumnWidth = 19;
 
 	private final char SPACE_ENRYPTION_CHARACTER = '*';
 	
@@ -69,7 +74,6 @@ public class Report {
 	private String filePathFormat = "./reports/business/%s.txt";
 	private String dailyFilePrefix = "DAILY-REPORT-";
 	private String monthlyFilePrefix = "MONTHLY-REPORT-";
-	private String reportDate;
 	
 	private String businessName = Utility.BUSINESS_TITLE;
 	private String businessAddress1 = Utility.BUSINESS_ADDRESS_1;
@@ -248,6 +252,136 @@ public class Report {
 		utility.writeFile("business", dailyReportFileName, dailyReport.toString());
 		return true;
 	}
+
+	public boolean generateMonthlyReport(boolean isAutomated) {
+		String monthlyReportFileName = generateFileName(MONTHLY_REPORT);
+		File monthlyFile = new File(String.format(filePathFormat, monthlyReportFileName));
+
+		calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -1);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		Date monthStart = calendar.getTime();
+		
+		calendar.add(Calendar.MONTH, 1);
+		calendar.add(Calendar.MILLISECOND, -1);
+		Date monthEnd = calendar.getTime();
+		
+		ArrayList<String[]> dailySales = parseMonthlyTransactions();
+		
+		calendar = Calendar.getInstance();
+		Object[][] employeeSales = statistic.getUserMostSales(monthStart, monthEnd);
+		String reportDate = reportDateTimeFormat.format(calendar.getTime());
+		
+		if (dailySales.size() == 0) {
+			logger.addLog(Logger.LEVEL_2, 
+				String.format("User %s tried to manually generate monthly sales report without any transactions yet.", 
+					user[0].toString()));
+			
+			gallery.showMessage(new String[] {"There are no sales recorded on the previous month."});
+			return false;
+		} else if (monthlyFile.isFile()) {
+			int confirmOverwrite = JOptionPane.showConfirmDialog(null, 
+				"The monthly sales report has already been generated, would you like to overwrite it?", 
+				Utility.SYSTEM_TITLE, 
+				JOptionPane.YES_NO_OPTION, 
+				JOptionPane.INFORMATION_MESSAGE);
+			if (confirmOverwrite != 0) {
+				return false;
+			}
+		}
+		
+		// Actual format of the document goes here
+		// Headers
+		StringBuilder dailyReport = new StringBuilder(horizontalLine + BR);
+		dailyReport.append(center("") + BR);
+		dailyReport.append(center(businessName) + BR);
+		dailyReport.append(center(businessAddress1) + BR);
+		dailyReport.append(center(businessAddress2) + BR);
+		dailyReport.append(center(monthlySalesReportTitle) + BR);
+		dailyReport.append(center("") + BR);
+		
+		dailyReport.append(
+			justify("Employees/Sales: " + encryptSpaces("Date: " + reportDate)) + BR);
+		
+		int numbering = 1;
+		for (Object[] employee : employeeSales) {
+			dailyReport.append(leftAlign(numbering + ". " + employee[0].toString() + " - " + employee[1].toString()) + BR);
+			
+			numbering++;
+		}
+		
+		// Report Table
+		dailyReport.append(tableHorizontalLine + BR);
+		// Table Header
+		// First Line
+		dailyReport.append(
+			center(
+				VERTICAL + center("Date", monthly1stColumnWidth) + 
+				VERTICAL + center("Total", monthly2ndColumnWidth) +
+				VERTICAL + center("Total", monthly3rdColumnWidth) +
+				VERTICAL + center("Gross", monthly4thColumnWidth) +
+				VERTICAL
+		) + BR);
+		// Second Line
+		dailyReport.append(
+			center(
+				VERTICAL + center("", monthly1stColumnWidth) + 
+				VERTICAL + center("Transactions", monthly2ndColumnWidth) +
+				VERTICAL + center("Products Sold", monthly3rdColumnWidth) +
+				VERTICAL + center("Sales", monthly4thColumnWidth) +
+				VERTICAL
+		) + BR);
+		// Table Contents
+		dailyReport.append(tableHorizontalLine + BR);
+		
+		dailySales.forEach(
+			(dailySale) ->
+				dailyReport.append(
+					center(
+						VERTICAL + center(dailySale[0], monthly1stColumnWidth) + 
+						VERTICAL + center(dailySale[1], monthly2ndColumnWidth) +
+						VERTICAL + center(dailySale[2], monthly3rdColumnWidth) +
+						VERTICAL + center(dailySale[3], monthly4thColumnWidth) +
+						VERTICAL
+					) + BR)
+		);
+
+		dailyReport.append(tableHorizontalLine + BR);
+		
+		// Footer/Calculation part
+		dailyReport.append(justify(VERTICAL + SPACE + VERTICAL) + BR);
+		dailyReport.append(
+			justify(
+				encryptSpaces(VERTICAL + SPACE + "Total Transactions:") + 
+				SPACE + 
+				encryptSpaces(totalTransactions + SPACE + VERTICAL)) + BR
+		);
+		dailyReport.append(
+			justify(
+				encryptSpaces(VERTICAL + SPACE + "Total Product Sold:") + 
+				SPACE + 
+				encryptSpaces(totalProductSold + SPACE + VERTICAL)) + BR
+		);
+		dailyReport.append(
+			justify(
+				encryptSpaces(VERTICAL + SPACE + "Total Gross Sales:") + 
+				SPACE + 
+				encryptSpaces(utility.formatCurrency(grossSales) + SPACE + VERTICAL)) + BR
+		);
+		dailyReport.append(justify(VERTICAL + SPACE + VERTICAL) + BR);
+		
+		// Page closing
+		dailyReport.append(tableHorizontalLine + BR);
+		dailyReport.append(center("") + BR);
+		dailyReport.append(horizontalLine + BR);
+		
+		utility.writeFile("business", monthlyReportFileName, dailyReport.toString());
+		return true;
+	}
 	
 	private ArrayList<String[]> parseDailyTransactions(int reportType, Object[][] transactions) {
 		if (transactions.length == 0) {
@@ -266,7 +400,7 @@ public class Report {
 		if (reportType == PREVIOUS_DAY_REPORT) {
 			calendar.add(Calendar.DAY_OF_YEAR, -1);
 		}
-		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
@@ -283,7 +417,7 @@ public class Report {
 			calendar.add(Calendar.MILLISECOND, -1);
 			Date hourTo = calendar.getTime();
 			
-			Object[] fetchedData = statistic.getHourlySaleStatistic(hourFrom, hourTo);
+			Object[] fetchedData = statistic.getSaleStatistic(hourFrom, hourTo);
 			
 			totalTransactions += (int) fetchedData[0];
 			totalProductSold += (double) fetchedData[1];
@@ -303,29 +437,63 @@ public class Report {
 		
 		return hourlySales;
 	}
-
-	public boolean generateMonthlyReport() {
-		// TODO Create monthly Report
+	
+	private ArrayList<String[]> parseMonthlyTransactions() {
+		ArrayList<String[]> dailySales = new ArrayList<>();
+		// Reverting back to current time
+		calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -1);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		
-		return true;
+		int maxDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+		totalTransactions = 0;
+		totalProductSold = 0;
+		grossSales = 0.0;
+		
+		for (int timeSpanStart = 1; timeSpanStart <= maxDays; timeSpanStart++) {
+			calendar.set(Calendar.DAY_OF_MONTH, timeSpanStart);
+			Date dayFrom = calendar.getTime();
+			
+			calendar.add(Calendar.DAY_OF_MONTH, 1);
+			calendar.add(Calendar.MILLISECOND, -1);
+			Date dayTo = calendar.getTime();
+			
+			Object[] fetchedData = statistic.getSaleStatistic(dayFrom, dayTo);
+			
+			if (fetchedData != null) {
+				totalTransactions += (int) fetchedData[0];
+				totalProductSold += (double) fetchedData[1];
+				grossSales += (double) fetchedData[2];
+				
+				String[] dayStatistic = {
+					reportDateTimeFormat.format(dayFrom), 
+					Integer.toString((int) fetchedData[0]), 
+					Double.toString((double) fetchedData[1]), 
+					utility.formatCurrency((double) fetchedData[2]), 
+				};
+				
+				dailySales.add(dayStatistic);
+			}
+			
+			calendar.add(Calendar.MILLISECOND, 1);
+		}
+		
+		return dailySales;
 	}
 	
 	private void checkPreviousReports() {
 		if (calendar.get(Calendar.DAY_OF_MONTH) == 1) {
-			// Automatic report generation
-			generateMonthlyReport();
+			// Monthly Sales Report Generation
+			generateMonthlyReport(true);
 		} else {
-			String monthlyReportFileName = generateFileName(MONTHLY_REPORT);
 			String dailyReportFileName = generateFileName(PREVIOUS_DAY_REPORT);
-			
-			File previousMonthFile = new File(String.format(filePathFormat, monthlyReportFileName));
 			File previousDayFile = new File(String.format(filePathFormat, dailyReportFileName));
 			
-			if (!previousMonthFile.isFile()) {
-				generateMonthlyReport();
-			}
-			
 			if (!previousDayFile.isFile()) {
+				// Daily Sales Report Generation
 				logger.addLog(Logger.LEVEL_1, 
 					String.format("The system have detected that the previous day's sales report does not exist, "
 							+ "it will now automatically create under the User ID: %s.", user[0].toString()));
@@ -366,9 +534,7 @@ public class Report {
 	}
 	
 	private void setupObjects() {
-		reportDate = reportDateTimeFormat.format(calendar.getTime());
-        
-        for (int space = 0; space < (MARGIN - 2) / 2; space++) {
+		for (int space = 0; space < (MARGIN - 2) / 2; space++) {
         	defaultMarginPadding += SPACE;
         }
 		
