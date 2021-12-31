@@ -115,7 +115,7 @@ public class Checkout extends JDialog {
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
 		utility = Utility.getInstance();
-		receipt = Receipt.getInstance(user, cartList);
+		receipt = new Receipt(user, cartList);
 		
 		this.user = user;
 		this.cartList = cartList;

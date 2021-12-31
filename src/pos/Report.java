@@ -262,6 +262,7 @@ public class Report {
 		File monthlyFile = new File(String.format(filePathFormat, monthlyReportFileName));
 
 		calendar = Calendar.getInstance();
+		// TODO Bypass montly
 		calendar.add(Calendar.MONTH, -1);
 		calendar.set(Calendar.DAY_OF_MONTH, 1);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -450,6 +451,7 @@ public class Report {
 		ArrayList<String[]> dailySales = new ArrayList<>();
 		// Reverting back to current time
 		calendar = Calendar.getInstance();
+		// TODO Bypass montly
 		calendar.add(Calendar.MONTH, -1);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
@@ -532,6 +534,7 @@ public class Report {
 		else if (reportType == MONTHLY_REPORT){
 			// Previous month's file name 
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			// TODO Bypass montly
 			calendar.add(Calendar.MONTH, -1);
 			
 			fileName.append(monthlyFilePrefix);

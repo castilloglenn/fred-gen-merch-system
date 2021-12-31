@@ -9,11 +9,6 @@ import utils.Utility;
 
 
 public class Receipt {
-
-	/**
-	 * Singleton instance
-	 */
-	private static Receipt singletonInstance = null;
 	
 	private final String BR = "\n";
 	private final int WIDTH = 50;
@@ -46,7 +41,7 @@ public class Receipt {
 	
 	private Utility utility;
 
-	private Receipt(Object[] user, ArrayList<CartItem> cartList) {
+	Receipt(Object[] user, ArrayList<CartItem> cartList) {
 		setHorizontalLine();
 		this.utility = Utility.getInstance();
 		
@@ -54,14 +49,6 @@ public class Receipt {
 		this.cartList = cartList;
 		
 		cashierName = cashier[1] + " " + cashier[3].toString().substring(0, 1) + ".";
-	}
-	
-	public static Receipt getInstance(Object[] user, ArrayList<CartItem> cartList) {
-		if (singletonInstance == null) {
-			singletonInstance = new Receipt(user, cartList);
-		}
-		
-		return singletonInstance;
 	}
     
     public String get(boolean generateID) {
