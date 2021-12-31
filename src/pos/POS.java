@@ -532,18 +532,19 @@ public class POS extends JFrame {
 		sl_transactionPanel.putConstraint(SpringLayout.NORTH, transactionSearchPanel, 20, SpringLayout.NORTH, transactionPanel);
 		sl_transactionPanel.putConstraint(SpringLayout.WEST, transactionSearchPanel, 20, SpringLayout.WEST, transactionPanel);
 		sl_transactionPanel.putConstraint(SpringLayout.SOUTH, transactionSearchPanel, 170, SpringLayout.NORTH, transactionPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.EAST, transactionSearchPanel, 445, SpringLayout.WEST, transactionPanel);
 		transactionPanel.add(transactionSearchPanel);
 		
 		transactionStatisticPanel = new RoundedPanel(Gallery.WHITE);
 		sl_transactionPanel.putConstraint(SpringLayout.NORTH, transactionStatisticPanel, 15, SpringLayout.SOUTH, transactionSearchPanel);
 		sl_transactionPanel.putConstraint(SpringLayout.WEST, transactionStatisticPanel, 0, SpringLayout.WEST, transactionSearchPanel);
-		sl_transactionPanel.putConstraint(SpringLayout.SOUTH, transactionStatisticPanel, -20, SpringLayout.SOUTH, transactionPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.SOUTH, transactionStatisticPanel, 420, SpringLayout.SOUTH, transactionSearchPanel);
 		sl_transactionPanel.putConstraint(SpringLayout.EAST, transactionStatisticPanel, 0, SpringLayout.EAST, transactionSearchPanel);
 		transactionPanel.add(transactionStatisticPanel);
 		
 		transactionReceiptPanel = new RoundedPanel(Gallery.WHITE);
-		sl_transactionPanel.putConstraint(SpringLayout.EAST, transactionSearchPanel, -15, SpringLayout.WEST, transactionReceiptPanel);
 		sl_transactionPanel.putConstraint(SpringLayout.NORTH, transactionReceiptPanel, 0, SpringLayout.NORTH, transactionSearchPanel);
+		sl_transactionPanel.putConstraint(SpringLayout.SOUTH, transactionReceiptPanel, -15, SpringLayout.SOUTH, transactionPanel);
 		SpringLayout sl_transactionSearchPanel = new SpringLayout();
 		transactionSearchPanel.setLayout(sl_transactionSearchPanel);
 		
@@ -575,7 +576,6 @@ public class POS extends JFrame {
 		transactionSearchPanel.add(tfTransactionSearch);
 		tfTransactionSearch.setColumns(10);
 		sl_transactionPanel.putConstraint(SpringLayout.WEST, transactionReceiptPanel, -420, SpringLayout.EAST, transactionPanel);
-		sl_transactionPanel.putConstraint(SpringLayout.SOUTH, transactionReceiptPanel, 0, SpringLayout.SOUTH, transactionStatisticPanel);
 		SpringLayout sl_transactionStatisticPanel = new SpringLayout();
 		transactionStatisticPanel.setLayout(sl_transactionStatisticPanel);
 		
