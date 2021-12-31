@@ -1,11 +1,15 @@
 package main;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 
 import inventory.Inventory;
 import pos.POS;
@@ -13,15 +17,6 @@ import utils.Gallery;
 import utils.Logger;
 import utils.RoundedPanel;
 import utils.Utility;
-
-import javax.swing.SpringLayout;
-import javax.swing.JLabel;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.SwingConstants;
 
 /**
  * 
@@ -38,8 +33,6 @@ public class Portal extends JFrame {
 	
 	private Gallery gallery;
 	private Logger logger;
-	private Object[] user;
-
 	private JPanel contentPane;
 	private JPanel mainPanel;
 	private JLabel lblGreetingMessage;
@@ -50,8 +43,6 @@ public class Portal extends JFrame {
 	public Portal(Object[] user) {
 		gallery = Gallery.getInstance();
 		logger = Logger.getInstance();
-		this.user = user;
-
 		setIconImage(gallery.getSystemIcon());
 		setTitle(portalTitle + " | " + Utility.BUSINESS_TITLE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
