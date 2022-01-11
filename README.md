@@ -2,9 +2,13 @@
 Thesis project for the subject INSY 55 - System Analysis And Design.
 
 Members:
+
 Lead developer: Castillo, Allen Glenn E.
+
 UI Designer: Garcia, Sebastian Raphael B.
+
 Documentator/Researcher: Cabigat, Ernest John C.
+
 
 Point of Sales design
 ![1](https://user-images.githubusercontent.com/55197203/137610436-84e46f99-7b69-431c-8a9f-ab0f4ec23243.PNG)
