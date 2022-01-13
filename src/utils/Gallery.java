@@ -96,13 +96,13 @@ public class Gallery {
 	
 	public void setupCustomFonts() {
 		try {
-			InputStream inputStream = new BufferedInputStream(new FileInputStream("assets/fonts/" + regularFont + ".ttf"));
+			InputStream inputStream = new BufferedInputStream(new FileInputStream(".\\assets\\fonts\\" + regularFont + ".ttf"));
 			font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 			GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			genv.registerFont(font);
 //			font = font.deriveFont(12f);  // if some error occur on fonts uncomment this
 			
-			InputStream inputStream2 = new BufferedInputStream(new FileInputStream("assets/fonts/" + monospacedFont + ".ttf"));
+			InputStream inputStream2 = new BufferedInputStream(new FileInputStream(".\\assets\\fonts\\" + monospacedFont + ".ttf"));
 			mfont = Font.createFont(Font.TRUETYPE_FONT, inputStream2);
 			GraphicsEnvironment genv2 = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			genv2.registerFont(mfont);
@@ -168,7 +168,7 @@ public class Gallery {
 	}
 	
 	public ImageIcon getImage(String name, int width, int height) {
-		ImageIcon image = new ImageIcon(Gallery.class.getResource("../images/" + name));
+		ImageIcon image = new ImageIcon(".\\assets\\images\\" + name);
 		Image img = image.getImage();
 		Image scaledIcon = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		ImageIcon finalImage = new ImageIcon(scaledIcon);

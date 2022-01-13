@@ -6,11 +6,20 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="images/products/general-hygiene/|images/products/general-hygiene/" kind="src" path="assets"/>
+	<classpathentry excluding="images/products/general-hygiene/|images/products/general-hygiene/|fonts/|images/|images/products/|images/products/agriculture/|images/products/consumables/|images/products/electronics/|images/products/tools/|images/products/general-hygiene/|images/products/school-supplies/" kind="src" path="assets"/>
 	<classpathentry excluding="business/|system/|transaction/" kind="src" path="reports"/>
 	<classpathentry kind="src" path="reports/business"/>
 	<classpathentry kind="src" path="reports/system"/>
 	<classpathentry kind="src" path="reports/transaction"/>
+	<classpathentry kind="src" path="assets/fonts"/>
+	<classpathentry excluding="products/|products/agriculture/|products/consumables/|products/electronics/|products/tools/|products/general-hygiene/|products/school-supplies/" kind="src" path="assets/images"/>
+	<classpathentry excluding="agriculture/|consumables/|electronics/|tools/|general-hygiene/|general-hygiene/|school-supplies/|school-supplies/" kind="src" path="assets/images/products"/>
+	<classpathentry kind="src" path="assets/images/products/agriculture"/>
+	<classpathentry kind="src" path="assets/images/products/consumables"/>
+	<classpathentry kind="src" path="assets/images/products/electronics"/>
+	<classpathentry kind="src" path="assets/images/products/tools"/>
+	<classpathentry kind="src" path="assets/images/products/general-hygiene"/>
+	<classpathentry kind="src" path="assets/images/products/school-supplies"/>
 	<classpathentry kind="lib" path="mysql-connector-java-8.0.26.jar"/>
 	<classpathentry kind="lib" path="jdatepicker-1.3.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
