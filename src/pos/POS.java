@@ -820,7 +820,7 @@ public class POS extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblDashboardNav); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblDashboardNav); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				setTitle(POS_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 				
 				cardLayout.show(displayPanel, "pos");
@@ -831,7 +831,7 @@ public class POS extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblTransactionNav); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblTransactionNav); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				setTitle(TRANSACTION_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
 				lblTransactionStatistics.setText(getTransactionStatistics());
 				cardLayout.show(displayPanel, "transaction");
@@ -841,10 +841,10 @@ public class POS extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblReportNav); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblReportNav); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
-				setTitle(REPORTS_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
-				
+			@Override public void mousePressed(MouseEvent e) {
 				if (requestManagerPermission()) {
+					setTitle(REPORTS_TITLE + Utility.TITLE_SEPARATOR + Utility.BUSINESS_TITLE);
+					
 					logger.addLog(Logger.LEVEL_2, 
 						String.format("User %s viewed the product reports and statistics.", user[0].toString()));
 					
@@ -857,7 +857,7 @@ public class POS extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblCheckoutButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCheckoutButton); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				checkOut();
 			}
 		});
@@ -865,13 +865,13 @@ public class POS extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblCancelButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblCancelButton); }
 			
-			@Override public void mouseClicked(MouseEvent e) { clearCart(false); }
+			@Override public void mousePressed(MouseEvent e) { clearCart(false); }
 		});
 		lblAddToCart.addMouseListener(new MouseAdapter() {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblAddToCart); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblAddToCart); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				addToCart();
 			}
 		});
@@ -887,7 +887,7 @@ public class POS extends JFrame {
 				lblDownButton.setIcon(gallery.getImage("arrow-down.png", 22, 22));
 			}
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				tableNextPage();
 			}
 		});
@@ -905,7 +905,7 @@ public class POS extends JFrame {
 				lblUpButton.setIcon(gallery.getImage("arrow-up.png", 22, 22));
 			}
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				tablePreviousPage();
 			}
 		});
@@ -986,7 +986,7 @@ public class POS extends JFrame {
 				gallery.buttonNormalized(lblLeftButton);
 			}
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				cartPreviousPage();
 			}
 		});
@@ -1001,7 +1001,7 @@ public class POS extends JFrame {
 				gallery.buttonNormalized(lblRightButton);
 			}
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				cartNextPage();
 			}
 		});
@@ -1016,7 +1016,7 @@ public class POS extends JFrame {
 				gallery.buttonNormalized(lblTransactionSearchButton);
 			}
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mouseReleased(MouseEvent e) {
 				String inputTransactionID = tfTransactionSearch.getText();
 				
 				String contents = utility.readFile("transaction", inputTransactionID);
@@ -1383,6 +1383,7 @@ public class POS extends JFrame {
 			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 			JLabel label = new JLabel(clearCartMessage);
 			JPasswordField pass = new JPasswordField(10);
+			
 			String[] options = new String[]{"OK", "Cancel"};
 			
 			panel.add(label);
@@ -1393,7 +1394,7 @@ public class POS extends JFrame {
 				JOptionPane
 					.showOptionDialog(null, panel, Utility.BUSINESS_TITLE,
 			                         JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
-			                         null, options, pass);
+			                         null, options, options[0]);
 			
 			// Manager password return value
 			String managerPassword = "";

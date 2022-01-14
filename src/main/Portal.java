@@ -108,7 +108,7 @@ public class Portal extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblPosButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblPosButton); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				logger.addLog(Logger.LEVEL_2, String.format("User %s opened the Point of Sales.", user[0].toString()));
 
 				new POS(user);
@@ -119,7 +119,7 @@ public class Portal extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblInventoryButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblInventoryButton); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				logger.addLog(Logger.LEVEL_2, String.format("User %s opened the Inventory System.", user[0].toString()));
 
 				new Inventory(user);

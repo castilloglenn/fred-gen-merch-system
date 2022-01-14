@@ -210,6 +210,7 @@ public class Main extends JFrame {
 				panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 				JLabel label = new JLabel(forgotPasswordMessage);
 				JPasswordField pass = new JPasswordField(10);
+				
 				String[] options = new String[]{"OK", "Cancel"};
 				
 				panel.add(label);
@@ -331,6 +332,36 @@ public class Main extends JFrame {
 			}
 		});
 		
+		// Key bindings to user
+		tfUsername
+			.getInputMap(JComponent.WHEN_FOCUSED)
+			.put(
+				KeyStroke.getKeyStroke(
+					KeyEvent.VK_ENTER, 
+					KeyEvent.SHIFT_DOWN_MASK, 
+					true)
+						, "Shift-Enter Action");
+		tfUsername.getActionMap().put("Shift-Enter Action", new AbstractAction() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		    	checkAdminLogin();
+		    }
+		});
+		tfUsername
+		.getInputMap(JComponent.WHEN_FOCUSED)
+		.put(
+			KeyStroke.getKeyStroke(
+				KeyEvent.VK_ENTER, 
+				0, 
+				false)
+					, "Enter Action");
+		tfUsername.getActionMap().put("Enter Action", new AbstractAction() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		    	checkLogin();
+		    }
+		});
+
 		// Key bindings to password
 		tfPassword
 			.getInputMap(JComponent.WHEN_FOCUSED)

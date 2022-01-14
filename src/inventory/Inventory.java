@@ -603,7 +603,7 @@ public class Inventory extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnDashboard); }
 			
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				refreshStatistics();
 				cardLayout.show(displayPanel, "dashboard");
 			}
@@ -614,7 +614,7 @@ public class Inventory extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnSupplier); }
 			
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				cardLayout.show(displayPanel, "supplier");
 			}
 
@@ -625,7 +625,7 @@ public class Inventory extends JFrame {
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(btnProduct);}
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mousePressed(MouseEvent e) {
 				cardLayout.show(displayPanel, "product");
 			}
 		});

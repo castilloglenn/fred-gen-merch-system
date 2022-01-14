@@ -466,7 +466,7 @@ public class Admin extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblLogsButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblLogsButton); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				
 				cardLayout.show(cardPanel, "system_log");
 			}
@@ -475,7 +475,7 @@ public class Admin extends JFrame {
 			@Override public void mouseEntered(MouseEvent e) { gallery.buttonHovered(lblUsersButton); }
 			@Override public void mouseExited(MouseEvent e) { gallery.buttonNormalized(lblUsersButton); }
 			
-			@Override public void mouseClicked(MouseEvent e) {
+			@Override public void mousePressed(MouseEvent e) {
 				logger.addLog(Logger.LEVEL_3, 
 					String.format(
 						"User %s opened the user management panel.", 
